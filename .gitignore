@@ -1,0 +1,16 @@
+
+### IDE ###
+.idea/*
+
+### ENV ###
+**/.env
+
+### LOGS ###
+logs/
+*.log
+
+### SAMPLE DATA ###
+sample-response-data/*
+
+### WEBSITE DATA ###
+acme.json
