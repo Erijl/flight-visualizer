@@ -1,0 +1,7 @@
+### Scheduler ###
+spring.task.scheduling.pool.size=20
+
+### API ###
+flight.visualizer.api.url=
+flight.visualizer.api.client.secret=
+flight.visualizer.api.client.id=

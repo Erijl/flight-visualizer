@@ -5,7 +5,6 @@ import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -13,15 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.lang.reflect.Type;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.List;
 
 @Component
 public class AuthManager {
 
-    private RestUtil restUtil;
+    private final RestUtil restUtil;
     private final Gson gson = new GsonBuilder().create();
 
     private String accessToken;
@@ -41,9 +38,9 @@ public class AuthManager {
     }
 
     public String getBearerAccessToken() {
-        if(accessToken == null || new Date().after(this.expirationDate)) {
+        if (accessToken == null || new Date().after(this.expirationDate)) {
             AccessToken accessTokenDto = this.postAccessToken();
-            if(accessTokenDto != null) {
+            if (accessTokenDto != null) {
                 this.accessToken = accessTokenDto.getAccessToken();
                 this.expirationDate = Date.from(
                         new Date().
@@ -66,7 +63,7 @@ public class AuthManager {
         final String requestUrl = new UrlBuilder(this.baseUrl).accessToken().getUrl();
 
         ResponseEntity<String> response = restTemplate.exchange(
-                requestUrl, HttpMethod.GET, this.restUtil.getStandardHttpEntity(), String.class);
+                requestUrl, HttpMethod.POST, this.restUtil.getStandardHttpEntity(), String.class);
 
         if (response.getStatusCode() == HttpStatus.OK) {
             return this.gson.fromJson(response.getBody(), AccessToken.class);
