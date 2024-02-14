@@ -12,13 +12,14 @@ public class UrlBuilder {
         url = new StringBuilder().append(baseUrl);
     }
 
-    public EndpointBuilder endpoint(String endpoint) {
-        switch (endpoint) {
-            case "flight-schedules":
-                url.append("flight-schedules/flightschedules/passenger?");
-                break;
-        }
 
+    public TokenBuilder accessToken() {
+        url.append("oauth/token");
+        return new TokenBuilder();
+    }
+
+    public EndpointBuilder flightSchedule() {
+        url.append("flight-schedules/flightschedules/passenger?");
         return new EndpointBuilder();
     }
 
@@ -27,6 +28,10 @@ public class UrlBuilder {
         public FilterBuilder filterAirlineCodes(List<String> airlineCodes) {
             url.append("airlines=").append(airlineCodes);
             return new FilterBuilder();
+        }
+
+        public String getUrl() {
+            return url.toString();
         }
     }
 
@@ -71,5 +76,17 @@ public class UrlBuilder {
             url.append("&aircraftTypes=").append(aircraftTypes);
             return this;
         }
+
+        public String getUrl() {
+            return url.toString();
+        }
+    }
+
+    public class TokenBuilder {
+
+        public String getUrl() {
+            return url.toString();
+        }
+
     }
 }
