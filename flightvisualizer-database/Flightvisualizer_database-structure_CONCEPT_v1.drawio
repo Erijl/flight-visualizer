@@ -1,0 +1,229 @@
+<mxfile host="app.diagrams.net" modified="2024-02-14T23:48:39.950Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:122.0) Gecko/20100101 Firefox/122.0" etag="vY54ZOrqdpZOTNSfXeHx" version="23.1.4" type="device">
+  <diagram name="Page-1" id="9f46799a-70d6-7492-0946-bef42562c5a5">
+    <mxGraphModel dx="2183" dy="2052" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="h4MUKHZvDstGOGhx7txB-96" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1090" y="875" width="330" height="235" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-92" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1060" y="-350" width="450" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-70" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="460" width="570" height="1080" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-26" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="40" width="380" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-12" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="-130" width="280" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-1" value="&lt;div&gt;flight_schedule&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="972.5" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-2" value="&lt;div&gt;########################### RAW RAW RAW ######################&lt;br&gt;&lt;/div&gt;&lt;div&gt;{&lt;/div&gt;&amp;nbsp; &quot;airline&quot;: &quot;LH&quot;,&lt;br&gt;&amp;nbsp; &quot;flightNumber&quot;: 2,&lt;br&gt;&amp;nbsp; &quot;suffix&quot;: &quot;&quot;,&lt;br&gt;&amp;nbsp; &quot;periodOfOperationUTC&quot;: {&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;startDate&quot;: &quot;01JAN24&quot;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;endDate&quot;: &quot;01JAN24&quot;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;daysOfOperation&quot;: &quot;1&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;&lt;br&gt;&amp;nbsp; },&lt;br&gt;&amp;nbsp; &quot;periodOfOperationLT&quot;: {&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;startDate&quot;: &quot;01JAN24&quot;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;endDate&quot;: &quot;01JAN24&quot;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;daysOfOperation&quot;: &quot;1&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;&lt;br&gt;&amp;nbsp; },&lt;br&gt;&amp;nbsp; &quot;legs&quot;: [&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; {&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;sequenceNumber&quot;: 1,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;origin&quot;: &quot;FRA&quot;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;destination&quot;: &quot;HAM&quot;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;serviceType&quot;: &quot;J&quot;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftOwner&quot;: &quot;LH&quot;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftType&quot;: &quot;319&quot;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftConfigurationVersion&quot;: &quot;C138&quot;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;registration&quot;: &quot;&quot;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;op&quot;: true,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftDepartureTimeUTC&quot;: 330,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftDepartureTimeDateDiffUTC&quot;: 0,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftDepartureTimeLT&quot;: 390,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftDepartureTimeDateDiffLT&quot;: 0,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftDepartureTimeVariation&quot;: 60,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftArrivalTimeUTC&quot;: 395,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftArrivalTimeDateDiffUTC&quot;: 0,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftArrivalTimeLT&quot;: 455,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftArrivalTimeDateDiffLT&quot;: 0,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;aircraftArrivalTimeVariation&quot;: 60&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; }&lt;br&gt;&amp;nbsp; ],&lt;br&gt;&amp;nbsp; &quot;dataElements&quot;: [&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; {&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;startLegSequenceNumber&quot;: 1,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;endLegSequenceNumber&quot;: 1,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;id&quot;: 98,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;value&quot;: &quot;2&quot;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; },&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; {&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;startLegSequenceNumber&quot;: 1,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;endLegSequenceNumber&quot;: 1,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;id&quot;: 99,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;value&quot;: &quot;1&quot;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; },&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; {&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;startLegSequenceNumber&quot;: 1,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;endLegSequenceNumber&quot;: 1,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;id&quot;: 106,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;value&quot;: &quot;JCDZPYBMUHQVWSTLK&quot;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; },&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; {&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;startLegSequenceNumber&quot;: 1,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;endLegSequenceNumber&quot;: 1,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;id&quot;: 109,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;value&quot;: &quot;JRM/CRM/DRM/ZRM/PRM/YR/BR/MR/UR/HR/QR/VR/WR/SR/TR/LR/KR&quot;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; },&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; {&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;startLegSequenceNumber&quot;: 1,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;endLegSequenceNumber&quot;: 1,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;id&quot;: 505,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;value&quot;: &quot;ET&quot;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; }&lt;br&gt;&amp;nbsp; ]&lt;br&gt;}" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;" vertex="1" parent="1">
+          <mxGeometry x="2090" y="-30" width="470" height="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-3" value="*airline" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="940" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-4" value="&lt;div&gt;#guid&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="900" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-5" value="&lt;div&gt;########################### STRUCTURE ########################&lt;br&gt;&lt;/div&gt;&lt;div&gt;{&lt;/div&gt;&amp;nbsp; &quot;airline&quot;: REF&amp;lt;Airline&amp;gt;,&lt;br&gt;&amp;nbsp; &quot;flightNumber&quot;: 2,&lt;br&gt;&amp;nbsp; &quot;suffix&quot;: &quot;&quot;,&lt;br&gt;&amp;nbsp; &quot;periodOfOperation&quot;: REF&amp;lt;flight_schedule_operation_period_utc&amp;gt;,&lt;br&gt;&amp;nbsp; &quot;legs&quot;: [&lt;br&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; REF&amp;lt;flight_schedule_leg&amp;gt;,&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; ...&lt;br&gt;&lt;/div&gt;&amp;nbsp; ],&lt;br&gt;&amp;nbsp; &quot;dataElements&quot;: [&lt;br&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp; REF&amp;lt;flight_schedule_data_element&amp;gt;,&lt;/div&gt;&lt;div&gt;&amp;nbsp;&amp;nbsp; ...&lt;br&gt;&lt;/div&gt;&amp;nbsp; ]&lt;br&gt;}" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;" vertex="1" parent="1">
+          <mxGeometry x="1600" y="-30" width="470" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-6" value="&lt;div&gt;airline&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="-60" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-7" value="&lt;div&gt;icao_airline_id&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="-20" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-8" value="#guid" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="-115" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-9" value="&lt;div&gt;iata_airline_id&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="-70" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-10" value="name" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="30" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-19" value="flight_schedule_operation_period_utc" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1050" y="230" width="220" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-20" value="&lt;div&gt;*flight_schedule_id&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="100" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-21" value="#guid" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="50" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-22" value="start_date_utc" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="150" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-23" value="&lt;div&gt;Names that include timezone, specification:&lt;/div&gt;&lt;div&gt;some_name_TIMEZONE&lt;br&gt;&lt;/div&gt;" style="shape=card;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="-130" width="230" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-24" value="&lt;div&gt;end_date_utc&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="200" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-37" value="start_date_lt" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="300" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-39" value="operation_days_utc" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="250" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-40" value="&lt;div&gt;end_date_lt&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="350" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-41" value="operation_days_lt" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="400" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-43" value="flight_schedule_leg" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="650" width="220" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-44" value="&lt;div&gt;*flight_schedule_id&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="520" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-45" value="#guid" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="470" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-46" value="sequence_number" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="570" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-47" value="*origin_airport" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="620" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-48" value="*iata_service_type" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="720" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-49" value="*destination_airport" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="670" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-50" value="aircraft_owner" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="770" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-51" value="aircraft_configuration_version" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="455" y="880" width="180" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-52" value="check if aircraft_owner is always Airline" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;position2=0;" vertex="1" parent="1">
+          <mxGeometry x="590" y="700" width="120" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-53" value="aircraft_type" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="830" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-54" value="registration" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="940" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-55" value="op" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="990" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-56" value="separat aircraft table?" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;position2=0;" vertex="1" parent="1">
+          <mxGeometry x="630" y="800" width="120" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-58" value="aircraft_departure_time_utc" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="1040" width="170" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-59" value="&lt;div&gt;aircraft_departure_time_date_diff_utc&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="1090" width="230" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-60" value="aircraft_departure_time_lt" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="1140" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-62" value="&lt;div&gt;aircraft_departure_time_date_diff_lt&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="1190" width="220" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-63" value="aircraft_departure_time_variation" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="1235" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-65" value="aircraft_arrival_time_utc" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="1290" width="160" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-66" value="&lt;div&gt;aircraft_arrival_time_date_diff_utc&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="1340" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-67" value="aircraft_arrival_time_lt" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="1390" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-68" value="&lt;div&gt;aircraft_arrival_time_date_diff_lt&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="1440" width="210" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-69" value="aircraft_arrival_time_variation" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="1485" width="190" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-71" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="-250" width="280" height="480" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-72" value="airport" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="-180" width="130" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-73" value="longitude" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="-140" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-74" value="#guid" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="-235" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-75" value="iata_airport_code" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="-190" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-76" value="iata_city_code" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="-40" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-77" value="latitude" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="-90" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-78" value="iso_country_code" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="10" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-79" value="location_type" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="60" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-80" value="add enum" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;position2=0;" vertex="1" parent="1">
+          <mxGeometry x="710" y="20" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-81" value="add multilanguage name support" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;position2=0;" vertex="1" parent="1">
+          <mxGeometry x="800" y="-330" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-82" value="add multilanguage name support" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;position2=0;" vertex="1" parent="1">
+          <mxGeometry x="290" y="-215" width="150" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-83" value="offset_utc" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="110" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-84" value="time_zone_id" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="160" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-85" value="&lt;div&gt;Names that include IATA / ICAO, specification:&lt;/div&gt;&lt;div&gt;IATA_some_name / ICAO_some_name&lt;br&gt;&lt;/div&gt;" style="shape=card;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1880" y="-130" width="230" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-86" value="&lt;div&gt;flight_schedule_data_element&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1080" y="-220" width="190" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-87" value="start_leg_sequence_number" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="-260" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-88" value="&lt;div&gt;#guid&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="-300" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-89" value="end_leg_sequence_number" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="-215" width="180" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-90" value="ssim_id" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="-170" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-91" value="value" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1310" y="-125" width="130" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-93" value="flightNumber" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="980" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-94" value="suffix" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="1020" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="h4MUKHZvDstGOGhx7txB-95" value="period_of_operation" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="1060" width="130" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
