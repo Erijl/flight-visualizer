@@ -6,36 +6,33 @@ import com.erijl.flightvisualizer.backend.util.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class AuthManager {
 
-    private final RestUtil restUtil;
     private final Gson gson = new GsonBuilder().create();
 
     private String accessToken;
     private Date expirationDate;
 
-    @Value("${flight.visualizer.api.url")
+    @Value("${flight.visualizer.api.url}")
     private String baseUrl;
 
-    @Value("${flight.visualizer.api.client.id")
+    @Value("${flight.visualizer.api.client.id}")
     private String clientId;
 
-    @Value("${flight.visualizer.api.client.secret")
+    @Value("${flight.visualizer.api.client.secret}")
     private String clientSecret;
-
-    public AuthManager(RestUtil restUtil) {
-        this.restUtil = restUtil;
-    }
 
     public String getBearerAccessToken() {
         if (accessToken == null || new Date().after(this.expirationDate)) {
@@ -62,9 +59,19 @@ public class AuthManager {
 
         final String requestUrl = new UrlBuilder(this.baseUrl).accessToken().getUrl();
 
-        ResponseEntity<String> response = restTemplate.exchange(
-                requestUrl, HttpMethod.POST, this.restUtil.getStandardHttpEntity(), String.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.ALL_VALUE);
+        headers.set("Content-Type", "application/x-www-form-urlencoded");
 
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", this.clientId);
+        body.add("client_secret", this.clientSecret);
+        body.add("grant_type", "client_credentials");
+
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                requestUrl, HttpMethod.POST, requestEntity, String.class);
         if (response.getStatusCode() == HttpStatus.OK) {
             return this.gson.fromJson(response.getBody(), AccessToken.class);
         } else {
