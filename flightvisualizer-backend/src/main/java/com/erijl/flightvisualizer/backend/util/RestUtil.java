@@ -1,6 +1,7 @@
 package com.erijl.flightvisualizer.backend.util;
 
 import com.erijl.flightvisualizer.backend.dto.AccessToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
@@ -10,6 +11,12 @@ import java.util.Collections;
 
 @Component
 public class RestUtil {
+
+    private final RestTemplate restTemplate;
+
+    public RestUtil(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     public HttpHeaders getStandardHeaders() {
         HttpHeaders headers = new HttpHeaders();
@@ -36,8 +43,6 @@ public class RestUtil {
     }
 
     public ResponseEntity<String> exchangeRequest(String requestUrl, HttpMethod httpMethod, HttpHeaders httpHeaders) {
-        RestTemplate restTemplate = new RestTemplate();
-
         return restTemplate.exchange(
                 requestUrl,
                 httpMethod,
@@ -48,8 +53,6 @@ public class RestUtil {
 
     public ResponseEntity<String> exchangeRequest(String requestUrl, HttpMethod httpMethod, HttpHeaders httpHeaders,
                                                    MultiValueMap<String, String> body) {
-        RestTemplate restTemplate = new RestTemplate();
-
         return restTemplate.exchange(
                 requestUrl,
                 httpMethod,

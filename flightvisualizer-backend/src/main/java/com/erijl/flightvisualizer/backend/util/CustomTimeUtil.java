@@ -10,7 +10,7 @@ import java.util.Locale;
 public class CustomTimeUtil {
 
     /**
-     * Date conversion to the 'ddMMMyy' format used in aviation
+     * Date conversion to the 'ddMMMyy' format used by Lufthansa
      * Example:
      * <pre>
      *  24.12.2023 -> 24DEZ23

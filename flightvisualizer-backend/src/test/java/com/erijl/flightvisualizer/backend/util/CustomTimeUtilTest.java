@@ -22,10 +22,10 @@ public class CustomTimeUtilTest {
                 ).getTime()
         ));
 
-        assertEquals("01DEZ24", customTimeUtil.convertDateToDDMMMYY(
+        assertEquals("01DEC24", customTimeUtil.convertDateToDDMMMYY(
                 new GregorianCalendar(
                         2024,
-                        Calendar.JANUARY,
+                        Calendar.DECEMBER,
                         1
                 ).getTime()
         ));
