@@ -29,10 +29,6 @@ public class UrlBuilder {
             url.append("airlines=").append(airlineCodes);
             return new FilterBuilder();
         }
-
-        public String getUrl() {
-            return url.toString();
-        }
     }
 
     public class FilterBuilder {
@@ -54,11 +50,6 @@ public class UrlBuilder {
 
         public FilterBuilder filterDaysOfOperation(String daysOfOperation) {
             url.append("&daysOfOperation=").append(daysOfOperation);
-            return this;
-        }
-
-        public FilterBuilder filterTimeMode(TimeMode timeMode) {
-            url.append("&timeMode=").append(timeMode.getTimeZoneString());
             return this;
         }
 
