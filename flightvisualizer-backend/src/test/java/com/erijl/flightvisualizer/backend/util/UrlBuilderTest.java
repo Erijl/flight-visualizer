@@ -1,6 +1,5 @@
 package com.erijl.flightvisualizer.backend.util;
 
-import com.erijl.flightvisualizer.backend.enums.TimeMode;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

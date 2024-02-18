@@ -1,7 +1,6 @@
 package com.erijl.flightvisualizer.backend.util;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;

@@ -10,7 +10,6 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -18,7 +17,7 @@ import java.util.Date;
 @Component
 public class AuthManager {
 
-    private RestUtil restUtil;
+    private final RestUtil restUtil;
     private final Gson gson = new GsonBuilder().create();
 
     private String accessToken;
