@@ -25,7 +25,7 @@ public class UrlBuilder {
 
     public class EndpointBuilder {
 
-        public FilterBuilder filterAirlineCodes(List<String> airlineCodes) {
+        public FilterBuilder filterAirlineCodes(String airlineCodes) {
             url.append("airlines=").append(airlineCodes);
             return new FilterBuilder();
         }
@@ -78,6 +78,7 @@ public class UrlBuilder {
         }
 
         public String getUrl() {
+            url.append("&timeMode=UTC");
             return url.toString();
         }
     }

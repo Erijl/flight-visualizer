@@ -1,8 +1,12 @@
 package com.erijl.flightvisualizer.backend.util;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+
+import com.erijl.flightvisualizer.backend.dto.AccessToken;
+import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Collections;
 
 @Component
 public class RestUtil {
@@ -14,7 +18,43 @@ public class RestUtil {
         return headers;
     }
 
+    public HttpHeaders getStandardHeadersWithBody() {
+        HttpHeaders headers = this.getStandardHeaders();
+        headers.replace("Content-Type", Collections.singletonList("application/x-www-form-urlencoded"));
+
+        return headers;
+    }
+
+    public HttpHeaders getStandardHeaders(String accessToken) {
+        HttpHeaders headers = this.getStandardHeaders();
+        headers.set("Authorization", accessToken);
+        return headers;
+    }
+
     public HttpEntity<String> getStandardHttpEntity() {
         return new HttpEntity<>(getStandardHeaders());
+    }
+
+    public ResponseEntity<String> exchangeRequest(String requestUrl, HttpMethod httpMethod, HttpHeaders httpHeaders) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        return restTemplate.exchange(
+                requestUrl,
+                httpMethod,
+                new HttpEntity<>(httpHeaders),
+                String.class
+        );
+    }
+
+    public ResponseEntity<String> exchangeRequest(String requestUrl, HttpMethod httpMethod, HttpHeaders httpHeaders,
+                                                   MultiValueMap<String, String> body) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        return restTemplate.exchange(
+                requestUrl,
+                httpMethod,
+                new HttpEntity<>(body, httpHeaders),
+                String.class
+        );
     }
 }

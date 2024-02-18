@@ -1,6 +1,7 @@
 package com.erijl.flightvisualizer.backend.manager;
 
 import com.erijl.flightvisualizer.backend.dto.AccessToken;
+import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,6 +18,7 @@ import java.util.Date;
 @Component
 public class AuthManager {
 
+    private RestUtil restUtil;
     private final Gson gson = new GsonBuilder().create();
 
     private String accessToken;
@@ -30,6 +32,10 @@ public class AuthManager {
 
     @Value("${flight.visualizer.api.client.secret}")
     private String clientSecret;
+
+    public AuthManager(RestUtil restUtil) {
+        this.restUtil = restUtil;
+    }
 
     public String getBearerAccessToken() {
         if (accessToken == null || new Date().after(this.expirationDate)) {
@@ -51,24 +57,17 @@ public class AuthManager {
     }
 
     private AccessToken postAccessToken() {
-
-        RestTemplate restTemplate = new RestTemplate();
-
         final String requestUrl = new UrlBuilder(this.baseUrl).accessToken().getUrl();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Accept", MediaType.ALL_VALUE);
-        headers.set("Content-Type", "application/x-www-form-urlencoded");
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("client_id", this.clientId);
         body.add("client_secret", this.clientSecret);
         body.add("grant_type", "client_credentials");
 
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(body, headers);
+        ResponseEntity<String> response = this.restUtil.exchangeRequest(
+                requestUrl, HttpMethod.POST, this.restUtil.getStandardHeadersWithBody(), body
+        );
 
-        ResponseEntity<String> response = restTemplate.exchange(
-                requestUrl, HttpMethod.POST, requestEntity, String.class);
         if (response.getStatusCode() == HttpStatus.OK) {
             return this.gson.fromJson(response.getBody(), AccessToken.class);
         } else {
@@ -76,6 +75,7 @@ public class AuthManager {
             System.out.println("Request Failed");
             System.out.println(response.getStatusCode());
         }
+
         return null;
     }
 }
