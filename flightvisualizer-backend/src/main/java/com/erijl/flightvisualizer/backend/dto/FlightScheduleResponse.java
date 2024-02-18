@@ -1,4 +1,4 @@
-package com.erijl.flightvisualizer.backend.model;
+package com.erijl.flightvisualizer.backend.dto;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class FlightAggregate {
+public class FlightScheduleResponse {
 
     @SerializedName("airline")
     private String airline;
@@ -20,14 +20,14 @@ public class FlightAggregate {
     private String suffix;
 
     @SerializedName("periodOfOperationUTC")
-    private PeriodOfOperation periodOfOperationUTC;
+    private PeriodOfOperationResponse periodOfOperationResponseUTC;
 
     @SerializedName("periodOfOperationLT")
-    private PeriodOfOperation periodOfOperationLT;
+    private PeriodOfOperationResponse periodOfOperationResponseLT;
 
     @SerializedName("legs")
-    private List<Leg> legs;
+    private List<LegResponse> legResponses;
 
     @SerializedName("dataElements")
-    private List<DataElement> dataElements;
+    private List<DataElementResponse> dataElementResponses;
 }

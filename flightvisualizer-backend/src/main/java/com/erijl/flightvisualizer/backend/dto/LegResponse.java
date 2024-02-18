@@ -1,4 +1,4 @@
-package com.erijl.flightvisualizer.backend.model;
+package com.erijl.flightvisualizer.backend.dto;
 
 
 import com.google.gson.annotations.SerializedName;
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Leg {
+public class LegResponse {
 
     @SerializedName("sequenceNumber")
     private int sequenceNumber;

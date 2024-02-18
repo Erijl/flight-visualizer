@@ -1,6 +1,6 @@
-package com.erijl.flightvisualizer.backend.model;
+package com.erijl.flightvisualizer.backend.dto;
 
-public class DataElement {
+public class DataElementResponse {
 
     private int id;
 
