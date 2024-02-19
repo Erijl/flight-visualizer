@@ -34,10 +34,28 @@ public class UrlBuilder {
         return new AircraftEndpointBuilder();
     }
 
+    public AirportEndpointBuilder airport() {
+        url.append("mds-references/airports/");
+        return new AirportEndpointBuilder();
+    }
+
     public class AirlineEndpointBuilder {
 
         public AirlineEndpointBuilder filterForAirline(String airline) {
             url.append(airline);
+            return this;
+        }
+
+        public String getUrl() {
+            url.append("?lang=EN");
+            return url.toString();
+        }
+    }
+
+    public class AirportEndpointBuilder {
+
+        public AirportEndpointBuilder filterForAirport(String airport) {
+            url.append(airport);
             return this;
         }
 

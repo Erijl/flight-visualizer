@@ -2,9 +2,12 @@ package com.erijl.flightvisualizer.backend.config;
 
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
 import com.erijl.flightvisualizer.backend.dto.FlightScheduleResponse;
+import com.erijl.flightvisualizer.backend.model.FlightSchedule;
 import com.erijl.flightvisualizer.backend.model.WeekRepresentation;
+import com.erijl.flightvisualizer.backend.repository.FlightScheduleRepository;
 import com.erijl.flightvisualizer.backend.service.AircraftService;
 import com.erijl.flightvisualizer.backend.service.AirlineService;
+import com.erijl.flightvisualizer.backend.service.AirportService;
 import com.erijl.flightvisualizer.backend.util.CustomTimeUtil;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
@@ -31,15 +34,19 @@ public class CronScheduler {
     private final RestUtil restUtil;
     private final AirlineService airlineService;
     private final AircraftService aircraftService;
+    private final AirportService airportService;
+    private final FlightScheduleRepository flightScheduleRepository;
     private final AuthManager authManager;
     private final Gson gson = new GsonBuilder().create();
 
 
-    public CronScheduler(CustomTimeUtil customTimeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AuthManager authManager) {
+    public CronScheduler(CustomTimeUtil customTimeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager) {
         this.customTimeUtil = customTimeUtil;
         this.restUtil = restUtil;
         this.airlineService = airlineService;
         this.aircraftService = aircraftService;
+        this.airportService = airportService;
+        this.flightScheduleRepository = flightScheduleRepository;
         this.authManager = authManager;
     }
 
@@ -108,6 +115,11 @@ public class CronScheduler {
         iataAircraftCodes.forEach(aircraftCode -> {
             System.out.println(aircraftCode);
             this.aircraftService.ensureAircraftExists(aircraftCode);
+        });
+
+        iataAirportCodes.forEach(airportCode -> {
+            System.out.println(airportCode);
+            this.airportService.ensureAirportExists(airportCode);
         });
     }
 }

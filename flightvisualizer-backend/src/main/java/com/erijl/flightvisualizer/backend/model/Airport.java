@@ -39,8 +39,27 @@ public class Airport {
     private String locationType;
 
     @Column(name = "offset_utc")
-    private Integer offsetUtc;
+    private String offsetUtc;
 
     @Column(name = "timezone_id")
     private String timezoneId;
+
+    public Airport() {
+    }
+
+    public Airport(String iataAirportCode) {
+        this.iataAirportCode = iataAirportCode;
+    }
+
+    public Airport(String iataAirportCode, String airportName, BigDecimal longitude, BigDecimal latitude, String iataCityCode, String isoCountryCode, String locationType, String offsetUtc, String timezoneId) {
+        this.iataAirportCode = iataAirportCode;
+        this.airportName = airportName;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.iataCityCode = iataCityCode;
+        this.isoCountryCode = isoCountryCode;
+        this.locationType = locationType;
+        this.offsetUtc = offsetUtc;
+        this.timezoneId = timezoneId;
+    }
 }

@@ -8,14 +8,14 @@ CREATE TABLE airline
 CREATE TABLE airport
 (
     iata_airport_code VARCHAR(3) PRIMARY KEY,
-    airport_name      VARCHAR(255)                                     NOT NULL,
-    longitude         NUMERIC(9, 6)                                    NOT NULL,
-    latitude          NUMERIC(9, 6)                                    NOT NULL,
-    iata_city_code    VARCHAR(3)                                       NOT NULL,
-    iso_country_code  VARCHAR(2)                                       NOT NULL,
-    location_type     ENUM ('Airport', 'RailwayStation', 'BusStation') NOT NULL,
-    offset_utc        INT                                              NOT NULL,
-    timezone_id       VARCHAR(255)                                     NOT NULL
+    airport_name      VARCHAR(255)                                     ,
+    longitude         NUMERIC(9, 6)                                    ,
+    latitude          NUMERIC(9, 6)                                    ,
+    iata_city_code    VARCHAR(3)                                       ,
+    iso_country_code  VARCHAR(2)                                       ,
+    location_type     VARCHAR(254)                                     ,
+    offset_utc        VARCHAR(10)                                      ,
+    timezone_id       VARCHAR(255)
 );
 
 CREATE TABLE aircraft
