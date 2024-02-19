@@ -29,10 +29,28 @@ public class UrlBuilder {
         return new AirlineEndpointBuilder();
     }
 
+    public AircraftEndpointBuilder aircraft() {
+        url.append("mds-references/aircraft/");
+        return new AircraftEndpointBuilder();
+    }
+
     public class AirlineEndpointBuilder {
 
         public AirlineEndpointBuilder filterForAirline(String airline) {
             url.append(airline);
+            return this;
+        }
+
+        public String getUrl() {
+            url.append("?lang=EN");
+            return url.toString();
+        }
+    }
+
+    public class AircraftEndpointBuilder {
+
+        public AircraftEndpointBuilder filterForAircraft(String iataAircraftCode) {
+            url.append(iataAircraftCode);
             return this;
         }
 

@@ -20,4 +20,17 @@ public class Aircraft {
 
     @Column(name = "aircraft_name")
     private String aircraftName;
+
+    public Aircraft(String iataAircraftCode, String aircraftName) {
+        this.iataAircraftCode = iataAircraftCode;
+        this.aircraftName = aircraftName;
+    }
+
+    public Aircraft(String iataAircraftCode) {
+        this.iataAircraftCode = iataAircraftCode;
+    }
+
+    public Aircraft(){
+
+    }
 }

@@ -1,7 +1,5 @@
 package com.erijl.flightvisualizer.backend.util;
 
-import com.erijl.flightvisualizer.backend.dto.AccessToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
