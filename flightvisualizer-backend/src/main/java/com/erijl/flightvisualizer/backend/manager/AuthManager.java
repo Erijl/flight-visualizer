@@ -37,8 +37,9 @@ public class AuthManager {
     }
 
     public String getBearerAccessToken() {
-        if (accessToken == null || new Date().after(this.expirationDate)) {
+        if (accessToken == null) {
             AccessToken accessTokenDto = this.postAccessToken();
+            System.out.println("'''''''''' FETCHING NEW TOKEN ''''''''''''");
             if (accessTokenDto != null) {
                 this.accessToken = accessTokenDto.getAccessToken();
                 this.expirationDate = Date.from(

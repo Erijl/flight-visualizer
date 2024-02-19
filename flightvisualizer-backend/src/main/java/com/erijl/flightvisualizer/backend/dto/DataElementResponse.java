@@ -1,7 +1,11 @@
 package com.erijl.flightvisualizer.backend.dto;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class DataElementResponse {
 
     @SerializedName("id")

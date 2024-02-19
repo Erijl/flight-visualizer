@@ -27,8 +27,19 @@ public class FlightScheduleDataElement {
     private Integer endLegSequenceNumber;
 
     @Column(name = "ssim_code")
-    private String ssimCode;
+    private Integer ssimCode;
 
     @Column(name = "value")
     private String value;
+
+    public FlightScheduleDataElement() {
+    }
+
+    public FlightScheduleDataElement(FlightSchedule flightSchedule, Integer startLegSequenceNumber, Integer endLegSequenceNumber, Integer ssimCode, String value) {
+        this.flightSchedule = flightSchedule;
+        this.startLegSequenceNumber = startLegSequenceNumber;
+        this.endLegSequenceNumber = endLegSequenceNumber;
+        this.ssimCode = ssimCode;
+        this.value = value;
+    }
 }

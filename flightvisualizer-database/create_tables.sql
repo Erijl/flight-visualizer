@@ -27,12 +27,12 @@ CREATE TABLE aircraft
 CREATE TABLE flight_schedule_operation_period
 (
     operation_period_id INT AUTO_INCREMENT PRIMARY KEY,
-    start_date_utc      DATE NOT NULL,
-    end_date_utc        DATE NOT NULL,
-    operation_days_utc  INT  NOT NULL,
-    start_date_lt       DATE NOT NULL,
-    end_date_lt         DATE NOT NULL,
-    operation_days_lt   INT  NOT NULL
+    start_date_utc      DATE         NOT NULL,
+    end_date_utc        DATE         NOT NULL,
+    operation_days_utc  VARCHAR(10)  NOT NULL,
+    start_date_lt       DATE         NOT NULL,
+    end_date_lt         DATE         NOT NULL,
+    operation_days_lt   VARCHAR(10)  NOT NULL
 );
 
 CREATE TABLE flight_schedule
@@ -52,7 +52,7 @@ CREATE TABLE flight_schedule_data_element
     flight_schedule_id        INT          NOT NULL,
     start_leg_sequence_number INT          NOT NULL,
     end_leg_sequence_number   INT          NOT NULL,
-    ssim_code                 VARCHAR(255) NOT NULL,
+    ssim_code                 INT          NOT NULL,
     value                     VARCHAR(255) ,
     FOREIGN KEY (flight_schedule_id) REFERENCES flight_schedule (flight_schedule_id)
 );
@@ -70,16 +70,16 @@ CREATE TABLE flight_schedule_leg
     aircraft_configuration_version        VARCHAR(255) ,
     registration                          VARCHAR(255) ,
     op                                    BOOLEAN      ,
-    aircraft_departure_time_utc           TIME         ,
+    aircraft_departure_time_utc           INT         ,
     aircraft_departure_time_date_diff_utc INT          ,
-    aircraft_departure_time_lt            TIME         ,
+    aircraft_departure_time_lt            INT         ,
     aircraft_departure_time_diff_lt       INT          ,
-    aircraft_departure_time_variation     VARCHAR(255) ,
-    aircraft_arrival_time_utc             TIME         ,
+    aircraft_departure_time_variation     INT          ,
+    aircraft_arrival_time_utc             INT         ,
     aircraft_arrival_time_date_diff_utc   INT          ,
-    aircraft_arrival_time_lt              TIME         ,
+    aircraft_arrival_time_lt              INT         ,
     aircraft_arrival_time_diff_lt         INT          ,
-    aircraft_arrival_time_variation       VARCHAR(255) ,
+    aircraft_arrival_time_variation       INT          ,
 
     FOREIGN KEY (flight_schedule_id) REFERENCES flight_schedule (flight_schedule_id),
     FOREIGN KEY (origin_airport) REFERENCES airport (iata_airport_code),

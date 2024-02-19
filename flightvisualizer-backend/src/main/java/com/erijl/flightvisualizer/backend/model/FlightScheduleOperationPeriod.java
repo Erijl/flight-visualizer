@@ -25,7 +25,7 @@ public class FlightScheduleOperationPeriod {
     private Date endDateUtc;
 
     @Column(name = "operation_days_utc")
-    private Integer operationDaysUtc;
+    private String operationDaysUtc;
 
     @Column(name = "start_date_lt")
     private Date startDateLt;
@@ -34,5 +34,17 @@ public class FlightScheduleOperationPeriod {
     private Date endDateLt;
 
     @Column(name = "operation_days_lt")
-    private Integer operationDaysLt;
+    private String operationDaysLt;
+
+    public FlightScheduleOperationPeriod() {
+    }
+
+    public FlightScheduleOperationPeriod(Date startDateUtc, Date endDateUtc, String operationDaysUtc, Date startDateLt, Date endDateLt, String operationDaysLt) {
+        this.startDateUtc = startDateUtc;
+        this.endDateUtc = endDateUtc;
+        this.operationDaysUtc = operationDaysUtc;
+        this.startDateLt = startDateLt;
+        this.endDateLt = endDateLt;
+        this.operationDaysLt = operationDaysLt;
+    }
 }

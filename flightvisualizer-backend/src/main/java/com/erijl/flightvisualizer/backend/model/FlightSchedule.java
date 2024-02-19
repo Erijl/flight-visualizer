@@ -29,4 +29,14 @@ public class FlightSchedule {
 
     @Column(name = "suffix")
     private String suffix;
+
+    public FlightSchedule() {
+    }
+
+    public FlightSchedule(Airline airline, FlightScheduleOperationPeriod operationPeriod, Integer flightNumber, String suffix) {
+        this.airline = airline;
+        this.operationPeriod = operationPeriod;
+        this.flightNumber = flightNumber;
+        this.suffix = suffix;
+    }
 }

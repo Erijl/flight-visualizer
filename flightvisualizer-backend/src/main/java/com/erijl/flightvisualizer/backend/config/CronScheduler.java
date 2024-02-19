@@ -2,9 +2,8 @@ package com.erijl.flightvisualizer.backend.config;
 
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
 import com.erijl.flightvisualizer.backend.dto.FlightScheduleResponse;
-import com.erijl.flightvisualizer.backend.model.FlightSchedule;
-import com.erijl.flightvisualizer.backend.model.WeekRepresentation;
-import com.erijl.flightvisualizer.backend.repository.FlightScheduleRepository;
+import com.erijl.flightvisualizer.backend.model.*;
+import com.erijl.flightvisualizer.backend.repository.*;
 import com.erijl.flightvisualizer.backend.service.AircraftService;
 import com.erijl.flightvisualizer.backend.service.AirlineService;
 import com.erijl.flightvisualizer.backend.service.AirportService;
@@ -32,22 +31,37 @@ public class CronScheduler {
 
     CustomTimeUtil customTimeUtil;
     private final RestUtil restUtil;
+    private final AuthManager authManager;
+
     private final AirlineService airlineService;
     private final AircraftService aircraftService;
     private final AirportService airportService;
+
+    private final AirlineRepository airlineRepository;
+    private final AirportRepository airportRepository;
+    private final AircraftRepository aircraftRepository;
+
     private final FlightScheduleRepository flightScheduleRepository;
-    private final AuthManager authManager;
+    private final FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository;
+    private final FlightScheduleDataElementRepository flightScheduleDataElementRepository;
+    private final FlightScheduleLegRepository flightScheduleLegRepository;
     private final Gson gson = new GsonBuilder().create();
 
 
-    public CronScheduler(CustomTimeUtil customTimeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager) {
+    public CronScheduler(CustomTimeUtil customTimeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, AirportRepository airportRepository, AircraftRepository aircraftRepository, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, AirlineRepository airlineRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
         this.customTimeUtil = customTimeUtil;
         this.restUtil = restUtil;
         this.airlineService = airlineService;
         this.aircraftService = aircraftService;
         this.airportService = airportService;
+        this.airportRepository = airportRepository;
+        this.aircraftRepository = aircraftRepository;
         this.flightScheduleRepository = flightScheduleRepository;
         this.authManager = authManager;
+        this.airlineRepository = airlineRepository;
+        this.flightScheduleOperationPeriodRepository = flightScheduleOperationPeriodRepository;
+        this.flightScheduleDataElementRepository = flightScheduleDataElementRepository;
+        this.flightScheduleLegRepository = flightScheduleLegRepository;
     }
 
     @Scheduled(initialDelay = 1000)
@@ -87,6 +101,77 @@ public class CronScheduler {
 
     private void insertFlightScheduleResponse(List<FlightScheduleResponse> flightScheduleResponseList) {
         this.ensureForeignKeyRelation(flightScheduleResponseList);
+
+        flightScheduleResponseList.forEach(flightScheduleResponse -> {
+            FlightScheduleOperationPeriod operationPeriod = this.flightScheduleOperationPeriodRepository.save(
+                    new FlightScheduleOperationPeriod(
+                            this.customTimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getStartDate()),
+                            this.customTimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getEndDate()),
+                            flightScheduleResponse.getPeriodOfOperationResponseUTC().getDaysOfOperation(),
+                            this.customTimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getStartDate()),
+                            this.customTimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getEndDate()),
+                            flightScheduleResponse.getPeriodOfOperationResponseLT().getDaysOfOperation()
+                    )
+            );
+
+            Optional<Airline> airline = this.airlineRepository.findById(flightScheduleResponse.getAirline());
+            if (airline.isEmpty()) return;
+
+            FlightSchedule flightSchedule = this.flightScheduleRepository.save(
+                    new FlightSchedule(
+                        airline.get(),
+                        operationPeriod,
+                        flightScheduleResponse.getFlightNumber(),
+                        flightScheduleResponse.getSuffix()
+                    )
+            );
+
+            flightScheduleResponse.getDataElementResponses().forEach(flightScheduleDataElement -> {
+                this.flightScheduleDataElementRepository.save(
+                        new FlightScheduleDataElement(
+                                flightSchedule,
+                                flightScheduleDataElement.getStartLegSequenceNumber(),
+                                flightScheduleDataElement.getEndLegSequenceNumber(),
+                                flightScheduleDataElement.getId(),
+                                flightScheduleDataElement.getValue()
+                        )
+                );
+            });
+
+            flightScheduleResponse.getLegResponses().forEach(flightScheduleLeg -> {
+                Optional<Airport> originAirport = this.airportRepository.findById(flightScheduleLeg.getOrigin());
+                Optional<Airport> destinationAirport = this.airportRepository.findById(flightScheduleLeg.getDestination());
+                Optional<Airline> aircraftOwnerAirline = this.airlineRepository.findById(flightScheduleLeg.getAircraftOwner());
+                Optional<Aircraft> aircraft = this.aircraftRepository.findById(flightScheduleLeg.getAircraftType());
+
+                if (originAirport.isEmpty() || destinationAirport.isEmpty() || aircraftOwnerAirline.isEmpty() || aircraft.isEmpty()) return;
+                this.flightScheduleLegRepository.save(
+                        new FlightScheduleLeg(
+                                flightSchedule,
+                                flightScheduleLeg.getSequenceNumber(),
+                                originAirport.get(),
+                                destinationAirport.get(),
+                                flightScheduleLeg.getServiceType(),
+                                aircraftOwnerAirline.get(),
+                                aircraft.get(),
+                                flightScheduleLeg.getAircraftConfigurationVersion(),
+                                flightScheduleLeg.getRegistration(),
+                                flightScheduleLeg.isOp(),
+                                flightScheduleLeg.getAircraftDepartureTimeUTC(),
+                                flightScheduleLeg.getAircraftDepartureTimeDateDiffUTC(),
+                                flightScheduleLeg.getAircraftDepartureTimeLT(),
+                                flightScheduleLeg.getAircraftDepartureTimeDateDiffLT(),
+                                flightScheduleLeg.getAircraftDepartureTimeVariation(),
+                                flightScheduleLeg.getAircraftArrivalTimeUTC(),
+                                flightScheduleLeg.getAircraftArrivalTimeDateDiffUTC(),
+                                flightScheduleLeg.getAircraftArrivalTimeLT(),
+                                flightScheduleLeg.getAircraftArrivalTimeDateDiffLT(),
+                                flightScheduleLeg.getAircraftArrivalTimeVariation()
+                        )
+                );
+            });
+
+        });
     }
 
     private void ensureForeignKeyRelation(List<FlightScheduleResponse> flightScheduleResponseList) {
@@ -101,11 +186,13 @@ public class CronScheduler {
                 iataAircraftCodes.add(flightScheduleLeg.getAircraftType());
                 iataAirportCodes.add(flightScheduleLeg.getOrigin());
                 iataAirportCodes.add(flightScheduleLeg.getDestination());
+                iataAirlineCodes.add(flightScheduleLeg.getAircraftOwner());
             });
         });
 
         System.out.println("Airports: " + iataAirportCodes.size());
         System.out.println("Aircrafts: " + iataAircraftCodes.size());
+        System.out.println("Airlines: " + iataAirlineCodes.size());
 
         iataAirlineCodes.forEach(airlineCode -> {
             System.out.println(airlineCode);

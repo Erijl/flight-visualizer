@@ -19,7 +19,7 @@ public class LegResponse {
     private String destination; // Arrival airport IATA code
 
     @SerializedName("serviceType")
-    private char serviceType;
+    private String serviceType;
 
     @SerializedName("aircraftOwner")
     private String aircraftOwner;

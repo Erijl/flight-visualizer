@@ -54,32 +54,58 @@ public class FlightScheduleLeg {
     private Boolean op;
 
     @Column(name = "aircraft_departure_time_utc")
-    private Time aircraftDepartureTimeUtc;
+    private Integer aircraftDepartureTimeUtc;
 
     @Column(name = "aircraft_departure_time_date_diff_utc")
     private Integer aircraftDepartureTimeDateDiffUtc;
 
     @Column(name = "aircraft_departure_time_lt")
-    private Time aircraftDepartureTimeLt;
+    private Integer aircraftDepartureTimeLt;
 
     @Column(name = "aircraft_departure_time_diff_lt")
     private Integer aircraftDepartureTimeDiffLt;
 
     @Column(name = "aircraft_departure_time_variation")
-    private String aircraftDepartureTimeVariation;
+    private Integer aircraftDepartureTimeVariation;
 
     @Column(name = "aircraft_arrival_time_utc")
-    private Time aircraftArrivalTimeUtc;
+    private Integer aircraftArrivalTimeUtc;
 
     @Column(name = "aircraft_arrival_time_date_diff_utc")
     private Integer aircraftArrivalTimeDateDiffUtc;
 
     @Column(name = "aircraft_arrival_time_lt")
-    private Time aircraftArrivalTimeLt;
+    private Integer aircraftArrivalTimeLt;
 
     @Column(name = "aircraft_arrival_time_diff_lt")
     private Integer aircraftArrivalTimeDiffLt;
 
     @Column(name = "aircraft_arrival_time_variation")
-    private String aircraftArrivalTimeVariation;
+    private Integer aircraftArrivalTimeVariation;
+
+    public FlightScheduleLeg() {
+    }
+
+    public FlightScheduleLeg(FlightSchedule flightSchedule, Integer legSequenceNumber, Airport originAirport, Airport destinationAirport, String iataServiceTypeCode, Airline aircraftOwnerAirline, Aircraft aircraft, String aircraftConfigurationVersion, String registration, Boolean op, Integer aircraftDepartureTimeUtc, Integer aircraftDepartureTimeDateDiffUtc, Integer aircraftDepartureTimeLt, Integer aircraftDepartureTimeDiffLt, Integer aircraftDepartureTimeVariation, Integer aircraftArrivalTimeUtc, Integer aircraftArrivalTimeDateDiffUtc, Integer aircraftArrivalTimeLt, Integer aircraftArrivalTimeDiffLt, Integer aircraftArrivalTimeVariation) {
+        this.flightSchedule = flightSchedule;
+        this.legSequenceNumber = legSequenceNumber;
+        this.originAirport = originAirport;
+        this.destinationAirport = destinationAirport;
+        this.iataServiceTypeCode = iataServiceTypeCode;
+        this.aircraftOwnerAirline = aircraftOwnerAirline;
+        this.aircraft = aircraft;
+        this.aircraftConfigurationVersion = aircraftConfigurationVersion;
+        this.registration = registration;
+        this.op = op;
+        this.aircraftDepartureTimeUtc = aircraftDepartureTimeUtc;
+        this.aircraftDepartureTimeDateDiffUtc = aircraftDepartureTimeDateDiffUtc;
+        this.aircraftDepartureTimeLt = aircraftDepartureTimeLt;
+        this.aircraftDepartureTimeDiffLt = aircraftDepartureTimeDiffLt;
+        this.aircraftDepartureTimeVariation = aircraftDepartureTimeVariation;
+        this.aircraftArrivalTimeUtc = aircraftArrivalTimeUtc;
+        this.aircraftArrivalTimeDateDiffUtc = aircraftArrivalTimeDateDiffUtc;
+        this.aircraftArrivalTimeLt = aircraftArrivalTimeLt;
+        this.aircraftArrivalTimeDiffLt = aircraftArrivalTimeDiffLt;
+        this.aircraftArrivalTimeVariation = aircraftArrivalTimeVariation;
+    }
 }
