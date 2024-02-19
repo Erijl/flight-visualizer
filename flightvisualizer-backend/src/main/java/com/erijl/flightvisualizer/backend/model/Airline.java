@@ -23,4 +23,14 @@ public class Airline {
 
     @Column(name = "airline_name")
     private String airlineName;
+
+    public Airline(String iataAirlineCode, String icaoAirlineCode, String airlineName) {
+        this.iataAirlineCode = iataAirlineCode;
+        this.icaoAirlineCode = icaoAirlineCode;
+        this.airlineName = airlineName;
+    }
+
+    public Airline() {
+
+    }
 }

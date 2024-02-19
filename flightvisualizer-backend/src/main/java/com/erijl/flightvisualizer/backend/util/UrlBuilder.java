@@ -1,6 +1,7 @@
 package com.erijl.flightvisualizer.backend.util;
 
 import com.erijl.flightvisualizer.backend.enums.TimeMode;
+import com.erijl.flightvisualizer.backend.model.FlightSchedule;
 
 import java.util.List;
 
@@ -18,52 +19,70 @@ public class UrlBuilder {
         return new TokenBuilder();
     }
 
-    public EndpointBuilder flightSchedule() {
+    public FlightScheduleEndpointBuilder flightSchedule() {
         url.append("flight-schedules/flightschedules/passenger?");
-        return new EndpointBuilder();
+        return new FlightScheduleEndpointBuilder();
     }
 
-    public class EndpointBuilder {
+    public AirlineEndpointBuilder airline() {
+        url.append("mds-references/airlines/");
+        return new AirlineEndpointBuilder();
+    }
 
-        public FilterBuilder filterAirlineCodes(String airlineCodes) {
-            url.append("airlines=").append(airlineCodes);
-            return new FilterBuilder();
+    public class AirlineEndpointBuilder {
+
+        public AirlineEndpointBuilder filterForAirline(String airline) {
+            url.append(airline);
+            return this;
+        }
+
+        public String getUrl() {
+            url.append("?lang=EN");
+            return url.toString();
         }
     }
 
-    public class FilterBuilder {
+    public class FlightScheduleEndpointBuilder {
 
-        public FilterBuilder filterFlightNumberRanges(String flightNumberRanges) {
+        public FlightScheduleFilterBuilder filterAirlineCodes(String airlineCodes) {
+            url.append("airlines=").append(airlineCodes);
+            return new FlightScheduleFilterBuilder();
+        }
+    }
+
+    public class FlightScheduleFilterBuilder {
+
+        public FlightScheduleFilterBuilder filterFlightNumberRanges(String flightNumberRanges) {
             url.append("&flightNumberRanges=").append(flightNumberRanges);
             return this;
         }
 
-        public FilterBuilder filterStartDate(String startDate) {
+        public FlightScheduleFilterBuilder filterStartDate(String startDate) {
             url.append("&startDate=").append(startDate);
             return this;
         }
 
-        public FilterBuilder filterEndDate(String endDate) {
+        public FlightScheduleFilterBuilder filterEndDate(String endDate) {
             url.append("&endDate=").append(endDate);
             return this;
         }
 
-        public FilterBuilder filterDaysOfOperation(String daysOfOperation) {
+        public FlightScheduleFilterBuilder filterDaysOfOperation(String daysOfOperation) {
             url.append("&daysOfOperation=").append(daysOfOperation);
             return this;
         }
 
-        public FilterBuilder filterOrigin(String origin) {
+        public FlightScheduleFilterBuilder filterOrigin(String origin) {
             url.append("&origin=").append(origin);
             return this;
         }
 
-        public FilterBuilder filterDestination(String destination) {
+        public FlightScheduleFilterBuilder filterDestination(String destination) {
             url.append("&destination=").append(destination);
             return this;
         }
 
-        public FilterBuilder filterAircraftTypes(List<String> aircraftTypes) {
+        public FlightScheduleFilterBuilder filterAircraftTypes(List<String> aircraftTypes) {
             url.append("&aircraftTypes=").append(aircraftTypes);
             return this;
         }

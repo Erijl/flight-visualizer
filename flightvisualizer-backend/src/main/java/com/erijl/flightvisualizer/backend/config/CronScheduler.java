@@ -3,6 +3,7 @@ package com.erijl.flightvisualizer.backend.config;
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
 import com.erijl.flightvisualizer.backend.dto.FlightScheduleResponse;
 import com.erijl.flightvisualizer.backend.model.WeekRepresentation;
+import com.erijl.flightvisualizer.backend.service.AirlineService;
 import com.erijl.flightvisualizer.backend.util.CustomTimeUtil;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
@@ -25,16 +26,18 @@ public class CronScheduler {
     @Value("${flight.visualizer.api.url}")
     private String baseUrl;
 
-    AuthManager authManager;
     CustomTimeUtil customTimeUtil;
-    RestUtil restUtil;
+    private final RestUtil restUtil;
+    private final AirlineService airlineService;
+    private final AuthManager authManager;
     private final Gson gson = new GsonBuilder().create();
 
 
-    public CronScheduler(AuthManager authManager, CustomTimeUtil customTimeUtil, RestUtil restUtil) {
-        this.authManager = authManager;
+    public CronScheduler(CustomTimeUtil customTimeUtil, RestUtil restUtil, AirlineService airlineService, AuthManager authManager) {
         this.customTimeUtil = customTimeUtil;
         this.restUtil = restUtil;
+        this.airlineService = airlineService;
+        this.authManager = authManager;
     }
 
     @Scheduled(initialDelay = 1000)
@@ -66,5 +69,34 @@ public class CronScheduler {
             System.out.println("Request Failed");
             System.out.println(response.getStatusCode());
         }
+
+        if(aggregatedFlights != null || !aggregatedFlights.isEmpty()) {
+            this.insertFlightScheduleResponse(aggregatedFlights);
+        }
+    }
+
+    private void insertFlightScheduleResponse(List<FlightScheduleResponse> flightScheduleResponseList) {
+        this.ensureForeignKeyRelation(flightScheduleResponseList);
+    }
+
+    private void ensureForeignKeyRelation(List<FlightScheduleResponse> flightScheduleResponseList) {
+        HashSet<String> iataAirlineCodes = new HashSet<>();
+        HashSet<String> iataAirportCodes = new HashSet<>();
+        HashSet<String> iataAircraftCodes = new HashSet<>();
+
+        flightScheduleResponseList.forEach(flightScheduleResponse -> {
+            iataAirlineCodes.add(flightScheduleResponse.getAirline());
+
+            flightScheduleResponse.getLegResponses().forEach(flightScheduleLeg -> {
+                iataAircraftCodes.add(flightScheduleLeg.getAircraftType());
+                iataAirportCodes.add(flightScheduleLeg.getOrigin());
+                iataAirportCodes.add(flightScheduleLeg.getDestination());
+            });
+        });
+
+        iataAirlineCodes.forEach(airlineCode -> {
+            System.out.println(airlineCode);
+            this.airlineService.ensureAirlineExists(airlineCode);
+        });
     }
 }
