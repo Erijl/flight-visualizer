@@ -21,3 +21,16 @@ export class Airport {
     this.timezoneId = timezoneId;
   }
 }
+
+
+export class FlightScheduleLeg {
+  legId: number;
+  originAirport: Airport;
+  destinationAirport: Airport;
+
+  constructor(legId: number, originAirport: Airport, destinationAirport: Airport) {
+    this.legId = legId;
+    this.originAirport = originAirport;
+    this.destinationAirport = destinationAirport;
+  }
+}

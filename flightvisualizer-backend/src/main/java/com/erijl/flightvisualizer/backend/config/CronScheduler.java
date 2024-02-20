@@ -96,7 +96,7 @@ public class CronScheduler {
         }
 
         if(aggregatedFlights != null || !aggregatedFlights.isEmpty()) {
-            //this.insertFlightScheduleResponse(aggregatedFlights);
+            this.insertFlightScheduleResponse(aggregatedFlights);
         }
     }
 

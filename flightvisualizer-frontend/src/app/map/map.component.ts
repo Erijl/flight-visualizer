@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import mapboxgl from "mapbox-gl";
-import {Airport} from "../core/airport";
+import {Airport, FlightScheduleLeg} from "../core/airport";
 import {DataService} from "../core/data.service";
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -11,10 +11,12 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 })
 export class MapComponent implements OnInit {
   airports: Airport[] = [];
+  flightScheduleLegs: FlightScheduleLeg[] = [];
   constructor(private dataService: DataService) { }
 
   ngOnInit(): void {
     this.getAirports();
+    this.getFlightScheduleLegRoutes();
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXJpamwiLCJhIjoiY2xza2JpemdmMDIzejJyczBvZGk2aG44eiJ9.eJkFfrXg1dGFasDJRkmnIg';
     const map = new mapboxgl.Map({
@@ -38,20 +40,17 @@ export class MapComponent implements OnInit {
       }
 
       let airportGeoRoutes = [];
-      for(let i = 0; i < 1000; i++) {
-        let randomOrigin = this.airports[Math.floor(Math.random() * this.airports.length)];
-        let randomDesination = this.airports[Math.floor(Math.random() * this.airports.length)];
+      for(let i = 0; i < this.flightScheduleLegs.length; i++) {
+        let randomOrigin = this.flightScheduleLegs[i].originAirport;
+        let randomDesination = this.flightScheduleLegs[i].destinationAirport;
 
-        let normalDistance = Math.abs(randomOrigin.longitude) + Math.abs(randomDesination.longitude);
-        let distanceAcross = Math.abs(normalDistance - 360);
-
-        let shouldCross180thMedian = distanceAcross < normalDistance;
-        console.log(shouldCross180thMedian);
+        let diffLongitude = randomDesination.longitude - randomOrigin.longitude;
+        let shouldCross180thMedian = Math.abs(diffLongitude) > 180;
 
         if(shouldCross180thMedian) {
-          if(randomDesination.longitude - randomOrigin.longitude >= 180) {
-            randomDesination.longitude -= 360;
-          } else if(randomDesination.longitude - randomOrigin.longitude < 180) {
+          if(diffLongitude > 0) {
+            randomOrigin.longitude += 360;
+          } else {
             randomDesination.longitude += 360;
           }
         }
@@ -129,6 +128,12 @@ export class MapComponent implements OnInit {
     this.dataService.getAirports().subscribe(airports => {
 
       this.airports = airports;
+    });
+  }
+
+  getFlightScheduleLegRoutes(): void {
+    this.dataService.getFlightScheduleLegRoutes().subscribe(flightScheduleLegs => {
+      this.flightScheduleLegs = flightScheduleLegs;
     });
   }
 }

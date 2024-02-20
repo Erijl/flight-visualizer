@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {catchError, Observable, of, tap} from "rxjs";
-import {Airport} from "./airport";
+import {Airport, FlightScheduleLeg} from "./airport";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable({
@@ -17,6 +17,14 @@ export class DataService {
             tap(_ => this.log('fetched Airports')),
             catchError(this.handleError<Airport[]>('getAirports', []))
         );
+  }
+
+  getFlightScheduleLegRoutes() {
+    return this.http.get<FlightScheduleLeg[]>(this.apiEndpoint + 'flightScheduleLegs')
+      .pipe(
+        tap(_ => this.log('fetched getFlightScheduleLegRoutes')),
+        catchError(this.handleError<FlightScheduleLeg[]>('getFlightScheduleLegRoutes', []))
+      );
   }
 
   /**
