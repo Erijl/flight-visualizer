@@ -5,7 +5,17 @@
   "projects": {
     "flightvisualizer-frontend": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "standalone": false
+        },
+        "@schematics/angular:directive": {
+          "standalone": false
+        },
+        "@schematics/angular:pipe": {
+          "standalone": false
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -25,8 +35,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
-              "mapbox-gl/dist/mapbox-gl.css"
+              "src/styles.css"
             ],
             "scripts": []
           },

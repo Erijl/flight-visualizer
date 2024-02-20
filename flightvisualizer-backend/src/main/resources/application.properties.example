@@ -1,0 +1,15 @@
+### Scheduler ###
+spring.task.scheduling.pool.size=20
+
+### API ###
+flight.visualizer.api.url=
+flight.visualizer.api.client.secret=
+flight.visualizer.api.client.id=
+
+### DATABASE ###
+spring.jpa.hibernate.ddl-auto=none
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.show-sql=true

@@ -1,20 +1,18 @@
-package com.erijl.flightvisualizer.backend.model;
+package com.erijl.flightvisualizer.backend.dto;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
-
 @Getter
 @Setter
-public class PeriodOfOperation {
+public class PeriodOfOperationResponse {
 
     @SerializedName("startDate")
-    private Date startDate;
+    private String startDate;
 
     @SerializedName("endDate")
-    private Date endDate;
+    private String endDate;
 
     @SerializedName("daysOfOperation")
     private String daysOfOperation;
