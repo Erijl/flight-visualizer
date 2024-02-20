@@ -1,10 +1,7 @@
 package com.erijl.flightvisualizer.backend.service;
 
-import com.erijl.flightvisualizer.backend.dto.AirlineResponse;
 import com.erijl.flightvisualizer.backend.dto.AirportResponse;
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
-import com.erijl.flightvisualizer.backend.model.Aircraft;
-import com.erijl.flightvisualizer.backend.model.Airline;
 import com.erijl.flightvisualizer.backend.model.Airport;
 import com.erijl.flightvisualizer.backend.repository.AirportRepository;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
@@ -38,6 +35,10 @@ public class AirportService {
         this.airportRepository = airportRepository;
         this.restUtil = restUtil;
         this.authManager = authManager;
+    }
+
+    public Iterable<Airport> getAllAirports() {
+        return this.airportRepository.findAll();
     }
 
     public void ensureAirportExists(String iataAirportCode) {

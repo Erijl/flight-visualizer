@@ -66,6 +66,7 @@ public class CronScheduler {
 
     @Scheduled(initialDelay = 1000)
     public void fetchTodaysFLightSchedule() {
+        //TODO add chron scheduler log
         Date today = new Date();
         Date tomorrow = Date.from(
                 new Date().
@@ -95,7 +96,7 @@ public class CronScheduler {
         }
 
         if(aggregatedFlights != null || !aggregatedFlights.isEmpty()) {
-            this.insertFlightScheduleResponse(aggregatedFlights);
+            //this.insertFlightScheduleResponse(aggregatedFlights);
         }
     }
 
@@ -114,12 +115,12 @@ public class CronScheduler {
                     )
             );
 
-            Optional<Airline> airline = this.airlineRepository.findById(flightScheduleResponse.getAirline());
-            if (airline.isEmpty()) return;
+            String airlineCode = flightScheduleResponse.getAirline();
+            Airline airline = (airlineCode == null || airlineCode.isEmpty()) ? null : this.airlineRepository.findById(airlineCode).orElse(null);
 
             FlightSchedule flightSchedule = this.flightScheduleRepository.save(
                     new FlightSchedule(
-                        airline.get(),
+                        airline,
                         operationPeriod,
                         flightScheduleResponse.getFlightNumber(),
                         flightScheduleResponse.getSuffix()
@@ -139,21 +140,25 @@ public class CronScheduler {
             });
 
             flightScheduleResponse.getLegResponses().forEach(flightScheduleLeg -> {
-                Optional<Airport> originAirport = this.airportRepository.findById(flightScheduleLeg.getOrigin());
-                Optional<Airport> destinationAirport = this.airportRepository.findById(flightScheduleLeg.getDestination());
-                Optional<Airline> aircraftOwnerAirline = this.airlineRepository.findById(flightScheduleLeg.getAircraftOwner());
-                Optional<Aircraft> aircraft = this.aircraftRepository.findById(flightScheduleLeg.getAircraftType());
+                String origin = flightScheduleLeg.getOrigin();
+                String destination = flightScheduleLeg.getDestination();
+                String aircraftOwner = flightScheduleLeg.getAircraftOwner();
+                String aircraftType = flightScheduleLeg.getAircraftType();
 
-                if (originAirport.isEmpty() || destinationAirport.isEmpty() || aircraftOwnerAirline.isEmpty() || aircraft.isEmpty()) return;
+                Airport originAirport = (origin == null || origin.isEmpty()) ? null : this.airportRepository.findById(origin).orElse(null);
+                Airport destinationAirport = (destination == null || destination.isEmpty()) ? null : this.airportRepository.findById(destination).orElse(null);
+                Airline aircraftOwnerAirline = (aircraftOwner == null || aircraftOwner.isEmpty()) ? null : this.airlineRepository.findById(aircraftOwner).orElse(null);
+                Aircraft aircraft = (aircraftType == null || aircraftType.isEmpty()) ? null : this.aircraftRepository.findById(aircraftType).orElse(null);
+
                 this.flightScheduleLegRepository.save(
                         new FlightScheduleLeg(
                                 flightSchedule,
                                 flightScheduleLeg.getSequenceNumber(),
-                                originAirport.get(),
-                                destinationAirport.get(),
+                                originAirport,
+                                destinationAirport,
                                 flightScheduleLeg.getServiceType(),
-                                aircraftOwnerAirline.get(),
-                                aircraft.get(),
+                                aircraftOwnerAirline,
+                                aircraft,
                                 flightScheduleLeg.getAircraftConfigurationVersion(),
                                 flightScheduleLeg.getRegistration(),
                                 flightScheduleLeg.isOp(),
@@ -180,15 +185,26 @@ public class CronScheduler {
         HashSet<String> iataAircraftCodes = new HashSet<>();
 
         flightScheduleResponseList.forEach(flightScheduleResponse -> {
-            iataAirlineCodes.add(flightScheduleResponse.getAirline());
+
+            if(flightScheduleResponse.getAirline() != null && flightScheduleResponse.getAirline().length() <= 2) {
+                iataAirlineCodes.add(flightScheduleResponse.getAirline());
+            }
 
             flightScheduleResponse.getLegResponses().forEach(flightScheduleLeg -> {
                 iataAircraftCodes.add(flightScheduleLeg.getAircraftType());
                 iataAirportCodes.add(flightScheduleLeg.getOrigin());
                 iataAirportCodes.add(flightScheduleLeg.getDestination());
-                iataAirlineCodes.add(flightScheduleLeg.getAircraftOwner());
+
+                if(flightScheduleLeg.getAircraftOwner() != null && flightScheduleLeg.getAircraftOwner().length() <= 2) {
+                    iataAirlineCodes.add(flightScheduleLeg.getAircraftOwner());
+                }
             });
         });
+
+        iataAircraftCodes.remove(null);
+        iataAirportCodes.remove(null);
+        iataAirportCodes.remove(null);
+        iataAirlineCodes.remove(null);
 
         System.out.println("Airports: " + iataAirportCodes.size());
         System.out.println("Aircrafts: " + iataAircraftCodes.size());
