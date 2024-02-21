@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {catchError, Observable, of, tap} from "rxjs";
-import {Airport, FlightScheduleLeg} from "./airport";
+import {Airport, FlightScheduleLeg} from "../dto/airport";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable({
