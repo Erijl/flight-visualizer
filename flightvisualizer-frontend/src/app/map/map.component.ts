@@ -12,6 +12,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 export class MapComponent implements OnInit {
   airports: Airport[] = [];
   flightScheduleLegs: FlightScheduleLeg[] = [];
+  map: mapboxgl.Map | undefined;
+  airportsShown: boolean = false;
   constructor(private dataService: DataService) { }
 
   generateAirportGeoFeatures(): any[] {
@@ -59,14 +61,7 @@ export class MapComponent implements OnInit {
     return airportGeoRoutes;
   }
 
-  addLayersToMap(map: any): void {
-    map.addSource('airports', {
-      'type': 'geojson',
-      'data': {
-        'type': 'FeatureCollection',
-        'features': this.generateAirportGeoFeatures()
-      }
-    });
+  addAirportRouteLayersToMap(map: any): void {
 
     map.addSource('routes', {
       'type': 'geojson',
@@ -74,17 +69,6 @@ export class MapComponent implements OnInit {
         'type': 'FeatureCollection',
         'features': this.generateAirportGeoRoutes()
       }
-    });
-
-    map.addLayer({
-      'id': 'airports',
-      'type': 'circle',
-      'source': 'airports',
-      'paint': {
-        'circle-radius': 6,
-        'circle-color': '#B42222'
-      },
-      'filter': ['==', '$type', 'Point']
     });
 
     map.addLayer({
@@ -99,6 +83,27 @@ export class MapComponent implements OnInit {
         'line-color': 'white',
         'line-width': 1
       },
+    });
+  }
+
+  addAirportLayerToMap(map: any): void {
+    map.addSource('airports', {
+      'type': 'geojson',
+      'data': {
+        'type': 'FeatureCollection',
+        'features': this.generateAirportGeoFeatures()
+      }
+    });
+
+    map.addLayer({
+      'id': 'airports',
+      'type': 'circle',
+      'source': 'airports',
+      'paint': {
+        'circle-radius': 6,
+        'circle-color': '#B42222'
+      },
+      'filter': ['==', '$type', 'Point']
     });
   }
 
@@ -123,18 +128,31 @@ export class MapComponent implements OnInit {
     this.getFlightScheduleLegRoutes();
 
     mapboxgl.accessToken = '';
-    const map = new mapboxgl.Map({
+    this.map = new mapboxgl.Map({
       container: 'map', // container id
       style: 'mapbox://styles/mapbox/dark-v11', // style URL
       center: [-74.5, 40], // starting position [lng, lat]
       zoom: 0 // starting zoom
     });
 
-    map.on('load', () => {
-      this.addLayersToMap(map);
-      map.resize();
-      this.handleMapEvents(map);
+    this.map.on('load', () => {
+      this.addAirportRouteLayersToMap(this.map);
+      // @ts-ignore
+      this.map.resize();
+      this.handleMapEvents(this.map);
     });
+  }
+
+  updateGeoJSON(): void {
+    this.airportsShown = !this.airportsShown;
+    if(this.airportsShown) {
+      // @ts-ignore
+      this.map.removeLayer('airports');
+      // @ts-ignore
+      this.map.removeSource('airports');
+    } else {
+      this.addAirportLayerToMap(this.map);
+    }
   }
 
   getAirports(): void {
@@ -146,7 +164,7 @@ export class MapComponent implements OnInit {
 
   getFlightScheduleLegRoutes(): void {
     this.dataService.getFlightScheduleLegRoutes().subscribe(flightScheduleLegs => {
-      this.flightScheduleLegs = flightScheduleLegs;
+      this.flightScheduleLegs = flightScheduleLegs.filter(leg => leg.originAirport.iataAirportCode == "FRA" || leg.destinationAirport.iataAirportCode == "FRA");
     });
   }
 }
