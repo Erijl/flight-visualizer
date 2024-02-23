@@ -1,8 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import mapboxgl from "mapbox-gl";
-import {Airport, FlightScheduleLeg} from "../core/dto/airport";
+import mapboxgl, {Control} from "mapbox-gl";
+import {Airport, FlightScheduleRouteDto} from "../core/dto/airport";
 import {DataService} from "../core/service/data.service";
 import 'mapbox-gl/dist/mapbox-gl.css';
+import {GeoService} from "../core/service/geo.service";
+import {AirportDisplayType, RouteDisplayType} from "../core/enum";
+import {FilterService} from "../core/service/filter.service";
 
 @Component({
   selector: 'app-map',
@@ -10,161 +13,139 @@ import 'mapbox-gl/dist/mapbox-gl.css';
   styleUrl: './map.component.css'
 })
 export class MapComponent implements OnInit {
-  airports: Airport[] = [];
-  flightScheduleLegs: FlightScheduleLeg[] = [];
-  map: mapboxgl.Map | undefined;
-  airportsShown: boolean = false;
-  constructor(private dataService: DataService) { }
+  // @ts-ignore
+  map: mapboxgl.Map;
 
-  generateAirportGeoFeatures(): any[] {
-    let airportGeoFeatures = [];
-    for(let i = 0; i < this.airports.length; i++) {
-      airportGeoFeatures.push({
-        'type': 'Feature',
-        'geometry': {
-          'type': 'Point',
-          'coordinates': [this.airports[i].longitude, this.airports[i].latitude]
-        }
-      });
-    }
-    return airportGeoFeatures;
-  }
+  // 'raw' data
+  allAirports: Airport[] = [];
+  allFlightScheduleRouteDtos: FlightScheduleRouteDto[] = [];
 
-  generateAirportGeoRoutes(): any[] {
-    let airportGeoRoutes = [];
-    for(let i = 0; i < this.flightScheduleLegs.length; i++) {
-      let randomOrigin = this.flightScheduleLegs[i].originAirport;
-      let randomDesination = this.flightScheduleLegs[i].destinationAirport;
+  // UI data
+  airportDisplayTypes = Object.values(AirportDisplayType);
+  airportDisplayType: AirportDisplayType = AirportDisplayType.ALL;
+  routeDisplayTypes = Object.values(RouteDisplayType);
+  routeDisplayType: RouteDisplayType = RouteDisplayType.ALL;
 
-      let diffLongitude = randomDesination.longitude - randomOrigin.longitude;
-      let shouldCross180thMedian = Math.abs(diffLongitude) > 180;
+  flightScheduleRouteDtosToDisplay: FlightScheduleRouteDto[] = [];
 
-      if(shouldCross180thMedian) {
-        if(diffLongitude > 0) {
-          randomOrigin.longitude += 360;
-        } else {
-          randomDesination.longitude += 360;
-        }
-      }
+  selectedAirportSpecificRoutes: Airport = new Airport();
+  selectedAirportSpecificRoutesString: string = "";
+  specificAirportRoutesOutgoing: boolean = true;
+  specificAirportRoutesIncoming: boolean = true;
 
-      airportGeoRoutes.push({
-        'type': 'Feature',
-        'geometry': {
-          'type': 'LineString',
-          'coordinates': [
-            [randomOrigin.longitude, randomOrigin.latitude],
-            [randomDesination.longitude, randomDesination.latitude]
-          ]
-        }
-      });
-    }
-    return airportGeoRoutes;
-  }
+  // UI state
+  specificAirportRoutesContainerVisible: boolean = false;
 
-  addAirportRouteLayersToMap(map: any): void {
 
-    map.addSource('routes', {
-      'type': 'geojson',
-      'data': {
-        'type': 'FeatureCollection',
-        'features': this.generateAirportGeoRoutes()
-      }
-    });
-
-    map.addLayer({
-      'id': 'routes',
-      'type': 'line',
-      'source': 'routes',
-      'layout': {
-        'line-join': 'round',
-        'line-cap': 'round'
-      },
-      'paint': {
-        'line-color': 'white',
-        'line-width': 1
-      },
-    });
-  }
-
-  addAirportLayerToMap(map: any): void {
-    map.addSource('airports', {
-      'type': 'geojson',
-      'data': {
-        'type': 'FeatureCollection',
-        'features': this.generateAirportGeoFeatures()
-      }
-    });
-
-    map.addLayer({
-      'id': 'airports',
-      'type': 'circle',
-      'source': 'airports',
-      'paint': {
-        'circle-radius': 6,
-        'circle-color': '#B42222'
-      },
-      'filter': ['==', '$type', 'Point']
-    });
-  }
-
-  handleMapEvents(map: any): void {
-    map.on('click', 'routes', (e: any) => {
-      console.log(e);
-    });
-
-    map.on('mouseenter', 'routes', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-
-    map.on('mouseleave', 'routes', () => {
-      map.getCanvas().style.cursor = '';
-    });
-
-    map.addControl(new mapboxgl.NavigationControl());
-  }
+  constructor(private dataService: DataService, private geoService: GeoService, private filterSerice: FilterService) { }
 
   ngOnInit(): void {
     this.getAirports();
     this.getFlightScheduleLegRoutes();
 
-    mapboxgl.accessToken = '';
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZXJpamwiLCJhIjoiY2xza2JpemdmMDIzejJyczBvZGk2aG44eiJ9.eJkFfrXg1dGFasDJRkmnIg';
     this.map = new mapboxgl.Map({
-      container: 'map', // container id
-      style: 'mapbox://styles/mapbox/dark-v11', // style URL
-      center: [-74.5, 40], // starting position [lng, lat]
-      zoom: 0 // starting zoom
+      container: 'map',
+      style: 'mapbox://styles/mapbox/dark-v11',
+      center: [-74.5, 40],
+      zoom: 0
     });
 
     this.map.on('load', () => {
-      this.addAirportRouteLayersToMap(this.map);
-      // @ts-ignore
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.flightScheduleRouteDtosToDisplay));
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.allAirports));
+
+      this.geoService.addLayerTypeLineToMap(this.map, 'routeLayer', 'routeSource', {}, {'line-color': '#ffffff', 'line-width': 2})
+      this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
+
       this.map.resize();
-      this.handleMapEvents(this.map);
     });
   }
 
-  updateGeoJSON(): void {
-    this.airportsShown = !this.airportsShown;
-    if(this.airportsShown) {
-      // @ts-ignore
-      this.map.removeLayer('airports');
-      // @ts-ignore
-      this.map.removeSource('airports');
-    } else {
-      this.addAirportLayerToMap(this.map);
+  onAirportDisplayTypeChange(): void {
+    this.renderAirports();
+  }
+
+  renderAirports(): void {
+    //TODO optimize, check state before
+
+    if(this.airportDisplayType === AirportDisplayType.ALL) {
+      this.geoService.removeLayerFromMap(this.map, 'airportLayer');
+      this.geoService.removeSourceFromMap(this.map, 'airportSource');
+
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.allAirports));
+      this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
+    } else if(this.airportDisplayType === AirportDisplayType.WITHROUTES) {
+      this.geoService.removeLayerFromMap(this.map, 'airportLayer');
+      this.geoService.removeSourceFromMap(this.map, 'airportSource');
+
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.filterSerice.getAllAirportsPresentInFlightScheduleRouteDtos(this.flightScheduleRouteDtosToDisplay)));
+      this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
+    } else if(this.airportDisplayType === AirportDisplayType.NONE) {
+      this.geoService.removeLayerFromMap(this.map, 'airportLayer');
+      this.geoService.removeSourceFromMap(this.map, 'airportSource');
     }
+  }
+
+  onRouteDisplayTypeChange(): void {
+    console.log(this.routeDisplayType);
+    if(this.routeDisplayType === RouteDisplayType.ALL) {
+      this.specificAirportRoutesContainerVisible = false;
+      this.geoService.removeLayerFromMap(this.map, 'routeLayer');
+      this.geoService.removeSourceFromMap(this.map, 'routeSource');
+
+      this.flightScheduleRouteDtosToDisplay = this.allFlightScheduleRouteDtos;
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.flightScheduleRouteDtosToDisplay));
+      this.geoService.addLayerTypeLineToMap(this.map, 'routeLayer', 'routeSource', {}, {'line-color': '#ffffff', 'line-width': 2})
+
+      this.renderAirports();
+    } else if(this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) {
+      this.specificAirportRoutesContainerVisible = true;
+      this.geoService.removeLayerFromMap(this.map, 'routeLayer');
+      this.geoService.removeSourceFromMap(this.map, 'routeSource');
+
+      this.flightScheduleRouteDtosToDisplay = this.filterSerice.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.selectedAirportSpecificRoutes, this.specificAirportRoutesIncoming, this.specificAirportRoutesOutgoing);
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.flightScheduleRouteDtosToDisplay));
+      this.geoService.addLayerTypeLineToMap(this.map, 'routeLayer', 'routeSource', {}, {'line-color': '#ffffff', 'line-width': 2})
+
+      this.renderAirports()
+    }
+  }
+
+  onSelectedAirportSpecificRoutesChange(): void {
+    // @ts-ignore
+    this.selectedAirportSpecificRoutes = this.allAirports.find(airport => airport.iataAirportCode === this.selectedAirportSpecificRoutesString);
+    this.onRouteDisplayTypeChange();
+  }
+
+  onOutgoingChange(event: any): void {
+    // Handle outgoing checkbox change
+  }
+
+  onIncomingChange(event: any): void {
+    // Handle incoming checkbox change
+  }
+
+  onDropdownChange(event: any): void {
+    // Handle dropdown change
+  }
+
+  onSliderChange(event: any): void {
+    // Handle slider change
   }
 
   getAirports(): void {
     this.dataService.getAirports().subscribe(airports => {
-
-      this.airports = airports;
+      this.allAirports = airports;
     });
   }
 
   getFlightScheduleLegRoutes(): void {
     this.dataService.getFlightScheduleLegRoutes().subscribe(flightScheduleLegs => {
-      this.flightScheduleLegs = flightScheduleLegs.filter(leg => leg.originAirport.iataAirportCode == "FRA" || leg.destinationAirport.iataAirportCode == "FRA");
+      this.allFlightScheduleRouteDtos = flightScheduleLegs;
+      this.flightScheduleRouteDtosToDisplay = flightScheduleLegs;
     });
   }
+
+  protected readonly AirportDisplayType = AirportDisplayType;
 }

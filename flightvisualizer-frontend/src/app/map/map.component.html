@@ -1,7 +1,33 @@
 <div class="map-container">
   <div id="map"></div>
   <div class="side-panel">
-    <!-- Add content for your side panel here -->
-    <p><button (click)="updateGeoJSON()">Update GeoJSON</button></p>
+    <h1>Map Controls</h1>
+
+    <h2>Airports</h2>
+    <select [(ngModel)]="airportDisplayType" (change)="onAirportDisplayTypeChange()">
+      <option *ngFor="let type of airportDisplayTypes" [value]="type">{{type}}</option>
+    </select>
+
+    <h2>Routes</h2>
+    <select [(ngModel)]="routeDisplayType" (change)="onRouteDisplayTypeChange()">
+      <option *ngFor="let type of routeDisplayTypes" [value]="type">{{type}}</option>
+    </select>
+
+    <div *ngIf="specificAirportRoutesContainerVisible">
+      Airport:
+      <select [(ngModel)]="selectedAirportSpecificRoutesString" (change)="onSelectedAirportSpecificRoutesChange()">
+        <option *ngFor="let airport of allAirports" [value]="airport.iataAirportCode">{{airport.iataAirportCode}}</option>
+      </select>
+      <div>
+        <input type="checkbox" [(ngModel)]="specificAirportRoutesOutgoing" (change)="onOutgoingChange($event)"> Outgoing
+        <input type="checkbox" [(ngModel)]="specificAirportRoutesIncoming" (change)="onIncomingChange($event)"> Incoming
+      </div>
+    </div>
+
+    <select (change)="onDropdownChange($event)">
+      <!-- Options will be populated dynamically -->
+    </select>
+
+    <input type="range" min="1" max="100" (change)="onSliderChange($event)">
   </div>
 </div>

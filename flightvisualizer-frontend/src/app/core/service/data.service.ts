@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {catchError, Observable, of, tap} from "rxjs";
-import {Airport, FlightScheduleLeg} from "../dto/airport";
+import {Airport, FlightScheduleRouteDto} from "../dto/airport";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable({
@@ -20,10 +20,10 @@ export class DataService {
   }
 
   getFlightScheduleLegRoutes() {
-    return this.http.get<FlightScheduleLeg[]>(this.apiEndpoint + 'flightScheduleLegs')
+    return this.http.get<FlightScheduleRouteDto[]>(this.apiEndpoint + 'flightScheduleLegs')
       .pipe(
         tap(_ => this.log('fetched getFlightScheduleLegRoutes')),
-        catchError(this.handleError<FlightScheduleLeg[]>('getFlightScheduleLegRoutes', []))
+        catchError(this.handleError<FlightScheduleRouteDto[]>('getFlightScheduleLegRoutes', []))
       );
   }
 

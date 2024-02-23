@@ -87,3 +87,14 @@ CREATE TABLE flight_schedule_leg
     FOREIGN KEY (aircraft_owner_airline_code) REFERENCES airline (iata_airline_code),
     FOREIGN KEY (aircraft_code) REFERENCES aircraft (iata_aircraft_code)
 );
+
+-- CREATE TABLE flight_schedule_cron_run
+-- (
+--     cron_run_id INT AUTO_INCREMENT PRIMARY KEY,
+--     cron_run_date_utc DATE NOT NULL,
+--     cron_run_finish TIMESTAMP NOT NULL,
+--     aircraft_count INT,
+--     airline_count INT,
+--     airport_count INT,
+--     flight_schedule_count INT
+-- );

@@ -64,14 +64,18 @@ public class CronScheduler {
         this.flightScheduleLegRepository = flightScheduleLegRepository;
     }
 
-    @Scheduled(initialDelay = 1000)
+    //@Scheduled(initialDelay = 1000)
     public void fetchTodaysFLightSchedule() {
         //TODO add chron scheduler log
-        Date today = new Date();
-        Date tomorrow = Date.from(
+        Date today = Date.from(
                 new Date().
                         toInstant().
                         plus(1, ChronoUnit.DAYS)
+        );
+        Date tomorrow = Date.from(
+                new Date().
+                        toInstant().
+                        plus(2, ChronoUnit.DAYS)
         );
 
         String requestUrl = new UrlBuilder(this.baseUrl)
