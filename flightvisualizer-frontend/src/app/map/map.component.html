@@ -19,13 +19,17 @@
         <option *ngFor="let airport of allAirports" [value]="airport.iataAirportCode">{{airport.iataAirportCode}}</option>
       </select>
       <div>
-        <input type="checkbox" [(ngModel)]="specificAirportRoutesOutgoing" (change)="onOutgoingChange($event)"> Outgoing
-        <input type="checkbox" [(ngModel)]="specificAirportRoutesIncoming" (change)="onIncomingChange($event)"> Incoming
+        <input type="checkbox" [(ngModel)]="specificAirportRoutesOutgoing" (change)="onOutgoingChange()"> Outgoing
+        <br>
+        <input type="checkbox" [(ngModel)]="specificAirportRoutesIncoming" (change)="onIncomingChange()"> Incoming
       </div>
     </div>
 
-    <select (change)="onDropdownChange($event)">
-      <!-- Options will be populated dynamically -->
+    <br>
+    <br>
+    Filter:
+    <select [(ngModel)]="routeFilterType" (change)="onRouteFilterTypeChange()">
+      <option *ngFor="let type of routeFilterTypes" [value]="type">{{type}}</option>
     </select>
 
     <input type="range" min="1" max="100" (change)="onSliderChange($event)">

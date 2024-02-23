@@ -9,3 +9,9 @@ export enum RouteDisplayType {
   ALL = "All",
   SPECIFICAIRPORT = "Specific Airport",
 }
+
+export enum RouteFilterType {
+  DURATION = "Duration",
+  DISTANCE = "Distance",
+  ROUTECOUNT = "Route Count", //TODO AIRPORTROUTECOUNT(?)
+}

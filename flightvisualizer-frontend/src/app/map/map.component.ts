@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import mapboxgl, {Control} from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 import {Airport, FlightScheduleRouteDto} from "../core/dto/airport";
 import {DataService} from "../core/service/data.service";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
-import {AirportDisplayType, RouteDisplayType} from "../core/enum";
+import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enum";
 import {FilterService} from "../core/service/filter.service";
 
 @Component({
@@ -18,13 +18,15 @@ export class MapComponent implements OnInit {
 
   // 'raw' data
   allAirports: Airport[] = [];
-  allFlightScheduleRouteDtos: FlightScheduleRouteDto[] = [];
+  allFlightScheduleRouteDtos: FlightScheduleRouteDto[] = [];//TODO use only Routes from Airports not Railway statsions etc.
 
   // UI data
   airportDisplayTypes = Object.values(AirportDisplayType);
   airportDisplayType: AirportDisplayType = AirportDisplayType.ALL;
   routeDisplayTypes = Object.values(RouteDisplayType);
   routeDisplayType: RouteDisplayType = RouteDisplayType.ALL;
+  routeFilterTypes = Object.values(RouteFilterType);
+  routeFilterType: RouteFilterType = RouteFilterType.DISTANCE;
 
   flightScheduleRouteDtosToDisplay: FlightScheduleRouteDto[] = [];
 
@@ -87,8 +89,8 @@ export class MapComponent implements OnInit {
     }
   }
 
-  onRouteDisplayTypeChange(): void {
-    console.log(this.routeDisplayType);
+  renderRoutes(): void {
+    //TODO optimize, check state before
     if(this.routeDisplayType === RouteDisplayType.ALL) {
       this.specificAirportRoutesContainerVisible = false;
       this.geoService.removeLayerFromMap(this.map, 'routeLayer');
@@ -112,22 +114,28 @@ export class MapComponent implements OnInit {
     }
   }
 
+  onRouteDisplayTypeChange(): void {
+    this.renderRoutes();
+  }
+
   onSelectedAirportSpecificRoutesChange(): void {
     // @ts-ignore
     this.selectedAirportSpecificRoutes = this.allAirports.find(airport => airport.iataAirportCode === this.selectedAirportSpecificRoutesString);
     this.onRouteDisplayTypeChange();
   }
 
-  onOutgoingChange(event: any): void {
-    // Handle outgoing checkbox change
+  onOutgoingChange(): void {
+    this.renderRoutes();
+    this.renderAirports();
   }
 
-  onIncomingChange(event: any): void {
-    // Handle incoming checkbox change
+  onIncomingChange(): void {
+    this.renderRoutes();
+    this.renderAirports();
   }
 
-  onDropdownChange(event: any): void {
-    // Handle dropdown change
+  onRouteFilterTypeChange(): void {
+
   }
 
   onSliderChange(event: any): void {
