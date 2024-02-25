@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit} from '@angular/core';
 import mapboxgl from "mapbox-gl";
 import {Airport, FlightScheduleRouteDto} from "../core/dto/airport";
 import {DataService} from "../core/service/data.service";
@@ -6,6 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
 import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enum";
 import {FilterService} from "../core/service/filter.service";
+import * as d3 from 'd3';
 
 @Component({
   selector: 'app-map',
@@ -13,6 +14,7 @@ import {FilterService} from "../core/service/filter.service";
   styleUrl: './map.component.css'
 })
 export class MapComponent implements OnInit {
+
   // @ts-ignore
   map: mapboxgl.Map;
 
@@ -37,6 +39,7 @@ export class MapComponent implements OnInit {
 
   // UI state
   specificAirportRoutesContainerVisible: boolean = false;
+  histogramData: number[] = [];
 
 
   constructor(private dataService: DataService, private geoService: GeoService, private filterSerice: FilterService) { }
@@ -152,6 +155,8 @@ export class MapComponent implements OnInit {
     this.dataService.getFlightScheduleLegRoutes().subscribe(flightScheduleLegs => {
       this.allFlightScheduleRouteDtos = flightScheduleLegs;
       this.flightScheduleRouteDtosToDisplay = flightScheduleLegs;
+      this.histogramData = this.geoService.generateRouteDistanceArray(this.allFlightScheduleRouteDtos);
+      console.log(this.histogramData);
     });
   }
 

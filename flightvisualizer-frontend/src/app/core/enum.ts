@@ -8,6 +8,7 @@ export enum AirportDisplayType {
 export enum RouteDisplayType {
   ALL = "All",
   SPECIFICAIRPORT = "Specific Airport",
+  //TODO add for country
 }
 
 export enum RouteFilterType {

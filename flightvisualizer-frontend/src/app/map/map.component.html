@@ -33,5 +33,11 @@
     </select>
 
     <input type="range" min="1" max="100" (change)="onSliderChange($event)">
+
+    <br>
+    <br>
+    <div *ngIf="histogramData.length > 1">
+      <app-histogram [boxWidth]="300" [boxHeight]="300" [data]="histogramData"></app-histogram>
+    </div>
   </div>
 </div>

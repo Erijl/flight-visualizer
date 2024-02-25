@@ -6,11 +6,13 @@ import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
+import { HistogramComponent } from './histogram/histogram.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MapComponent
+    MapComponent,
+    HistogramComponent
   ],
     imports: [
         BrowserModule,
