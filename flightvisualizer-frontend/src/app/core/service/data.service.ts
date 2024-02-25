@@ -20,7 +20,7 @@ export class DataService {
   }
 
   getFlightScheduleLegRoutes() {
-    return this.http.get<FlightScheduleRouteDto[]>(this.apiEndpoint + 'flightScheduleLegs')
+    return this.http.get<FlightScheduleRouteDto[]>(this.apiEndpoint + 'flightScheduleLeg/distance')
       .pipe(
         tap(_ => this.log('fetched getFlightScheduleLegRoutes')),
         catchError(this.handleError<FlightScheduleRouteDto[]>('getFlightScheduleLegRoutes', []))
