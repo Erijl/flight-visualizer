@@ -17,11 +17,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class CronScheduler {
@@ -40,6 +42,7 @@ public class CronScheduler {
     private final AirlineRepository airlineRepository;
     private final AirportRepository airportRepository;
     private final AircraftRepository aircraftRepository;
+    private final FlightScheduleCronRunRepository flightScheduleCronRunRepository;
 
     private final FlightScheduleRepository flightScheduleRepository;
     private final FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository;
@@ -48,7 +51,8 @@ public class CronScheduler {
     private final Gson gson = new GsonBuilder().create();
 
 
-    public CronScheduler(CustomTimeUtil customTimeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, AirportRepository airportRepository, AircraftRepository aircraftRepository, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, AirlineRepository airlineRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
+    //TODO remove java.util.date globally
+    public CronScheduler(CustomTimeUtil customTimeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, AirportRepository airportRepository, AircraftRepository aircraftRepository, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, AirlineRepository airlineRepository, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
         this.customTimeUtil = customTimeUtil;
         this.restUtil = restUtil;
         this.airlineService = airlineService;
@@ -59,14 +63,28 @@ public class CronScheduler {
         this.flightScheduleRepository = flightScheduleRepository;
         this.authManager = authManager;
         this.airlineRepository = airlineRepository;
+        this.flightScheduleCronRunRepository = flightScheduleCronRunRepository;
         this.flightScheduleOperationPeriodRepository = flightScheduleOperationPeriodRepository;
         this.flightScheduleDataElementRepository = flightScheduleDataElementRepository;
         this.flightScheduleLegRepository = flightScheduleLegRepository;
     }
 
-    //@Scheduled(initialDelay = 1000)
+    @Scheduled(initialDelay = 1000)
     public void fetchTodaysFLightSchedule() {
-        //TODO add chron scheduler log
+        String currentLocalDateString = LocalDate.now(ZoneId.of("UTC")).toString();
+        FlightScheduleCronRun possibleCronRuns = this.flightScheduleCronRunRepository.
+                findFlightScheduleCronRunByCronRunDateUtcEquals(currentLocalDateString);
+
+        if(possibleCronRuns != null && possibleCronRuns.getCronRunDateUtc().equals(currentLocalDateString)) {
+            System.out.printf("Cron Run Already Exists for %s", currentLocalDateString);
+            return;
+        }
+
+        FlightScheduleCronRun cronRun = new FlightScheduleCronRun();
+        LocalDate currentDateUtc = LocalDate.now(ZoneId.of("UTC"));
+        cronRun.setCronRunDateUtc(currentDateUtc.toString());
+
+        cronRun = this.flightScheduleCronRunRepository.save(cronRun);
         Date today = Date.from(
                 new Date().
                         toInstant().
@@ -100,12 +118,12 @@ public class CronScheduler {
         }
 
         if(aggregatedFlights != null || !aggregatedFlights.isEmpty()) {
-            this.insertFlightScheduleResponse(aggregatedFlights);
+            this.insertFlightScheduleResponse(aggregatedFlights, cronRun);
         }
     }
 
-    private void insertFlightScheduleResponse(List<FlightScheduleResponse> flightScheduleResponseList) {
-        this.ensureForeignKeyRelation(flightScheduleResponseList);
+    private void insertFlightScheduleResponse(List<FlightScheduleResponse> flightScheduleResponseList, FlightScheduleCronRun cronRun) {
+        this.ensureForeignKeyRelation(flightScheduleResponseList, cronRun);
 
         flightScheduleResponseList.forEach(flightScheduleResponse -> {
             FlightScheduleOperationPeriod operationPeriod = this.flightScheduleOperationPeriodRepository.save(
@@ -183,7 +201,7 @@ public class CronScheduler {
         });
     }
 
-    private void ensureForeignKeyRelation(List<FlightScheduleResponse> flightScheduleResponseList) {
+    private void ensureForeignKeyRelation(List<FlightScheduleResponse> flightScheduleResponseList, FlightScheduleCronRun cronRun) {
         HashSet<String> iataAirlineCodes = new HashSet<>();
         HashSet<String> iataAirportCodes = new HashSet<>();
         HashSet<String> iataAircraftCodes = new HashSet<>();
@@ -207,8 +225,12 @@ public class CronScheduler {
 
         iataAircraftCodes.remove(null);
         iataAirportCodes.remove(null);
-        iataAirportCodes.remove(null);
         iataAirlineCodes.remove(null);
+
+        cronRun.setAirlineCount(iataAirlineCodes.size());
+        cronRun.setAircraftCount(iataAircraftCodes.size());
+        cronRun.setAirportCount(iataAirportCodes.size());
+        this.flightScheduleCronRunRepository.save(cronRun);
 
         System.out.println("Airports: " + iataAirportCodes.size());
         System.out.println("Aircrafts: " + iataAircraftCodes.size());

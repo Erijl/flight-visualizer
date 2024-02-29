@@ -4,6 +4,8 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 
@@ -58,6 +60,16 @@ public class CustomTimeUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public LocalDate convertDateToUtcLocalDate(Date date) {
+        return date.toInstant()
+                .atZone(ZoneId.of("UTC"))
+                .toLocalDate();
+    }
+
+    public LocalDate convertStringToLocalDate(String date) {
+        return LocalDate.parse(date);
     }
 
     public java.sql.Date convertDateToSqlDate(Date date) {
