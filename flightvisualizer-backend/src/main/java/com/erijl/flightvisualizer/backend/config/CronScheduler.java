@@ -19,11 +19,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class CronScheduler {
@@ -199,6 +199,8 @@ public class CronScheduler {
             });
 
         });
+
+        this.flightScheduleCronRunRepository.updateCronRunFinish(cronRun.getCronRunId(), new Timestamp(new Date().getTime()));
     }
 
     private void ensureForeignKeyRelation(List<FlightScheduleResponse> flightScheduleResponseList, FlightScheduleCronRun cronRun) {
@@ -230,6 +232,7 @@ public class CronScheduler {
         cronRun.setAirlineCount(iataAirlineCodes.size());
         cronRun.setAircraftCount(iataAircraftCodes.size());
         cronRun.setAirportCount(iataAirportCodes.size());
+        cronRun.setFlightScheduleCount(flightScheduleResponseList.size());
         this.flightScheduleCronRunRepository.save(cronRun);
 
         System.out.println("Airports: " + iataAirportCodes.size());
