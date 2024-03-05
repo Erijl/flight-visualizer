@@ -49,6 +49,10 @@ public class AirportService {
         }
     }
 
+    public Airport getAirportById(String iataAirportCode) {
+        return this.airportRepository.findById(iataAirportCode).orElse(null);
+    }
+
     private void requestAndInsertAirport(String iataAirportCode) {
         String requestUrl = new UrlBuilder(this.baseUrl)
                 .airport()

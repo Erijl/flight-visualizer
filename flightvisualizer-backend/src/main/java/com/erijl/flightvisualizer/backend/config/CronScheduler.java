@@ -39,9 +39,6 @@ public class CronScheduler {
     private final AircraftService aircraftService;
     private final AirportService airportService;
 
-    private final AirlineRepository airlineRepository;
-    private final AirportRepository airportRepository;
-    private final AircraftRepository aircraftRepository;
     private final FlightScheduleCronRunRepository flightScheduleCronRunRepository;
 
     private final FlightScheduleRepository flightScheduleRepository;
@@ -52,17 +49,14 @@ public class CronScheduler {
 
 
     //TODO remove java.util.date globally
-    public CronScheduler(CustomTimeUtil customTimeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, AirportRepository airportRepository, AircraftRepository aircraftRepository, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, AirlineRepository airlineRepository, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
+    public CronScheduler(CustomTimeUtil customTimeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
         this.customTimeUtil = customTimeUtil;
         this.restUtil = restUtil;
         this.airlineService = airlineService;
         this.aircraftService = aircraftService;
         this.airportService = airportService;
-        this.airportRepository = airportRepository;
-        this.aircraftRepository = aircraftRepository;
         this.flightScheduleRepository = flightScheduleRepository;
         this.authManager = authManager;
-        this.airlineRepository = airlineRepository;
         this.flightScheduleCronRunRepository = flightScheduleCronRunRepository;
         this.flightScheduleOperationPeriodRepository = flightScheduleOperationPeriodRepository;
         this.flightScheduleDataElementRepository = flightScheduleDataElementRepository;
@@ -138,7 +132,7 @@ public class CronScheduler {
             );
 
             String airlineCode = flightScheduleResponse.getAirline();
-            Airline airline = (airlineCode == null || airlineCode.isEmpty()) ? null : this.airlineRepository.findById(airlineCode).orElse(null);
+            Airline airline = (airlineCode == null || airlineCode.isEmpty()) ? null : this.airlineService.getAirlineById(airlineCode);
 
             FlightSchedule flightSchedule = this.flightScheduleRepository.save(
                     new FlightSchedule(
@@ -167,10 +161,10 @@ public class CronScheduler {
                 String aircraftOwner = flightScheduleLeg.getAircraftOwner();
                 String aircraftType = flightScheduleLeg.getAircraftType();
 
-                Airport originAirport = (origin == null || origin.isEmpty()) ? null : this.airportRepository.findById(origin).orElse(null);
-                Airport destinationAirport = (destination == null || destination.isEmpty()) ? null : this.airportRepository.findById(destination).orElse(null);
-                Airline aircraftOwnerAirline = (aircraftOwner == null || aircraftOwner.isEmpty()) ? null : this.airlineRepository.findById(aircraftOwner).orElse(null);
-                Aircraft aircraft = (aircraftType == null || aircraftType.isEmpty()) ? null : this.aircraftRepository.findById(aircraftType).orElse(null);
+                Airport originAirport = (origin == null || origin.isEmpty()) ? null : this.airportService.getAirportById(origin);
+                Airport destinationAirport = (destination == null || destination.isEmpty()) ? null : this.airportService.getAirportById(destination);
+                Airline aircraftOwnerAirline = (aircraftOwner == null || aircraftOwner.isEmpty()) ? null : this.airlineService.getAirlineById(aircraftOwner);
+                Aircraft aircraft = (aircraftType == null || aircraftType.isEmpty()) ? null : this.aircraftService.getAircraftById(aircraftType);
 
                 this.flightScheduleLegRepository.save(
                         new FlightScheduleLeg(

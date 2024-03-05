@@ -45,7 +45,11 @@ public class AirlineService {
         }
     }
 
-    public void requestAndInsertAirline(String iataAirlineCode) {
+    public Airline getAirlineById(String iataAirlineCode) {
+        return this.airlineRepository.findById(iataAirlineCode).orElse(null);
+    }
+
+    private void requestAndInsertAirline(String iataAirlineCode) {
         String requestUrl = new UrlBuilder(this.baseUrl)
                 .airline()
                 .filterForAirline(iataAirlineCode)

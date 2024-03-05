@@ -1,12 +1,9 @@
 package com.erijl.flightvisualizer.backend.service;
 
 import com.erijl.flightvisualizer.backend.dto.AircraftResponse;
-import com.erijl.flightvisualizer.backend.dto.AirlineResponse;
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
 import com.erijl.flightvisualizer.backend.model.Aircraft;
-import com.erijl.flightvisualizer.backend.model.Airline;
 import com.erijl.flightvisualizer.backend.repository.AircraftRepository;
-import com.erijl.flightvisualizer.backend.repository.AirlineRepository;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
 import com.google.gson.Gson;
@@ -48,7 +45,11 @@ public class AircraftService {
         }
     }
 
-    public void requestAndInsertAircraft(String iataAircraftCode) {
+    public Aircraft getAircraftById(String iataAircraftCode) {
+        return this.aircraftRepository.findById(iataAircraftCode).orElse(null);
+    }
+
+    private void requestAndInsertAircraft(String iataAircraftCode) {
         String requestUrl = new UrlBuilder(this.baseUrl)
                 .aircraft()
                 .filterForAircraft(iataAircraftCode)
