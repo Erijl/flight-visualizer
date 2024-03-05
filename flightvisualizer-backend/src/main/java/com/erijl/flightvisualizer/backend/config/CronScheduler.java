@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class CronScheduler {
@@ -119,6 +120,9 @@ public class CronScheduler {
     private void insertFlightScheduleResponse(List<FlightScheduleResponse> flightScheduleResponseList, FlightScheduleCronRun cronRun) {
         this.ensureForeignKeyRelation(flightScheduleResponseList, cronRun);
 
+        List<FlightScheduleDataElement> flightScheduleDataElements = new ArrayList<>();
+        List<FlightScheduleLeg> flightScheduleLegs = new ArrayList<>();
+
         flightScheduleResponseList.forEach(flightScheduleResponse -> {
             FlightScheduleOperationPeriod operationPeriod = this.flightScheduleOperationPeriodRepository.save(
                     new FlightScheduleOperationPeriod(
@@ -144,7 +148,7 @@ public class CronScheduler {
             );
 
             flightScheduleResponse.getDataElementResponses().forEach(flightScheduleDataElement -> {
-                this.flightScheduleDataElementRepository.save(
+                flightScheduleDataElements.add(
                         new FlightScheduleDataElement(
                                 flightSchedule,
                                 flightScheduleDataElement.getStartLegSequenceNumber(),
@@ -166,7 +170,7 @@ public class CronScheduler {
                 Airline aircraftOwnerAirline = (aircraftOwner == null || aircraftOwner.isEmpty()) ? null : this.airlineService.getAirlineById(aircraftOwner);
                 Aircraft aircraft = (aircraftType == null || aircraftType.isEmpty()) ? null : this.aircraftService.getAircraftById(aircraftType);
 
-                this.flightScheduleLegRepository.save(
+                flightScheduleLegs.add(
                         new FlightScheduleLeg(
                                 flightSchedule,
                                 flightScheduleLeg.getSequenceNumber(),
@@ -191,8 +195,9 @@ public class CronScheduler {
                         )
                 );
             });
-
         });
+        this.flightScheduleDataElementRepository.saveAll(flightScheduleDataElements);
+        this.flightScheduleLegRepository.saveAll(flightScheduleLegs);
 
         this.flightScheduleCronRunRepository.updateCronRunFinish(cronRun.getCronRunId(), new Timestamp(new Date().getTime()));
     }
@@ -233,19 +238,12 @@ public class CronScheduler {
         System.out.println("Aircrafts: " + iataAircraftCodes.size());
         System.out.println("Airlines: " + iataAirlineCodes.size());
 
-        iataAirlineCodes.forEach(airlineCode -> {
-            System.out.println(airlineCode);
-            this.airlineService.ensureAirlineExists(airlineCode);
-        });
+        iataAirlineCodes.forEach(this.airlineService::ensureAirlineExists);
+        System.out.println("Aircrafts");
 
-        iataAircraftCodes.forEach(aircraftCode -> {
-            System.out.println(aircraftCode);
-            this.aircraftService.ensureAircraftExists(aircraftCode);
-        });
+        iataAircraftCodes.forEach(this.aircraftService::ensureAircraftExists);
+        System.out.println("Airports");
 
-        iataAirportCodes.forEach(airportCode -> {
-            System.out.println(airportCode);
-            this.airportService.ensureAirportExists(airportCode);
-        });
+        iataAirportCodes.forEach(this.airportService::ensureAirportExists);
     }
 }

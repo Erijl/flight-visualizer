@@ -9,6 +9,7 @@ import com.erijl.flightvisualizer.backend.util.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,7 @@ public class AirlineService {
         this.authManager = authManager;
     }
 
+    @Cacheable(value="airline", key="#iataAirlineCode", unless="#result == null")
     public void ensureAirlineExists(String iataAirlineCode) {
         Optional<Airline> airline = airlineRepository.findById(iataAirlineCode);
 
@@ -45,6 +47,7 @@ public class AirlineService {
         }
     }
 
+    @Cacheable(value="airline", key="#iataAirlineCode", unless="#result == null")
     public Airline getAirlineById(String iataAirlineCode) {
         return this.airlineRepository.findById(iataAirlineCode).orElse(null);
     }
