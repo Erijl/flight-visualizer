@@ -42,16 +42,16 @@ public class AirportService {
         return this.airportRepository.findAll();
     }
 
-    @Cacheable(value = "airport", key = "#iataAirportCode", unless="#result == null")
+    @Cacheable(value = "airport", key = "#iataAirportCode", unless = "#result == null")
     public void ensureAirportExists(String iataAirportCode) {
         Optional<Airport> airport = this.airportRepository.findById(iataAirportCode);
 
-        if(airport.isEmpty()) {
+        if (airport.isEmpty()) {
             this.requestAndInsertAirport(iataAirportCode);
         }
     }
 
-    @Cacheable(value = "airport", key = "#iataAirportCode", unless="#result == null")
+    @Cacheable(value = "airport", key = "#iataAirportCode", unless = "#result == null")
     public Airport getAirportById(String iataAirportCode) {
         return this.airportRepository.findById(iataAirportCode).orElse(null);
     }
@@ -63,9 +63,8 @@ public class AirportService {
                 .getUrl();
 
         try {
-        System.out.println(requestUrl);
-        ResponseEntity<String> response = this.restUtil.exchangeRequest(
-                requestUrl, HttpMethod.GET, this.restUtil.getStandardHeaders(this.authManager.getBearerAccessToken()));
+            ResponseEntity<String> response = this.restUtil.exchangeRequest(
+                    requestUrl, HttpMethod.GET, this.restUtil.getStandardHeaders(this.authManager.getBearerAccessToken()));
 
             AirportResponse airportResponse = this.gson.fromJson(response.getBody(), AirportResponse.class);
             AirportResponse.Airport tempAirport = airportResponse.getAirportResource().getAirports().getAirport();

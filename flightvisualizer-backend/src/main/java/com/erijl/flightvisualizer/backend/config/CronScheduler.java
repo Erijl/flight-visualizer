@@ -24,7 +24,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class CronScheduler {
@@ -70,7 +69,7 @@ public class CronScheduler {
         FlightScheduleCronRun possibleCronRuns = this.flightScheduleCronRunRepository.
                 findFlightScheduleCronRunByCronRunDateUtcEquals(currentLocalDateString);
 
-        if(possibleCronRuns != null && possibleCronRuns.getCronRunDateUtc().equals(currentLocalDateString)) {
+        if (possibleCronRuns != null && possibleCronRuns.getCronRunDateUtc().equals(currentLocalDateString)) {
             System.out.printf("Cron Run Already Exists for %s", currentLocalDateString);
             return;
         }
@@ -80,15 +79,11 @@ public class CronScheduler {
         cronRun.setCronRunDateUtc(currentDateUtc.toString());
 
         cronRun = this.flightScheduleCronRunRepository.save(cronRun);
-        Date today = Date.from(
-                new Date().
-                        toInstant().
-                        plus(1, ChronoUnit.DAYS)
-        );
+        Date today = new Date();
         Date tomorrow = Date.from(
                 new Date().
                         toInstant().
-                        plus(2, ChronoUnit.DAYS)
+                        plus(1, ChronoUnit.DAYS)
         );
 
         String requestUrl = new UrlBuilder(this.baseUrl)
@@ -104,7 +99,8 @@ public class CronScheduler {
 
         List<FlightScheduleResponse> aggregatedFlights = new ArrayList<>();
         if (response.getStatusCode() == HttpStatus.OK) {
-            Type listType = new TypeToken<List<FlightScheduleResponse>>(){}.getType();
+            Type listType = new TypeToken<List<FlightScheduleResponse>>() {
+            }.getType();
             aggregatedFlights = this.gson.fromJson(response.getBody(), listType);
         } else {
             //TODO add proper error handling, especially for 206 & 400
@@ -112,7 +108,7 @@ public class CronScheduler {
             System.out.println(response.getStatusCode());
         }
 
-        if(aggregatedFlights != null || !aggregatedFlights.isEmpty()) {
+        if (aggregatedFlights != null || !aggregatedFlights.isEmpty()) {
             this.insertFlightScheduleResponse(aggregatedFlights, cronRun);
         }
     }
@@ -140,10 +136,10 @@ public class CronScheduler {
 
             FlightSchedule flightSchedule = this.flightScheduleRepository.save(
                     new FlightSchedule(
-                        airline,
-                        operationPeriod,
-                        flightScheduleResponse.getFlightNumber(),
-                        flightScheduleResponse.getSuffix()
+                            airline,
+                            operationPeriod,
+                            flightScheduleResponse.getFlightNumber(),
+                            flightScheduleResponse.getSuffix()
                     )
             );
 
@@ -209,7 +205,7 @@ public class CronScheduler {
 
         flightScheduleResponseList.forEach(flightScheduleResponse -> {
 
-            if(flightScheduleResponse.getAirline() != null && flightScheduleResponse.getAirline().length() <= 2) {
+            if (flightScheduleResponse.getAirline() != null && flightScheduleResponse.getAirline().length() <= 2) {
                 iataAirlineCodes.add(flightScheduleResponse.getAirline());
             }
 
@@ -218,7 +214,7 @@ public class CronScheduler {
                 iataAirportCodes.add(flightScheduleLeg.getOrigin());
                 iataAirportCodes.add(flightScheduleLeg.getDestination());
 
-                if(flightScheduleLeg.getAircraftOwner() != null && flightScheduleLeg.getAircraftOwner().length() <= 2) {
+                if (flightScheduleLeg.getAircraftOwner() != null && flightScheduleLeg.getAircraftOwner().length() <= 2) {
                     iataAirlineCodes.add(flightScheduleLeg.getAircraftOwner());
                 }
             });
@@ -234,16 +230,8 @@ public class CronScheduler {
         cronRun.setFlightScheduleCount(flightScheduleResponseList.size());
         this.flightScheduleCronRunRepository.save(cronRun);
 
-        System.out.println("Airports: " + iataAirportCodes.size());
-        System.out.println("Aircrafts: " + iataAircraftCodes.size());
-        System.out.println("Airlines: " + iataAirlineCodes.size());
-
         iataAirlineCodes.forEach(this.airlineService::ensureAirlineExists);
-        System.out.println("Aircrafts");
-
         iataAircraftCodes.forEach(this.aircraftService::ensureAircraftExists);
-        System.out.println("Airports");
-
         iataAirportCodes.forEach(this.airportService::ensureAirportExists);
     }
 }
