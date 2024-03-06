@@ -23,8 +23,26 @@ body {
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 1500px;
+  width: 300px;
   background-color: white;
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.left-side-panel {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 300px;
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.table-row {
+  height: 30px !important;
+}
+
+.table-header {
+  height: 30px !important;
 }

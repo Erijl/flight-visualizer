@@ -1,23 +1,66 @@
 <div class="map-container">
+
   <div id="map"></div>
+  <div class="left-side-panel">
+    <h1>Information Panel</h1>
+    Select a route or Airport to get started.
+    <div>
+      <h2>Airport Information</h2>
+      <p>{{ selectedAirport?.iataAirportCode }}</p>
+      <p>{{ selectedAirport?.airportName }}</p>
+      <p>{{ selectedAirport?.iataCityCode }}</p>
+      <p>{{ selectedAirport?.isoCountryCode }}</p>
+      <p>{{ selectedAirport?.latitude }}</p>
+      <p>{{ selectedAirport?.longitude }}</p>
+      <p>{{ selectedAirport?.timezoneId }}</p>
+    </div>
+
+    <br>
+    <h2>Incoming/Outgoing Routes</h2>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource">
+
+        <ng-container matColumnDef="origin">
+          <th mat-header-cell *matHeaderCellDef> Origin </th>
+          <td mat-cell *matCellDef="let route"> {{route?.originAirport?.iataAirportCode}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="destination">
+          <th mat-header-cell *matHeaderCellDef> Destination </th>
+          <td mat-cell *matCellDef="let route"> {{route?.destinationAirport?.iataAirportCode}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="distance">
+          <th mat-header-cell *matHeaderCellDef> Distance </th>
+          <td mat-cell *matCellDef="let route"> {{route.kilometerDistance}}Km </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-header"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[10, 20]"
+                     [showFirstLastButtons]="false"
+                     aria-label="Select page of incoming routes">
+      </mat-paginator>
+    </div>
+  </div>
+
   <div class="side-panel">
-    <h1>Map Controls</h1>
+    <h1>Filter Panel</h1>
 
     <h2>Airports</h2>
     <select [(ngModel)]="airportDisplayType" (change)="onAirportDisplayTypeChange()">
-      <option *ngFor="let type of airportDisplayTypes" [value]="type">{{type}}</option>
+      <option *ngFor="let type of airportDisplayTypes" [value]="type">{{ type }}</option>
     </select>
 
     <h2>Routes</h2>
     <select [(ngModel)]="routeDisplayType" (change)="onRouteDisplayTypeChange()">
-      <option *ngFor="let type of routeDisplayTypes" [value]="type">{{type}}</option>
+      <option *ngFor="let type of routeDisplayTypes" [value]="type">{{ type }}</option>
     </select>
 
     <div *ngIf="specificAirportRoutesContainerVisible">
-      Airport:
-      <select [(ngModel)]="selectedAirportSpecificRoutesString" (change)="onSelectedAirportSpecificRoutesChange()">
-        <option *ngFor="let airport of allAirports" [value]="airport.iataAirportCode">{{airport.iataAirportCode}}</option>
-      </select>
+      Airport: <!-- //TODO add message explaining to select airport when airport is empty-->
       <div>
         <input type="checkbox" [(ngModel)]="specificAirportRoutesOutgoing" (change)="onOutgoingChange()"> Outgoing
         <br>
@@ -29,7 +72,7 @@
     <br>
     Filter:
     <select [(ngModel)]="routeFilterType" (change)="onRouteFilterTypeChange()">
-      <option *ngFor="let type of routeFilterTypes" [value]="type">{{type}}</option>
+      <option *ngFor="let type of routeFilterTypes" [value]="type">{{ type }}</option>
     </select>
 
     <input type="range" min="1" max="100" (change)="onSliderChange($event)">
@@ -38,6 +81,17 @@
     <br>
     <div *ngIf="histogramData.length > 1">
       <app-histogram [boxWidth]="300" [boxHeight]="300" [data]="histogramData"></app-histogram>
+    </div>
+    <br>
+    <br>
+    <div class="slider-container">
+      <mat-slider class="slider" [(ngModel)]="lowerValue" [max]="upperValue" [min]="minValue"></mat-slider>
+      <mat-slider class="slider" [(ngModel)]="upperValue" [max]="maxValue" [min]="lowerValue"></mat-slider>
+    </div>
+    <div class="values-container">
+      <span>{{ lowerValue }}</span>
+      <br>
+      <span>{{ upperValue }}</span>
     </div>
   </div>
 </div>

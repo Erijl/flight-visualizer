@@ -53,6 +53,7 @@ export class GeoService {
         },
         'properties': {
           'title': airport.airportName ? airport.airportName : airport.iataAirportCode,
+          'iataAirportCode': airport.iataAirportCode,
           'icon': 'airport'
         }
       });
