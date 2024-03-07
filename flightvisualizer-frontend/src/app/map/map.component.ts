@@ -9,6 +9,7 @@ import {FilterService} from "../core/service/filter.service";
 import * as d3 from 'd3';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
+import {MatSort} from "@angular/material/sort";
 
 @Component({
   selector: 'app-map',
@@ -36,27 +37,43 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   specificAirportRoutesOutgoing: boolean = true;
   specificAirportRoutesIncoming: boolean = true;
+  compactFlightRouteInformationTable: boolean = true;
 
   // UI state
-  specificAirportRoutesContainerVisible: boolean = false;
   histogramData: number[] = [];
   selectedAirport: Airport = new Airport();
   selectedAirportRoutes: FlightScheduleRouteDto[] = [];
-
+  selectionType: string = 'airport';
 
   lowerValue = 10;
   upperValue = 90;
   minValue = 0;
   maxValue = 100;
-  displayedColumns: string[] = ['origin', 'destination', 'distance'];
+  displayedColumns: string[] = ['origin', 'destination', 'kilometerDistance'];
   dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.selectedAirportRoutes);
 
+  // ViewChild's
+
+  // @ts-ignore
+  @ViewChild(MatSort) sort: MatSort;
   // @ts-ignore
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-  }
+  // Callback Functions
+  // @ts-ignore
+  airportLayerClickHandler = (e) => {
+    // @ts-ignore
+    const clickedAirport = e.features[0];
+    // @ts-ignore
+    this.selectedAirport = this.allAirports.find(airport => airport.iataAirportCode === clickedAirport.properties.iataAirportCode);
+    if(this.selectedAirport.iataAirportCode != "") {
+      this.selectedAirportRoutes = this.filterSerice.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.selectedAirport, true, true);
+      this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.selectedAirportRoutes);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+      if(this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
+    }
+  };
 
   constructor(private dataService: DataService, private geoService: GeoService, private filterSerice: FilterService) { }
 
@@ -79,32 +96,37 @@ export class MapComponent implements OnInit, AfterViewInit{
       this.geoService.addLayerTypeLineToMap(this.map, 'routeLayer', 'routeSource', {}, {'line-color': '#ffffff', 'line-width': 2})
       this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
 
-      this.map.on('click', 'airportLayer', (e) => {
-        // @ts-ignore
-        const clickedAirport = e.features[0];
-        // @ts-ignore
-        console.log(this.allAirports.find(airport => airport.iataAirportCode === clickedAirport?.properties?.iataAirportCode));
-
-        // @ts-ignore
-        this.selectedAirport = this.allAirports.find(airport => airport.iataAirportCode === clickedAirport.properties.iataAirportCode);
-        if(this.selectedAirport.iataAirportCode != "") {
-          this.selectedAirportRoutes = this.filterSerice.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.selectedAirport, true, true);
-          this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.selectedAirportRoutes);
-          this.dataSource.paginator = this.paginator;
-          if(this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
-        }
-      });
-
-      this.map.on('mouseenter', 'airportLayer', (e) => {
-        this.map.getCanvas().style.cursor = 'pointer';
-      });
-
-      this.map.on('mouseleave', 'airportLayer', () => {
-        this.map.getCanvas().style.cursor = '';
-      });
+      this.map.on('click', 'airportLayer', this.airportLayerClickHandler);
+      this.map.on('mouseenter', 'airportLayer', this.airportLayerMouseEnterHandler);
+      this.map.on('mouseleave', 'airportLayer', this.airportLayerMouseLeaveHandler);
 
       this.map.resize();
     });
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  onSelectionTypeChange(): void {
+    if(this.selectionType === 'airport') {
+      this.map.on('click', 'airportLayer', this.airportLayerClickHandler);
+      this.map.on('mouseenter', 'airportLayer', this.airportLayerMouseEnterHandler);
+      this.map.on('mouseleave', 'airportLayer', this.airportLayerMouseLeaveHandler);
+    } else if(this.selectionType === 'route') {
+      this.map.off('click', 'airportLayer', this.airportLayerClickHandler);
+      this.map.off('mouseenter', 'airportLayer', this.airportLayerMouseEnterHandler);
+      this.map.off('mouseleave', 'airportLayer', this.airportLayerMouseLeaveHandler);
+    }
+  }
+
+  airportLayerMouseEnterHandler = () => {
+    this.map.getCanvas().style.cursor = 'pointer';
+  }
+
+  airportLayerMouseLeaveHandler = () => {
+    this.map.getCanvas().style.cursor = '';
   }
 
   onAirportDisplayTypeChange(): void {
@@ -130,12 +152,12 @@ export class MapComponent implements OnInit, AfterViewInit{
       this.geoService.removeLayerFromMap(this.map, 'airportLayer');
       this.geoService.removeSourceFromMap(this.map, 'airportSource');
     }
+
   }
 
   renderRoutes(): void {
     //TODO optimize, check state before
     if(this.routeDisplayType === RouteDisplayType.ALL) {
-      this.specificAirportRoutesContainerVisible = false;
       this.geoService.removeLayerFromMap(this.map, 'routeLayer');
       this.geoService.removeSourceFromMap(this.map, 'routeSource');
 
@@ -145,7 +167,6 @@ export class MapComponent implements OnInit, AfterViewInit{
 
       this.renderAirports();
     } else if(this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) {
-      this.specificAirportRoutesContainerVisible = true;
       this.geoService.removeLayerFromMap(this.map, 'routeLayer');
       this.geoService.removeSourceFromMap(this.map, 'routeSource');
 
@@ -162,13 +183,21 @@ export class MapComponent implements OnInit, AfterViewInit{
   }
 
   onOutgoingChange(): void {
-    this.renderRoutes();
-    this.renderAirports();
+    if(this.selectedAirport.iataAirportCode != "") {
+      this.selectedAirportRoutes = this.filterSerice.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.selectedAirport, this.specificAirportRoutesIncoming, this.specificAirportRoutesOutgoing);
+      this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.selectedAirportRoutes);
+      this.dataSource.paginator = this.paginator;
+      if(this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
+    }
   }
 
   onIncomingChange(): void {
-    this.renderRoutes();
-    this.renderAirports();
+    if(this.selectedAirport.iataAirportCode != "") {
+      this.selectedAirportRoutes = this.filterSerice.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.selectedAirport, this.specificAirportRoutesIncoming, this.specificAirportRoutesOutgoing);
+      this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.selectedAirportRoutes);
+      this.dataSource.paginator = this.paginator;
+      if(this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
+    }
   }
 
   onRouteFilterTypeChange(): void {
