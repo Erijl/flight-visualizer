@@ -24,7 +24,7 @@ public class FlightScheduleLegService {
     }
 
     public List<FlightScheduleLegWithDistance> getFlightScheduleLegsWithDistance() {
-        Iterable<FlightScheduleLegDto> flightScheduleLegDtos = flightScheduleLegRepository.findAllWithoutAssociations();
+        Iterable<FlightScheduleLegDto> flightScheduleLegDtos = this.getFlightScheduleLegs();
 
         List<FlightScheduleLegWithDistance> flightScheduleLegWithDistances = new ArrayList<>();
         for (FlightScheduleLegDto flightScheduleLegDto : flightScheduleLegDtos) {

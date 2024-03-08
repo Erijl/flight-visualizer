@@ -29,10 +29,10 @@ export class FlightScheduleRouteDto {
   destinationAirport: Airport;
   kilometerDistance: number;
 
-  constructor(legId: number, originAirport: Airport, destinationAirport: Airport, kilometerDistance: number) {
-    this.legId = legId;
-    this.originAirport = originAirport;
-    this.destinationAirport = destinationAirport;
-    this.kilometerDistance = kilometerDistance;
+  constructor(legId?: number, originAirport?: Airport, destinationAirport?: Airport, kilometerDistance?: number) {
+    this.legId = legId || -1;
+    this.originAirport = originAirport || new Airport();
+    this.destinationAirport = destinationAirport || new Airport();
+    this.kilometerDistance = kilometerDistance || 0;
   }
 }

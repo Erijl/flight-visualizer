@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import mapboxgl from "mapbox-gl";
 import {Airport, FlightScheduleRouteDto} from "../core/dto/airport";
 import {DataService} from "../core/service/data.service";
@@ -10,20 +10,18 @@ import * as d3 from 'd3';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
+import {AirportInfoComponent} from "../airport-info/airport-info.component";
+import {DataStoreService} from "../core/service/data-store.service";
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrl: './map.component.css'
 })
-export class MapComponent implements OnInit, AfterViewInit{
+export class MapComponent implements OnInit{
 
   // @ts-ignore
   map: mapboxgl.Map;
-
-  // 'raw' data
-  allAirports: Airport[] = [];
-  allFlightScheduleRouteDtos: FlightScheduleRouteDto[] = [];//TODO use only Routes from Airports not Railway statsions etc.
 
   // UI data
   airportDisplayTypes = Object.values(AirportDisplayType);
@@ -33,31 +31,15 @@ export class MapComponent implements OnInit, AfterViewInit{
   routeFilterTypes = Object.values(RouteFilterType);
   routeFilterType: RouteFilterType = RouteFilterType.DISTANCE;
 
-  flightScheduleRouteDtosToDisplay: FlightScheduleRouteDto[] = [];
-
-  specificAirportRoutesOutgoing: boolean = true;
-  specificAirportRoutesIncoming: boolean = true;
-  compactFlightRouteInformationTable: boolean = true;
-
   // UI state
   histogramData: number[] = [];
   selectedAirport: Airport = new Airport();
-  selectedAirportRoutes: FlightScheduleRouteDto[] = [];
   selectionType: string = 'airport';
 
   lowerValue = 10;
   upperValue = 90;
   minValue = 0;
   maxValue = 100;
-  displayedColumns: string[] = ['origin', 'destination', 'kilometerDistance'];
-  dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.selectedAirportRoutes);
-
-  // ViewChild's
-
-  // @ts-ignore
-  @ViewChild(MatSort) sort: MatSort;
-  // @ts-ignore
-  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   // Callback Functions
   // @ts-ignore
@@ -67,20 +49,16 @@ export class MapComponent implements OnInit, AfterViewInit{
     // @ts-ignore
     this.selectedAirport = this.allAirports.find(airport => airport.iataAirportCode === clickedAirport.properties.iataAirportCode);
     if(this.selectedAirport.iataAirportCode != "") {
-      this.selectedAirportRoutes = this.filterSerice.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.selectedAirport, true, true);
-      this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.selectedAirportRoutes);
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
+      this.dataStoreService.setSelectedAirport(this.selectedAirport);
       if(this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
     }
   };
 
-  constructor(private dataService: DataService, private geoService: GeoService, private filterSerice: FilterService) { }
+  // ViewChild's
+
+  constructor(private dataService: DataService, private geoService: GeoService, private filterSerice: FilterService, private dataStoreService: DataStoreService) { }
 
   ngOnInit(): void {
-    this.getAirports();
-    this.getFlightScheduleLegRoutes();
-
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXJpamwiLCJhIjoiY2xza2JpemdmMDIzejJyczBvZGk2aG44eiJ9.eJkFfrXg1dGFasDJRkmnIg';
     this.map = new mapboxgl.Map({
       container: 'map',
@@ -90,8 +68,8 @@ export class MapComponent implements OnInit, AfterViewInit{
     });
 
     this.map.on('load', () => {
-      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.flightScheduleRouteDtosToDisplay));
-      this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.allAirports));
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.dataStoreService.getCurrentlyDisplayedRoutes()));
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.dataStoreService.getCurrentlyDisplayedAirports()));
 
       this.geoService.addLayerTypeLineToMap(this.map, 'routeLayer', 'routeSource', {}, {'line-color': '#ffffff', 'line-width': 2})
       this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
@@ -102,11 +80,6 @@ export class MapComponent implements OnInit, AfterViewInit{
 
       this.map.resize();
     });
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
   }
 
   onSelectionTypeChange(): void {
@@ -140,13 +113,13 @@ export class MapComponent implements OnInit, AfterViewInit{
       this.geoService.removeLayerFromMap(this.map, 'airportLayer');
       this.geoService.removeSourceFromMap(this.map, 'airportSource');
 
-      this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.allAirports));
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.dataStoreService.getCurrentlyDisplayedAirports()));
       this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
     } else if(this.airportDisplayType === AirportDisplayType.WITHROUTES) {
       this.geoService.removeLayerFromMap(this.map, 'airportLayer');
       this.geoService.removeSourceFromMap(this.map, 'airportSource');
 
-      this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.filterSerice.getAllAirportsPresentInFlightScheduleRouteDtos(this.flightScheduleRouteDtosToDisplay)));
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.filterSerice.getAllAirportsPresentInFlightScheduleRouteDtos(this.dataStoreService.getCurrentlyDisplayedRoutes())));
       this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
     } else if(this.airportDisplayType === AirportDisplayType.NONE) {
       this.geoService.removeLayerFromMap(this.map, 'airportLayer');
@@ -161,8 +134,7 @@ export class MapComponent implements OnInit, AfterViewInit{
       this.geoService.removeLayerFromMap(this.map, 'routeLayer');
       this.geoService.removeSourceFromMap(this.map, 'routeSource');
 
-      this.flightScheduleRouteDtosToDisplay = this.allFlightScheduleRouteDtos;
-      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.flightScheduleRouteDtosToDisplay));
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.dataStoreService.getCurrentlyDisplayedRoutes()));
       this.geoService.addLayerTypeLineToMap(this.map, 'routeLayer', 'routeSource', {}, {'line-color': '#ffffff', 'line-width': 2})
 
       this.renderAirports();
@@ -170,8 +142,7 @@ export class MapComponent implements OnInit, AfterViewInit{
       this.geoService.removeLayerFromMap(this.map, 'routeLayer');
       this.geoService.removeSourceFromMap(this.map, 'routeSource');
 
-      this.flightScheduleRouteDtosToDisplay = this.filterSerice.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.selectedAirport, this.specificAirportRoutesIncoming, this.specificAirportRoutesOutgoing);
-      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.flightScheduleRouteDtosToDisplay));
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.dataStoreService.getCurrentlyDisplayedRoutes()));
       this.geoService.addLayerTypeLineToMap(this.map, 'routeLayer', 'routeSource', {}, {'line-color': '#ffffff', 'line-width': 2})
 
       if(this.airportDisplayType != AirportDisplayType.ALL) this.renderAirports();
@@ -182,11 +153,11 @@ export class MapComponent implements OnInit, AfterViewInit{
     this.renderRoutes();
   }
 
+  /*
   onOutgoingChange(): void {
     if(this.selectedAirport.iataAirportCode != "") {
       this.selectedAirportRoutes = this.filterSerice.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.selectedAirport, this.specificAirportRoutesIncoming, this.specificAirportRoutesOutgoing);
-      this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.selectedAirportRoutes);
-      this.dataSource.paginator = this.paginator;
+      this.airportInfoComponent.updateTable();
       if(this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
     }
   }
@@ -194,11 +165,11 @@ export class MapComponent implements OnInit, AfterViewInit{
   onIncomingChange(): void {
     if(this.selectedAirport.iataAirportCode != "") {
       this.selectedAirportRoutes = this.filterSerice.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.selectedAirport, this.specificAirportRoutesIncoming, this.specificAirportRoutesOutgoing);
-      this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.selectedAirportRoutes);
-      this.dataSource.paginator = this.paginator;
+      this.airportInfoComponent.updateTable();
       if(this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
     }
   }
+   */
 
   onRouteFilterTypeChange(): void {
 
@@ -212,20 +183,7 @@ export class MapComponent implements OnInit, AfterViewInit{
     this.renderRoutes();
   }
 
-  getAirports(): void {
-    this.dataService.getAirports().subscribe(airports => {
-      this.allAirports = airports.filter(airport => airport.locationType === "Airport");
-    });
-  }
-
-  getFlightScheduleLegRoutes(): void {
-    this.dataService.getFlightScheduleLegRoutes().subscribe(flightScheduleLegs => {
-      this.allFlightScheduleRouteDtos = flightScheduleLegs;
-      this.flightScheduleRouteDtosToDisplay = flightScheduleLegs;
-      this.histogramData = this.geoService.generateRouteDistanceArray(this.allFlightScheduleRouteDtos);
-      console.log(this.histogramData);
-    });
-  }
+  //this.histogramData = this.geoService.generateRouteDistanceArray(this.allFlightScheduleRouteDtos);
 
   protected readonly AirportDisplayType = AirportDisplayType;
 }
