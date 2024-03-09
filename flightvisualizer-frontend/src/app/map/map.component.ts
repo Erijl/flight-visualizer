@@ -88,8 +88,9 @@ export class MapComponent implements OnInit, OnDestroy {
     // @ts-ignore
     const clickedAirport = e.features[0];
     // @ts-ignore
-    this.selectedAirport = this.dataStoreService.getAllAirports().find(airport => airport.iataAirportCode === clickedAirport.properties.iataAirportCode);
-    if (this.selectedAirport.iataAirportCode != "") {
+    const selectedAirport = this.dataStoreService.getAllAirports().find(airport => airport.iataAirportCode === clickedAirport.properties.iataAirportCode);
+    if (selectedAirport && selectedAirport.iataAirportCode != '' && selectedAirport.iataAirportCode != this.selectedAirport.iataAirportCode) {
+      this.selectedAirport = selectedAirport;
       this.dataStoreService.setSelectedAirport(this.selectedAirport);
       if (this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
     }
@@ -151,6 +152,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   onSpecificAirportChange(): void {
     this.renderRoutes();
+    this.renderAirports();
   }
 
   replaceCurrentlyRenderedAirports(newAirports: Airport[]): void {
