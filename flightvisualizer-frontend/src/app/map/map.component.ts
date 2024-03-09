@@ -47,7 +47,7 @@ export class MapComponent implements OnInit{
     // @ts-ignore
     const clickedAirport = e.features[0];
     // @ts-ignore
-    this.selectedAirport = this.allAirports.find(airport => airport.iataAirportCode === clickedAirport.properties.iataAirportCode);
+    this.selectedAirport = this.dataStoreService.getAllAirports().find(airport => airport.iataAirportCode === clickedAirport.properties.iataAirportCode);
     if(this.selectedAirport.iataAirportCode != "") {
       this.dataStoreService.setSelectedAirport(this.selectedAirport);
       if(this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
@@ -68,7 +68,7 @@ export class MapComponent implements OnInit{
     });
 
     this.map.on('load', () => {
-      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.dataStoreService.getCurrentlyDisplayedRoutes()));
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.dataStoreService.getRenderedRoutes()));
       this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.dataStoreService.getCurrentlyDisplayedAirports()));
 
       this.geoService.addLayerTypeLineToMap(this.map, 'routeLayer', 'routeSource', {}, {'line-color': '#ffffff', 'line-width': 2})
@@ -119,7 +119,7 @@ export class MapComponent implements OnInit{
       this.geoService.removeLayerFromMap(this.map, 'airportLayer');
       this.geoService.removeSourceFromMap(this.map, 'airportSource');
 
-      this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.filterSerice.getAllAirportsPresentInFlightScheduleRouteDtos(this.dataStoreService.getCurrentlyDisplayedRoutes())));
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', this.geoService.convertAirportsToGeoJson(this.filterSerice.getAllAirportsPresentInFlightScheduleRouteDtos(this.dataStoreService.getRenderedRoutes())));
       this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
     } else if(this.airportDisplayType === AirportDisplayType.NONE) {
       this.geoService.removeLayerFromMap(this.map, 'airportLayer');
@@ -134,7 +134,7 @@ export class MapComponent implements OnInit{
       this.geoService.removeLayerFromMap(this.map, 'routeLayer');
       this.geoService.removeSourceFromMap(this.map, 'routeSource');
 
-      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.dataStoreService.getCurrentlyDisplayedRoutes()));
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.dataStoreService.getRenderedRoutes()));
       this.geoService.addLayerTypeLineToMap(this.map, 'routeLayer', 'routeSource', {}, {'line-color': '#ffffff', 'line-width': 2})
 
       this.renderAirports();
@@ -142,7 +142,7 @@ export class MapComponent implements OnInit{
       this.geoService.removeLayerFromMap(this.map, 'routeLayer');
       this.geoService.removeSourceFromMap(this.map, 'routeSource');
 
-      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.dataStoreService.getCurrentlyDisplayedRoutes()));
+      this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', this.geoService.convertFlightScheduleRouteDtosToGeoJson(this.dataStoreService.getRenderedRoutes()));
       this.geoService.addLayerTypeLineToMap(this.map, 'routeLayer', 'routeSource', {}, {'line-color': '#ffffff', 'line-width': 2})
 
       if(this.airportDisplayType != AirportDisplayType.ALL) this.renderAirports();

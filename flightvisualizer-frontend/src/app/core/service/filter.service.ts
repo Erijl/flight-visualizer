@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Airport, FlightScheduleRouteDto} from "../dto/airport";
 
 @Injectable({
@@ -21,12 +21,35 @@ export class FilterService {
     const allFlightScheduleRouteDtosByAirport: any = [];
     allFlightScheduleRouteDtos.forEach((flightScheduleRouteDto: FlightScheduleRouteDto) => {
 
-      if(incomingRoutes && flightScheduleRouteDto.destinationAirport.iataAirportCode == airport.iataAirportCode) {
+      if (incomingRoutes && flightScheduleRouteDto.destinationAirport.iataAirportCode == airport.iataAirportCode) {
         allFlightScheduleRouteDtosByAirport.push(flightScheduleRouteDto);
-      } else if(outgoingRoutes && flightScheduleRouteDto.originAirport.iataAirportCode == airport.iataAirportCode) {
+      } else if (outgoingRoutes && flightScheduleRouteDto.originAirport.iataAirportCode == airport.iataAirportCode) {
         allFlightScheduleRouteDtosByAirport.push(flightScheduleRouteDto);
       }
     });
     return allFlightScheduleRouteDtosByAirport;
+  }
+
+  getCleanedFlightScheduleRouteDtos(flightScheduleRouteDtos: FlightScheduleRouteDto[]): FlightScheduleRouteDto[] {
+    let cleanedRoutes: FlightScheduleRouteDto[] = [];
+
+    flightScheduleRouteDtos.forEach(route => {
+      if (!cleanedRoutes.find(cleanedRoute => this.compareFlightScheduleRouteDtos(route, cleanedRoute))) {
+        cleanedRoutes.push(route);
+      }
+    })
+    return cleanedRoutes;
+  }
+
+  compareFlightScheduleRouteDtos(originalFlightRoute: FlightScheduleRouteDto, alteredFlightRoute: FlightScheduleRouteDto): boolean {
+    return (
+        originalFlightRoute.originAirport.iataAirportCode == alteredFlightRoute.originAirport.iataAirportCode &&
+        originalFlightRoute.destinationAirport.iataAirportCode == alteredFlightRoute.destinationAirport.iataAirportCode
+      )
+      ||
+      (
+        originalFlightRoute.originAirport.iataAirportCode == alteredFlightRoute.destinationAirport.iataAirportCode &&
+        originalFlightRoute.destinationAirport.iataAirportCode == alteredFlightRoute.originAirport.iataAirportCode
+      );
   }
 }

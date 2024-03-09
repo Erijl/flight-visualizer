@@ -22,6 +22,7 @@ import {MatButtonToggle, MatButtonToggleGroup} from "@angular/material/button-to
 import {MatSort, MatSortModule} from "@angular/material/sort";
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AirportInfoComponent } from './airport-info/airport-info.component';
+import {CommonModule} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { AirportInfoComponent } from './airport-info/airport-info.component';
     MatButtonToggleGroup,
     MatButtonToggle,
     MatSort,
-    MatSortModule
+    MatSortModule,
+    CommonModule
   ],
   providers: [
     provideAnimationsAsync('noop')

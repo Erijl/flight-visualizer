@@ -20,6 +20,9 @@ export class DataStoreService {
   private _currentlyDisplayedAirports: BehaviorSubject<Airport[]> = new BehaviorSubject<Airport[]>([]);
   currentlyDisplayedAirports: Airport[] = [];
 
+  private _renderedRoutes: BehaviorSubject<FlightScheduleRouteDto[]> = new BehaviorSubject<FlightScheduleRouteDto[]>([]);
+  renderedRoutes = this._renderedRoutes.asObservable();
+
   // selected data
   private _selectedAirport: BehaviorSubject<Airport> = new BehaviorSubject<Airport>(new Airport());
   selectedAirport = this._selectedAirport.asObservable();
@@ -41,6 +44,10 @@ export class DataStoreService {
   }
 
   // GETTERS
+  getAllAirports(): Airport[] {
+    return this.allAirports;
+  }
+
   getSelectedAirport(): Airport {
     return this._selectedAirport.getValue();
   }
@@ -57,8 +64,12 @@ export class DataStoreService {
     return this._currentlyDisplayedAirports.getValue();
   }
 
+  getRenderedRoutes(): FlightScheduleRouteDto[] {
+    return this._renderedRoutes.getValue();
+  }
+
   getFlightScheduleRoutesForSelectedAirport(): FlightScheduleRouteDto[] {
-    return this.filterService.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this._selectedAirport.getValue(), this._selectedAirportRoutesIncoming.getValue(), this._selectedAirportRoutesOutgoing.getValue());
+    return this.filterService.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.getSelectedAirport(), this.getSelectedAirportRoutesIncoming(), this.getSelectedAirportRoutesOutgoing());
   }
 
   getSelectedAirportRoutesOutgoing(): boolean {
@@ -83,6 +94,7 @@ export class DataStoreService {
 
   setCurrentlyDisplayedRoutes(routes: FlightScheduleRouteDto[]): void {
     this._currentlyDisplayedRoutes.next(routes);
+    this._renderedRoutes.next(this.filterService.getCleanedFlightScheduleRouteDtos(routes));
   }
 
   setCurrentlyDisplayedAirports(airports: Airport[]): void {
@@ -98,14 +110,14 @@ export class DataStoreService {
   }
 
   // FETCHING DATA
-  getAirports(): void {
+  private getAirports(): void {
     this.dataService.getAirports().subscribe(airports => {
       this.allAirports = airports.filter(airport => airport.locationType === "Airport");
       this.setCurrentlyDisplayedAirports(this.allAirports);
     });
   }
 
-  getFlightScheduleLegRoutes(): void {
+  private getFlightScheduleLegRoutes(): void {
     this.dataService.getFlightScheduleLegRoutes().subscribe(flightScheduleLegs => {
       this.allFlightScheduleRouteDtos = flightScheduleLegs;
       this.setCurrentlyDisplayedRoutes(this.allFlightScheduleRouteDtos);
