@@ -18,7 +18,7 @@ export class DataStoreService {
   currentlyDisplayedRoutes: FlightScheduleRouteDto[] = [];
 
   private _currentlyDisplayedAirports: BehaviorSubject<Airport[]> = new BehaviorSubject<Airport[]>([]);
-  currentlyDisplayedAirports: Airport[] = [];
+  currentlyDisplayedAirports = this._currentlyDisplayedAirports.asObservable();
 
   private _renderedRoutes: BehaviorSubject<FlightScheduleRouteDto[]> = new BehaviorSubject<FlightScheduleRouteDto[]>([]);
   renderedRoutes = this._renderedRoutes.asObservable();
@@ -78,6 +78,10 @@ export class DataStoreService {
 
   getSelectedAirportRoutesIncoming(): boolean {
     return this._selectedAirportRoutesIncoming.getValue();
+  }
+
+  getAllFlightScheduleRouteDtos() {
+    return this.allFlightScheduleRouteDtos;
   }
 
 
