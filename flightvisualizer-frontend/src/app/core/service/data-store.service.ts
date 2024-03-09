@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Airport, FlightScheduleRouteDto} from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
@@ -83,7 +83,6 @@ export class DataStoreService {
   getAllFlightScheduleRouteDtos() {
     return this.allFlightScheduleRouteDtos;
   }
-
 
 
   // SETTERS

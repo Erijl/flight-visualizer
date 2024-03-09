@@ -52,9 +52,7 @@ export class GeoService {
           'coordinates': [airport.longitude, airport.latitude]
         },
         'properties': {
-          'title': airport.airportName ? airport.airportName : airport.iataAirportCode,
           'iataAirportCode': airport.iataAirportCode,
-          'icon': 'airport'
         }
       });
     });
@@ -69,6 +67,10 @@ export class GeoService {
         'geometry': {
           'type': 'LineString',
           'coordinates': this.calculateOptimalLinePath(flightScheduleRouteDto.originAirport, flightScheduleRouteDto.destinationAirport)
+        },
+        'properties': {
+          'originAirport': flightScheduleRouteDto.originAirport.iataAirportCode,
+          'destinationAirport': flightScheduleRouteDto.destinationAirport.iataAirportCode,
         }
       });
     });
