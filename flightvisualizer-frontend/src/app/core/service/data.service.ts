@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {catchError, Observable, of, tap} from "rxjs";
-import {Airport, FlightScheduleRouteDto} from "../dto/airport";
+import {Airport, FlightDateFrequencyDto, FlightScheduleRouteDto} from "../dto/airport";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable({
@@ -26,6 +26,16 @@ export class DataService {
         catchError(this.handleError<FlightScheduleRouteDto[]>('getFlightScheduleLegRoutes', []))
       );
   }
+
+  getFlightDateFrequencies() {
+    return this.http.get<FlightDateFrequencyDto[]>(this.apiEndpoint + 'flightdatefrequency')
+      .pipe(
+        tap(_ => this.log('fetched getFlightDateFrequencies')),
+        catchError(this.handleError<FlightDateFrequencyDto[]>('getFlightDateFrequencies', []))
+      );
+  }
+
+
 
   /**
    * Handle a Http operation that failed, without crashing the app.

@@ -23,6 +23,11 @@ import {MatSort, MatSortModule} from "@angular/material/sort";
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { AirportInfoComponent } from './airport-info/airport-info.component';
 import {CommonModule} from "@angular/common";
+import {MatDatepickerModule} from "@angular/material/datepicker";
+import {MatInputModule} from "@angular/material/input";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {provideNativeDateAdapter} from "@angular/material/core";
+import {MatSlideToggle} from "@angular/material/slide-toggle";
 
 @NgModule({
   declarations: [
@@ -31,32 +36,37 @@ import {CommonModule} from "@angular/common";
     HistogramComponent,
     AirportInfoComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    FormsModule,
-    MatSlider,
-    MatSliderRangeThumb,
-    MatTable,
-    MatColumnDef,
-    MatHeaderCell,
-    MatCell,
-    MatPaginator,
-    MatHeaderCellDef,
-    MatCellDef,
-    MatHeaderRowDef,
-    MatRowDef,
-    MatHeaderRow,
-    MatRow,
-    MatButtonToggleGroup,
-    MatButtonToggle,
-    MatSort,
-    MatSortModule,
-    CommonModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        FormsModule,
+        MatSlider,
+        MatSliderRangeThumb,
+        MatTable,
+        MatColumnDef,
+        MatHeaderCell,
+        MatCell,
+        MatPaginator,
+        MatHeaderCellDef,
+        MatCellDef,
+        MatHeaderRowDef,
+        MatRowDef,
+        MatHeaderRow,
+        MatRow,
+        MatButtonToggleGroup,
+        MatButtonToggle,
+        MatSort,
+        MatSortModule,
+        CommonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatDatepickerModule,
+        MatSlideToggle
+    ],
   providers: [
-    provideAnimationsAsync('noop')
+    provideAnimationsAsync('noop'),
+    provideNativeDateAdapter()
   ],
   bootstrap: [AppComponent]
 })

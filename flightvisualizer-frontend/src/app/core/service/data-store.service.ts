@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Airport, FlightScheduleRouteDto} from "../dto/airport";
+import {Airport, FlightDateFrequencyDto, FlightScheduleRouteDto} from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {FilterService} from "./filter.service";
@@ -12,6 +12,9 @@ export class DataStoreService {
   // 'raw' data
   allFlightScheduleRouteDtos: FlightScheduleRouteDto[] = [];
   allAirports: Airport[] = [];
+
+  private _allFlightDateFrequencies: BehaviorSubject<FlightDateFrequencyDto[]> = new BehaviorSubject<FlightDateFrequencyDto[]>([]);
+  allFlightDateFrequencies = this._allFlightDateFrequencies.asObservable();
 
   // displayed data
   private _currentlyDisplayedRoutes: BehaviorSubject<FlightScheduleRouteDto[]> = new BehaviorSubject<FlightScheduleRouteDto[]>([]);
@@ -41,6 +44,7 @@ export class DataStoreService {
   constructor(private dataService: DataService, private filterService: FilterService) {
     this.getAirports();
     this.getFlightScheduleLegRoutes();
+    this.getFlightDateFrequencies();
   }
 
   // GETTERS
@@ -124,6 +128,12 @@ export class DataStoreService {
     this.dataService.getFlightScheduleLegRoutes().subscribe(flightScheduleLegs => {
       this.allFlightScheduleRouteDtos = flightScheduleLegs;
       this.setCurrentlyDisplayedRoutes(this.allFlightScheduleRouteDtos);
+    });
+  }
+
+  private getFlightDateFrequencies(): void {
+    this.dataService.getFlightDateFrequencies().subscribe(flightDateFrequencies => {
+      this._allFlightDateFrequencies.next(flightDateFrequencies);
     });
   }
 }

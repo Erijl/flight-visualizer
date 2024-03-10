@@ -1,8 +1,4 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import {Component, OnDestroy, OnInit,} from '@angular/core';
 import mapboxgl from "mapbox-gl";
 import {Airport, FlightScheduleRouteDto} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -25,6 +21,7 @@ export class MapComponent implements OnInit, OnDestroy {
   // Subscriptions
   currentlyRenderedAirportsSubscription!: Subscription;
   currentlyRenderedRoutesSubscription!: Subscription;
+  flightDateFrequenciesSubscription!: Subscription;
 
   // UI data
   airportDisplayTypes = Object.values(AirportDisplayType);
@@ -33,19 +30,37 @@ export class MapComponent implements OnInit, OnDestroy {
   routeDisplayType: RouteDisplayType = RouteDisplayType.ALL;
   routeFilterTypes = Object.values(RouteFilterType);
   routeFilterType: RouteFilterType = RouteFilterType.DISTANCE;
+  flightDateFrequencies: Set<string> = new Set();
+  timeStart: number = 0; // 0 represents 0:00am
+  timeEnd: number = 143; // 143 represents 23:50pm
+
+
+
 
   // UI state
   histogramData: number[] = [];
   selectedAirport: Airport = new Airport();
   selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
   selectionType: string = 'airport';
+  selectedDate: Date = new Date();
+  selectedDateRange: { start: Date, end: Date } = {start: new Date(), end: new Date()};
+  isRangePicker: boolean = false;
 
   lowerValue = 10;
   upperValue = 90;
   minValue = 0;
   maxValue = 100;
 
-  // ViewChild's
+  getIsDateAvailableInputFilter() {
+    return (date: Date | null): boolean => {
+      if (!date || !this.flightDateFrequencies) {
+        return false;
+      }
+      const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+      return this.flightDateFrequencies.has(dateString);
+    };
+  }
+  dateFilter = this.getIsDateAvailableInputFilter();
 
   constructor(private geoService: GeoService, private filterSerice: FilterService, private dataStoreService: DataStoreService) {
   }
@@ -57,6 +72,15 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
       this.replaceCurrentlyRenderedRoutes(routes);
+    });
+
+    this.flightDateFrequenciesSubscription = this.dataStoreService.allFlightDateFrequencies.subscribe(frequencies => {
+      const dates = frequencies.map(frequency => {
+        const date = new Date(frequency.startDateUtc);
+        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+      });
+      this.flightDateFrequencies = new Set(dates);
+      this.dateFilter = this.getIsDateAvailableInputFilter();
     });
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXJpamwiLCJhIjoiY2xza2JpemdmMDIzejJyczBvZGk2aG44eiJ9.eJkFfrXg1dGFasDJRkmnIg';
@@ -120,6 +144,26 @@ export class MapComponent implements OnInit, OnDestroy {
     this.renderAirports();
   }
 
+  protected convertSliderValueToTime(value: number): string {
+    let hours = Math.floor((143*10)/60);
+    let minutes = Math.floor((143*10)%60);
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  }
+
+  onDateChange(event: any): void {
+    this.selectedDate = event.value;
+    // TODO: Add your logic to handle the date change
+  }
+
+  onDateRangeChange(event: any): void {
+    // TODO: Add your logic to handle the date range change
+  }
+
+  onToggleChange(): void {
+    this.isRangePicker = !this.isRangePicker;
+  }
+
   renderAirports(): void {
     if (this.airportDisplayType === AirportDisplayType.ALL) {
       this.dataStoreService.setCurrentlyDisplayedAirports(this.dataStoreService.getAllAirports());
@@ -144,10 +188,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
   onRouteFilterTypeChange(): void {
 
-  }
-
-  onSliderChange(event: any): void {
-    // Handle slider change
   }
 
   onSpecificAirportChange(): void {
@@ -234,6 +274,7 @@ export class MapComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.currentlyRenderedAirportsSubscription.unsubscribe();
     this.currentlyRenderedRoutesSubscription.unsubscribe();
+    this.flightDateFrequenciesSubscription.unsubscribe();
   }
 
   protected readonly AirportDisplayType = AirportDisplayType;

@@ -36,3 +36,13 @@ export class FlightScheduleRouteDto {
     this.kilometerDistance = kilometerDistance || 0;
   }
 }
+
+export class FlightDateFrequencyDto {
+  startDateUtc: Date;
+  count: number;
+
+  constructor(startDateUtc?: Date, frequency?: number) {
+    this.startDateUtc = startDateUtc || new Date();
+    this.count = frequency || 0;
+  }
+}

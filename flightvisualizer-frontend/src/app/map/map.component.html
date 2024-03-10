@@ -3,6 +3,47 @@
   <div id="map"></div>
   <div class="left-side-panel">
     <h1>Information Panel</h1>
+    <div [hidden]="isRangePicker">
+      <mat-form-field>
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepickerFilter]="dateFilter" [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange($event)">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div [hidden]="!isRangePicker">
+      <mat-form-field [hidden]="!isRangePicker">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [dateFilter]="dateFilter" [rangePicker]="rangePicker" [(ngModel)]="selectedDateRange"
+                              (change)="onDateRangeChange($event)">
+          <input matStartDate placeholder="Start date">
+          <input matEndDate placeholder="End date">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
+        <mat-date-range-picker #rangePicker></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+
+    <mat-slide-toggle (change)="onToggleChange()" [checked]="isRangePicker">Toggle Date Picker</mat-slide-toggle>
+
+    <br>
+    <mat-slider
+      thumbLabel
+      tickInterval="10"
+      min="0"
+      max="143"
+      step="1">
+      <input [ngModel]="timeStart" (ngModelChange)="timeStart = $event" matSliderStartThumb>
+      <input [ngModel]="timeEnd" (ngModelChange)="timeEnd = $event" matSliderEndThumb>
+    </mat-slider>
+    <div class="values-container">
+      <span>{{ convertSliderValueToTime(timeStart) }}</span>
+      <br>
+      <span>{{ convertSliderValueToTime(timeEnd)  }}</span>
+    </div>
+    <br>
+
     Select:
     <br>
     <mat-button-toggle-group [(ngModel)]="selectionType" (change)="onSelectionTypeChange()" name="fontStyle"
@@ -39,7 +80,9 @@
       <option *ngFor="let type of routeFilterTypes" [value]="type">{{ type }}</option>
     </select>
 
+    <!--
     <input type="range" min="1" max="100" (change)="onSliderChange($event)">
+    -->
 
     <br>
     <br>
