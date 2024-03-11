@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit,} from '@angular/core';
 import mapboxgl from "mapbox-gl";
-import {Airport, FlightScheduleRouteDto} from "../core/dto/airport";
+import {Airport, FlightScheduleRouteDto, SelectedDateRange} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
 import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enum";
@@ -31,41 +31,27 @@ export class MapComponent implements OnInit, OnDestroy {
   routeFilterTypes = Object.values(RouteFilterType);
   routeFilterType: RouteFilterType = RouteFilterType.DISTANCE;
   flightDateFrequencies: Set<string> = new Set();
-  timeStart: number = 0; // 0 represents 0:00am
-  timeEnd: number = 143; // 143 represents 23:50pm
-
-
-
+  timeStart: number = 0;
+  timeEnd: number = 1439;
 
   // UI state
   histogramData: number[] = [];
   selectedAirport: Airport = new Airport();
   selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
   selectionType: string = 'airport';
-  selectedDate: Date = new Date();
-  selectedDateRange: { start: Date, end: Date } = {start: new Date(), end: new Date()};
-  isRangePicker: boolean = false;
+  selectedDateRange: SelectedDateRange = new SelectedDateRange(new Date(), new Date());
 
   lowerValue = 10;
   upperValue = 90;
-  minValue = 0;
-  maxValue = 100;
 
-  getIsDateAvailableInputFilter() {
-    return (date: Date | null): boolean => {
-      if (!date || !this.flightDateFrequencies) {
-        return false;
-      }
-      const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      return this.flightDateFrequencies.has(dateString);
-    };
-  }
   dateFilter = this.getIsDateAvailableInputFilter();
 
   constructor(private geoService: GeoService, private filterSerice: FilterService, private dataStoreService: DataStoreService) {
   }
 
   ngOnInit(): void {
+    this.selectedDateRange = this.dataStoreService.getSelectedDateRange();
+
     this.currentlyRenderedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
       this.replaceCurrentlyRenderedAirports(airports);
     });
@@ -120,6 +106,16 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   };
 
+  getIsDateAvailableInputFilter() {
+    return (date: Date | null): boolean => {
+      if (!date || !this.flightDateFrequencies) {
+        return false;
+      }
+      const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+      return this.flightDateFrequencies.has(dateString);
+    };
+  }
+
   // @ts-ignore
   routeLayerClickHandler = (e) => {
     // @ts-ignore
@@ -145,23 +141,19 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   protected convertSliderValueToTime(value: number): string {
-    let hours = Math.floor((143*10)/60);
-    let minutes = Math.floor((143*10)%60);
+    let hours = Math.floor((value)/60);
+    let minutes = Math.floor((value)%60);
 
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 
-  onDateChange(event: any): void {
-    this.selectedDate = event.value;
-    // TODO: Add your logic to handle the date change
-  }
+  onDateRangeChange(): void {
+    console.log("Date range changed")
+    console.log(this.selectedDateRange);
+    console.log(this.selectedDateRange?.start);
+    console.log(this.selectedDateRange?.end);
 
-  onDateRangeChange(event: any): void {
-    // TODO: Add your logic to handle the date range change
-  }
-
-  onToggleChange(): void {
-    this.isRangePicker = !this.isRangePicker;
+    this.dataStoreService.setSelectedDateRange(this.selectedDateRange);
   }
 
   renderAirports(): void {

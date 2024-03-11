@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {catchError, Observable, of, tap} from "rxjs";
-import {Airport, FlightDateFrequencyDto, FlightScheduleRouteDto} from "../dto/airport";
+import {Airport, FlightDateFrequencyDto, FlightScheduleRouteDto, SelectedDateRange} from "../dto/airport";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable({
@@ -19,8 +19,8 @@ export class DataService {
         );
   }
 
-  getFlightScheduleLegRoutes() {
-    return this.http.get<FlightScheduleRouteDto[]>(this.apiEndpoint + 'flightScheduleLeg/distance')
+  getFlightScheduleLegRoutes(dateRange: SelectedDateRange) {
+    return this.http.get<FlightScheduleRouteDto[]>(this.apiEndpoint + 'flightScheduleLeg/distance?startDate=' + this.convertDateToUTCString(dateRange.start) + '&endDate=' + this.convertDateToUTCString(dateRange.end))
       .pipe(
         tap(_ => this.log('fetched getFlightScheduleLegRoutes')),
         catchError(this.handleError<FlightScheduleRouteDto[]>('getFlightScheduleLegRoutes', []))
@@ -58,5 +58,9 @@ export class DataService {
 
   private log(message: string) {
     console.log(`DEBUG: ${message}`);
+  }
+
+  private convertDateToUTCString(date: Date | null) {
+    return date ? date.getUTCFullYear() + '-' + ((date.getUTCMonth() + 1) > 9 ? (date.getUTCMonth()) + 1 : '0' + (date.getUTCMonth() + 1)) + '-' + date.getUTCDate() : '';
   }
 }

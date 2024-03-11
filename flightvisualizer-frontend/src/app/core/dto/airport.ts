@@ -46,3 +46,13 @@ export class FlightDateFrequencyDto {
     this.count = frequency || 0;
   }
 }
+
+export class SelectedDateRange {
+  start: Date | null;
+  end: Date | null;
+
+  constructor(start: Date | null, end: Date | null) {
+    this.start = start;
+    this.end = end;
+  }
+}

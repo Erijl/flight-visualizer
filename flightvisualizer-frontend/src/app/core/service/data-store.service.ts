@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Airport, FlightDateFrequencyDto, FlightScheduleRouteDto} from "../dto/airport";
+import {Airport, FlightDateFrequencyDto, FlightScheduleRouteDto, SelectedDateRange} from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {FilterService} from "./filter.service";
@@ -32,6 +32,9 @@ export class DataStoreService {
 
   private _selectedRoute: BehaviorSubject<FlightScheduleRouteDto> = new BehaviorSubject<FlightScheduleRouteDto>(new FlightScheduleRouteDto());
   selectedRoute = this._selectedRoute.asObservable();
+
+  private _selectedDateRange: BehaviorSubject<SelectedDateRange> = new BehaviorSubject<SelectedDateRange>(new SelectedDateRange(null, new Date()));
+  selectedDateRange = this._selectedDateRange.asObservable();
 
   // state
   private _selectedAirportRoutesOutgoing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
@@ -88,6 +91,10 @@ export class DataStoreService {
     return this.allFlightScheduleRouteDtos;
   }
 
+  getSelectedDateRange(): SelectedDateRange {
+    return this._selectedDateRange.getValue();
+  }
+
 
   // SETTERS
 
@@ -116,6 +123,12 @@ export class DataStoreService {
     this._selectedAirportRoutesIncoming.next(incoming);
   }
 
+  setSelectedDateRange(selectedDateRange: SelectedDateRange): void {
+    this._selectedDateRange.next(selectedDateRange);
+
+    this.getFlightScheduleLegRoutes();
+  }
+
   // FETCHING DATA
   private getAirports(): void {
     this.dataService.getAirports().subscribe(airports => {
@@ -125,7 +138,7 @@ export class DataStoreService {
   }
 
   private getFlightScheduleLegRoutes(): void {
-    this.dataService.getFlightScheduleLegRoutes().subscribe(flightScheduleLegs => {
+    this.dataService.getFlightScheduleLegRoutes(this.getSelectedDateRange()).subscribe(flightScheduleLegs => {
       this.allFlightScheduleRouteDtos = flightScheduleLegs;
       this.setCurrentlyDisplayedRoutes(this.allFlightScheduleRouteDtos);
     });
