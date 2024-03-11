@@ -148,11 +148,6 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   onDateRangeChange(): void {
-    console.log("Date range changed")
-    console.log(this.selectedDateRange);
-    console.log(this.selectedDateRange?.start);
-    console.log(this.selectedDateRange?.end);
-
     this.dataStoreService.setSelectedDateRange(this.selectedDateRange);
   }
 

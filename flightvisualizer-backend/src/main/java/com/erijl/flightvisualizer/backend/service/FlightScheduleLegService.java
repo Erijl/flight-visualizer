@@ -7,6 +7,9 @@ import com.erijl.flightvisualizer.backend.repository.FlightScheduleLegRepository
 import org.springframework.stereotype.Service;
 import com.erijl.flightvisualizer.backend.model.Airport;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,12 +22,21 @@ public class FlightScheduleLegService {
         this.flightScheduleLegRepository = flightScheduleLegRepository;
     }
 
-    public Iterable<FlightScheduleLegDto> getFlightScheduleLegs() {
-        return flightScheduleLegRepository.findAllWithoutAssociations();
+    public Iterable<FlightScheduleLegDto> getFlightScheduleLegs(String startDate, String endDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        if(!startDate.isEmpty() && !endDate.isEmpty()) {
+            return flightScheduleLegRepository.findAllWithoutAssociationsByStartAndEndDate(Date.valueOf(LocalDate.parse(startDate, formatter)), Date.valueOf(LocalDate.parse(endDate, formatter)));
+        } else if(!startDate.isEmpty()) {
+            return flightScheduleLegRepository.findAllWithoutAssociationsBySingleDate(Date.valueOf(LocalDate.parse(startDate, formatter)));
+        } else {
+            return flightScheduleLegRepository.findAllWithoutAssociationsBySingleDate(Date.valueOf(LocalDate.parse(endDate, formatter)));
+        }
     }
 
-    public List<FlightScheduleLegWithDistance> getFlightScheduleLegsWithDistance() {
-        Iterable<FlightScheduleLegDto> flightScheduleLegDtos = this.getFlightScheduleLegs();
+    public List<FlightScheduleLegWithDistance> getFlightScheduleLegsWithDistance(String startDate, String endDate) {
+
+        Iterable<FlightScheduleLegDto> flightScheduleLegDtos = this.getFlightScheduleLegs(startDate, endDate);
 
         List<FlightScheduleLegWithDistance> flightScheduleLegWithDistances = new ArrayList<>();
         for (FlightScheduleLegDto flightScheduleLegDto : flightScheduleLegDtos) {

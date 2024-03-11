@@ -33,7 +33,7 @@ export class DataStoreService {
   private _selectedRoute: BehaviorSubject<FlightScheduleRouteDto> = new BehaviorSubject<FlightScheduleRouteDto>(new FlightScheduleRouteDto());
   selectedRoute = this._selectedRoute.asObservable();
 
-  private _selectedDateRange: BehaviorSubject<SelectedDateRange> = new BehaviorSubject<SelectedDateRange>(new SelectedDateRange(null, new Date()));
+  private _selectedDateRange: BehaviorSubject<SelectedDateRange> = new BehaviorSubject<SelectedDateRange>(new SelectedDateRange(new Date(), null));
   selectedDateRange = this._selectedDateRange.asObservable();
 
   // state
@@ -141,6 +141,7 @@ export class DataStoreService {
     this.dataService.getFlightScheduleLegRoutes(this.getSelectedDateRange()).subscribe(flightScheduleLegs => {
       this.allFlightScheduleRouteDtos = flightScheduleLegs;
       this.setCurrentlyDisplayedRoutes(this.allFlightScheduleRouteDtos);
+      console.log("lenght of fetched FLightScheduleLegs+Distance: " + flightScheduleLegs.length);
     });
   }
 

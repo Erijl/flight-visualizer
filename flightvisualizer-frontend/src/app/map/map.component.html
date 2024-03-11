@@ -6,8 +6,7 @@
 
     <mat-form-field>
       <mat-label>Enter date range or date</mat-label>
-      <mat-date-range-input [dateFilter]="dateFilter" [rangePicker]="rangePicker" [(ngModel)]="selectedDateRange"
-                            (change)="onDateRangeChange()">
+      <mat-date-range-input [dateFilter]="dateFilter" [rangePicker]="rangePicker" [(ngModel)]="selectedDateRange">
         <input [(ngModel)]="selectedDateRange.start" (ngModelChange)="onDateRangeChange()" matStartDate placeholder="Start date">
         <input [(ngModel)]="selectedDateRange.end" (ngModelChange)="onDateRangeChange()" matEndDate placeholder="End date">
       </mat-date-range-input>

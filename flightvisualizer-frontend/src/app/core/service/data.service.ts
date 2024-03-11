@@ -61,6 +61,6 @@ export class DataService {
   }
 
   private convertDateToUTCString(date: Date | null) {
-    return date ? date.getUTCFullYear() + '-' + ((date.getUTCMonth() + 1) > 9 ? (date.getUTCMonth()) + 1 : '0' + (date.getUTCMonth() + 1)) + '-' + date.getUTCDate() : '';
+    return date ? date.getUTCFullYear() + '-' + ((date.getUTCMonth() + 1) > 9 ? (date.getUTCMonth() + 1) : '0' + (date.getUTCMonth() + 1)) + '-' + (date.getUTCDate() > 9 ? (date.getUTCDate()) : '0' + (date.getUTCDate())) : '';
   }
 }
