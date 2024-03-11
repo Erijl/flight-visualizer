@@ -1,5 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Airport, FlightDateFrequencyDto, FlightScheduleRouteDto, SelectedDateRange} from "../dto/airport";
+import {
+  Airport,
+  FlightDateFrequencyDto,
+  FlightScheduleRouteDto,
+  SelectedDateRange,
+  SelectedTimeRange
+} from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {FilterService} from "./filter.service";
@@ -35,6 +41,9 @@ export class DataStoreService {
 
   private _selectedDateRange: BehaviorSubject<SelectedDateRange> = new BehaviorSubject<SelectedDateRange>(new SelectedDateRange(new Date(), null));
   selectedDateRange = this._selectedDateRange.asObservable();
+
+  private _selectedTimeRange: BehaviorSubject<SelectedTimeRange> = new BehaviorSubject<SelectedTimeRange>(new SelectedTimeRange(0, 1439));
+  selectedTimeRange = this._selectedTimeRange.asObservable();
 
   // state
   private _selectedAirportRoutesOutgoing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
@@ -127,6 +136,13 @@ export class DataStoreService {
     this._selectedDateRange.next(selectedDateRange);
 
     this.getFlightScheduleLegRoutes();
+  }
+
+  setSelectedTimeRange(selectedTimeRange: SelectedTimeRange): void {
+    this._selectedTimeRange.next(selectedTimeRange);
+
+    //TODO add route filtering and displayment with new object properties
+    //this.setCurrentlyDisplayedRoutes();
   }
 
   // FETCHING DATA

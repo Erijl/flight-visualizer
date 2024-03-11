@@ -56,3 +56,13 @@ export class SelectedDateRange {
     this.end = end;
   }
 }
+
+export class SelectedTimeRange {
+  start: number | null;
+  end: number | null;
+
+  constructor(start: number | null, end: number | null) {
+    this.start = start;
+    this.end = end;
+  }
+}

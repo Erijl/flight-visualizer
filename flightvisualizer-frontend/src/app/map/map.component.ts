@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit,} from '@angular/core';
 import mapboxgl from "mapbox-gl";
-import {Airport, FlightScheduleRouteDto, SelectedDateRange} from "../core/dto/airport";
+import {Airport, FlightScheduleRouteDto, SelectedDateRange, SelectedTimeRange} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
 import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enum";
@@ -31,8 +31,7 @@ export class MapComponent implements OnInit, OnDestroy {
   routeFilterTypes = Object.values(RouteFilterType);
   routeFilterType: RouteFilterType = RouteFilterType.DISTANCE;
   flightDateFrequencies: Set<string> = new Set();
-  timeStart: number = 0;
-  timeEnd: number = 1439;
+  selectedTimeRange: SelectedTimeRange = new SelectedTimeRange(0, 1439);
 
   // UI state
   histogramData: number[] = [];
@@ -140,7 +139,8 @@ export class MapComponent implements OnInit, OnDestroy {
     this.renderAirports();
   }
 
-  protected convertSliderValueToTime(value: number): string {
+  protected convertSliderValueToTime(value: number | null): string {
+    if(value == null) return '';
     let hours = Math.floor((value)/60);
     let minutes = Math.floor((value)%60);
 
@@ -149,6 +149,10 @@ export class MapComponent implements OnInit, OnDestroy {
 
   onDateRangeChange(): void {
     this.dataStoreService.setSelectedDateRange(this.selectedDateRange);
+  }
+
+  onTimeRangeChange(): void  {
+    this.dataStoreService.setSelectedTimeRange(this.selectedTimeRange);
   }
 
   renderAirports(): void {
