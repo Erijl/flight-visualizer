@@ -1,0 +1,14 @@
+<div [hidden]="selectedRoute.flightScheduleId <= 0">
+
+  <h2>{{selectedRoute.originAirport.iataAirportCode}} to {{selectedRoute.destinationAirport.iataAirportCode}}</h2>
+
+  <p>{{selectedRoute.originAirport.iataAirportCode}}</p>
+  <p>{{selectedRoute.destinationAirport.iataAirportCode}}</p>
+  <p>UTC: {{convertIntToTimeOfDay(selectedRoute.aircraftDepartureTimeUtc)}}</p>
+  <p>{{selectedRoute.aircraftDepartureTimeDateDiffUtc}}</p>
+  <p>UTC: {{convertIntToTimeOfDay(selectedRoute.aircraftArrivalTimeUtc)}}</p>
+  <p>{{selectedRoute.aircraftArrivalTimeDateDiffUtc}}</p>
+  <p>{{selectedRoute.kilometerDistance}}Km</p>
+
+
+</div>

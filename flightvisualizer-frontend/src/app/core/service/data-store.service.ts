@@ -153,7 +153,11 @@ export class DataStoreService {
   setSelectedTimeRange(selectedTimeRange: SelectedTimeRange): void {
     this._selectedTimeRange.next(selectedTimeRange);
 
-    this.setCurrentlyDisplayedRoutes(this.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
+    if(this.getSelectedAirport().iataAirportCode !== "") {
+      this.setCurrentlyDisplayedRoutes(this.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
+    } else {
+      this.setCurrentlyDisplayedRoutes(this.getAllFlightScheduleRouteDtosWithTimeFilter());
+    }
   }
 
   // FETCHING DATA
