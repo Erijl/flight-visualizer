@@ -28,13 +28,15 @@ import {MatInputModule} from "@angular/material/input";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {provideNativeDateAdapter} from "@angular/material/core";
 import {MatSlideToggle} from "@angular/material/slide-toggle";
+import { RouteInfoComponent } from './route-info/route-info.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapComponent,
     HistogramComponent,
-    AirportInfoComponent
+    AirportInfoComponent,
+    RouteInfoComponent
   ],
     imports: [
         BrowserModule,

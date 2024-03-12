@@ -29,9 +29,9 @@
       </mat-slider>
       <div class="values-container">
         UTC:
-        <span>{{ convertSliderValueToTime(selectedTimeRange.start) }}</span>
+        <span>{{ convertIntToTimeOfDay(selectedTimeRange.start) }}</span>
         -
-        <span>{{ convertSliderValueToTime(selectedTimeRange.end) }}</span>
+        <span>{{ convertIntToTimeOfDay(selectedTimeRange.end) }}</span>
       </div>
     </div>
 
@@ -47,7 +47,7 @@
       <app-airport-info></app-airport-info>
     </div>
     <div *ngIf="selectionType == 'route'">
-
+      <app-route-info></app-route-info>
     </div>
   </div>
 

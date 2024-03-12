@@ -10,6 +10,22 @@ export class GeoService {
   constructor() {
   }
 
+  highlightRouteOnMap(map: mapboxgl.Map, sourceId: string, layerId: string, route: any): void {
+    this.addFeatureCollectionSourceToMap(map, sourceId, this.convertFlightScheduleRouteDtosToGeoJson([route]));
+    this.addLayerTypeLineToMap(map, layerId, sourceId, {
+      'line-cap': 'round',
+      'line-join': 'round'
+    }, {
+      'line-width': 5,
+      'line-color': '#ff0000'
+    });
+  }
+
+  highlightAirportOnMap(map: mapboxgl.Map, sourceId: string, layerId: string, airport: Airport): void {
+    this.addFeatureCollectionSourceToMap(map, sourceId, this.convertAirportsToGeoJson([airport]));
+    this.addLayerTypeCircleToMap(map, layerId, sourceId, 10, '#ff0000');
+  }
+
   addFeatureCollectionSourceToMap(map: mapboxgl.Map, sourceId: string, features: any): void {
     map.addSource(sourceId, {
       'type': 'geojson',

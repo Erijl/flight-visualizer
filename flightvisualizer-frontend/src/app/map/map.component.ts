@@ -26,6 +26,8 @@ export class MapComponent implements OnInit, OnDestroy {
   currentlyRenderedAirportsSubscription!: Subscription;
   currentlyRenderedRoutesSubscription!: Subscription;
   flightDateFrequenciesSubscription!: Subscription;
+  selectedRouteSubscription!: Subscription;
+  selectedAirportSubscription!: Subscription;
 
   // UI data
   airportDisplayTypes = Object.values(AirportDisplayType);
@@ -57,10 +59,32 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.currentlyRenderedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
       this.replaceCurrentlyRenderedAirports(airports);
+
+      if(!airports.includes(this.selectedAirport)) {
+        this.selectedAirport = new Airport();
+        this.dataStoreService.setSelectedAirport(this.selectedAirport);
+      }
     });
 
     this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
       this.replaceCurrentlyRenderedRoutes(routes);
+
+      if(!routes.includes(this.selectedRoute)) {
+        this.selectedRoute = new FlightScheduleRouteDto();
+        this.dataStoreService.setSelectedRoute(this.selectedRoute);
+      }
+    });
+
+    this.selectedRouteSubscription = this.dataStoreService.selectedRoute.subscribe(route => {
+      this.selectedRoute = route;
+
+      this.highlightSelectedRoute();
+    });
+
+    this.selectedAirportSubscription = this.dataStoreService.selectedAirport.subscribe(airport => {
+      this.selectedAirport = airport;
+
+      this.highlightSelectedAirport();
     });
 
     this.flightDateFrequenciesSubscription = this.dataStoreService.allFlightDateFrequencies.subscribe(frequencies => {
@@ -91,7 +115,6 @@ export class MapComponent implements OnInit, OnDestroy {
       const features = this.map.queryRenderedFeatures(e.point, { layers: ['airportLayer', 'routeLayer'] });
 
       if (!features.length) {
-        console.log("Nothing, pure emptiness")
         if (this.selectionType === 'airport') {
           this.selectedAirport = new Airport();
           this.dataStoreService.setSelectedAirport(this.selectedAirport);
@@ -105,8 +128,14 @@ export class MapComponent implements OnInit, OnDestroy {
 
   onSelectionTypeChange(): void {
     if (this.selectionType === 'airport') {
+      this.selectedRoute = new FlightScheduleRouteDto();
+      this.dataStoreService.setSelectedRoute(this.selectedRoute);
+
       this.enableAirportLayerSelection();
     } else if (this.selectionType === 'route') {
+      this.selectedAirport = new Airport();
+      this.dataStoreService.setSelectedAirport(this.selectedAirport);
+
       this.enableRouteLayerSelection();
     }
   }
@@ -158,7 +187,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.renderAirports();
   }
 
-  protected convertSliderValueToTime(value: number | null): string {
+  protected convertIntToTimeOfDay(value: number | null): string {
     if(value == null) return '';
     let hours = Math.floor((value)/60);
     let minutes = Math.floor((value)%60);
@@ -192,6 +221,24 @@ export class MapComponent implements OnInit, OnDestroy {
       this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getAllFlightScheduleRouteDtosWithTimeFilter());
     } else if (this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) {
       this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
+    }
+  }
+
+  highlightSelectedRoute(): void {
+    this.geoService.removeLayerFromMap(this.map, 'routeHighlightLayer');
+    this.geoService.removeSourceFromMap(this.map, 'routeHighlightSource');
+
+    if (this.selectedRoute.originAirport.iataAirportCode != '' && this.selectedRoute.destinationAirport.iataAirportCode != '') {
+      this.geoService.highlightRouteOnMap(this.map, 'routeHighlightSource', 'routeHighlightLayer', this.selectedRoute);
+    }
+  }
+
+  highlightSelectedAirport(): void {
+    this.geoService.removeLayerFromMap(this.map, 'airportHighlightLayer');
+    this.geoService.removeSourceFromMap(this.map, 'airportHighlightSource');
+
+    if (this.selectedAirport.iataAirportCode != '') {
+      this.geoService.highlightAirportOnMap(this.map, 'airportHighlightSource', 'airportHighlightLayer', this.selectedAirport);
     }
   }
 
@@ -288,6 +335,8 @@ export class MapComponent implements OnInit, OnDestroy {
     this.currentlyRenderedAirportsSubscription.unsubscribe();
     this.currentlyRenderedRoutesSubscription.unsubscribe();
     this.flightDateFrequenciesSubscription.unsubscribe();
+    this.selectedRouteSubscription.unsubscribe();
+    this.selectedAirportSubscription.unsubscribe();
   }
 
   protected readonly AirportDisplayType = AirportDisplayType;
