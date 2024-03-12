@@ -104,6 +104,10 @@ export class DataStoreService {
     return this.allFlightScheduleRouteDtos;
   }
 
+  getAllFlightScheduleRouteDtosWithTimeFilter() {
+    return this.filterService.getFlightRoutesInTimeFrame(this.allFlightScheduleRouteDtos, this.getSelectedTimeRange());
+  }
+
   getSelectedDateRange(): SelectedDateRange {
     return this._selectedDateRange.getValue();
   }
@@ -149,7 +153,7 @@ export class DataStoreService {
   setSelectedTimeRange(selectedTimeRange: SelectedTimeRange): void {
     this._selectedTimeRange.next(selectedTimeRange);
 
-    this.setCurrentlyDisplayedRoutes(this.filterService.getFlightRoutesInTimeFrame(this.allFlightScheduleRouteDtos, this.getSelectedTimeRange()));
+    this.setCurrentlyDisplayedRoutes(this.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
   }
 
   // FETCHING DATA

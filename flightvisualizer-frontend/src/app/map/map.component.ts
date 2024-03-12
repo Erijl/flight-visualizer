@@ -15,6 +15,10 @@ import {Subscription} from "rxjs";
 })
 export class MapComponent implements OnInit, OnDestroy {
 
+  // Constants
+  maxTime = 1439;
+  minTime = 0;
+
   // @ts-ignore
   map: mapboxgl.Map;
 
@@ -31,7 +35,7 @@ export class MapComponent implements OnInit, OnDestroy {
   routeFilterTypes = Object.values(RouteFilterType);
   routeFilterType: RouteFilterType = RouteFilterType.DISTANCE;
   flightDateFrequencies: Set<string> = new Set();
-  selectedTimeRange: SelectedTimeRange = new SelectedTimeRange(0, 1439);
+  selectedTimeRange: SelectedTimeRange = new SelectedTimeRange(this.minTime, this.maxTime);
 
   // UI state
   histogramData: number[] = [];
@@ -149,6 +153,9 @@ export class MapComponent implements OnInit, OnDestroy {
 
   onDateRangeChange(): void {
     this.dataStoreService.setSelectedDateRange(this.selectedDateRange);
+    this.selectedTimeRange = new SelectedTimeRange(this.minTime, this.maxTime);
+    this.routeDisplayType = RouteDisplayType.ALL;
+    this.onTimeRangeChange();
   }
 
   onTimeRangeChange(): void  {
@@ -167,9 +174,9 @@ export class MapComponent implements OnInit, OnDestroy {
 
   renderRoutes(): void {
     if (this.routeDisplayType === RouteDisplayType.ALL) {
-      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getAllFlightScheduleRouteDtos());
+      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getAllFlightScheduleRouteDtosWithTimeFilter());
     } else if (this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) {
-      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesForSelectedAirport());
+      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
     }
   }
 
