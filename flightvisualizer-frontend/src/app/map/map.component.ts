@@ -86,6 +86,21 @@ export class MapComponent implements OnInit, OnDestroy {
 
       this.map.resize();
     });
+
+    this.map.on('click', (e) => {
+      const features = this.map.queryRenderedFeatures(e.point, { layers: ['airportLayer', 'routeLayer'] });
+
+      if (!features.length) {
+        console.log("Nothing, pure emptiness")
+        if (this.selectionType === 'airport') {
+          this.selectedAirport = new Airport();
+          this.dataStoreService.setSelectedAirport(this.selectedAirport);
+        } else if (this.selectionType === 'route') {
+          this.selectedRoute = new FlightScheduleRouteDto();
+          this.dataStoreService.setSelectedRoute(this.selectedRoute);
+        }
+      }
+    });
   }
 
   onSelectionTypeChange(): void {
