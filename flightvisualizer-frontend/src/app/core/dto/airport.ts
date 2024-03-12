@@ -25,14 +25,34 @@ export class Airport {
 
 export class FlightScheduleRouteDto {
   legId: number;
+  flightScheduleId: number;
   originAirport: Airport;
   destinationAirport: Airport;
+  aircraftDepartureTimeUtc: number;
+  aircraftDepartureTimeDateDiffUtc: number;
+  aircraftArrivalTimeUtc: number;
+  aircraftArrivalTimeDateDiffUtc: number;
   kilometerDistance: number;
 
-  constructor(legId?: number, originAirport?: Airport, destinationAirport?: Airport, kilometerDistance?: number) {
+  constructor(
+    legId?: number,
+    flightScheduleId?: number,
+    originAirport?: Airport,
+    destinationAirport?: Airport,
+    aircraftDepartureTimeUtc?: number,
+    aircraftDepartureTimeDateDiffUtc?: number,
+    aircraftArrivalTimeUtc?: number,
+    aircraftArrivalTimeDateDiffUtc?: number,
+    kilometerDistance?: number
+  ) {
     this.legId = legId || -1;
+    this.flightScheduleId = flightScheduleId || -1;
     this.originAirport = originAirport || new Airport();
     this.destinationAirport = destinationAirport || new Airport();
+    this.aircraftDepartureTimeUtc = aircraftDepartureTimeUtc || 0;
+    this.aircraftDepartureTimeDateDiffUtc = aircraftDepartureTimeDateDiffUtc || 0;
+    this.aircraftArrivalTimeUtc = aircraftArrivalTimeUtc || 0;
+    this.aircraftArrivalTimeDateDiffUtc = aircraftArrivalTimeDateDiffUtc || 0;
     this.kilometerDistance = kilometerDistance || 0;
   }
 }
@@ -58,10 +78,10 @@ export class SelectedDateRange {
 }
 
 export class SelectedTimeRange {
-  start: number | null;
-  end: number | null;
+  start: number;
+  end: number;
 
-  constructor(start: number | null, end: number | null) {
+  constructor(start: number, end: number) {
     this.start = start;
     this.end = end;
   }

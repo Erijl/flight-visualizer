@@ -9,21 +9,25 @@ import lombok.Setter;
 public class FlightScheduleLegWithDistance {
 
     private Integer legId;
+    private Integer flightScheduleId;
     private Airport originAirport;
     private Airport destinationAirport;
+    private int aircraftDepartureTimeUtc;
+    private int aircraftDepartureTimeDateDiffUtc;
+    private int aircraftArrivalTimeUtc;
+    private int aircraftArrivalTimeDateDiffUtc;
     private int kilometerDistance;
 
-    public FlightScheduleLegWithDistance(Integer legId, Airport originAirport, Airport destinationAirport, int kilometerDistance) {
-        this.legId = legId;
-        this.originAirport = originAirport;
-        this.destinationAirport = destinationAirport;
-        this.kilometerDistance = kilometerDistance;
-    }
 
     public FlightScheduleLegWithDistance(FlightScheduleLegDto flightScheduleLegDto, int kilometerDistance) {
         this.legId = flightScheduleLegDto.getLegId();
+        this.flightScheduleId = flightScheduleLegDto.getFlightScheduleId();
         this.originAirport = flightScheduleLegDto.getOriginAirport();
         this.destinationAirport = flightScheduleLegDto.getDestinationAirport();
+        this.aircraftDepartureTimeUtc = flightScheduleLegDto.getAircraftDepartureTimeUtc();
+        this.aircraftDepartureTimeDateDiffUtc = flightScheduleLegDto.getAircraftDepartureTimeDateDiffUtc();
+        this.aircraftArrivalTimeUtc = flightScheduleLegDto.getAircraftArrivalTimeUtc();
+        this.aircraftArrivalTimeDateDiffUtc = flightScheduleLegDto.getAircraftArrivalTimeDateDiffUtc();
         this.kilometerDistance = kilometerDistance;
     }
 }

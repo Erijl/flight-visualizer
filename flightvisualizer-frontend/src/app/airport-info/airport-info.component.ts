@@ -14,6 +14,7 @@ import {Subscription} from "rxjs";
 export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   // Subscriptions
   selectedAirportSubscription!: Subscription;
+  currentlyRenderedRoutesSubscription!: Subscription;
 
   // UI data
   displayedColumns: string[] = ['origin', 'destination', 'kilometerDistance'];
@@ -37,6 +38,10 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
       this.selectedAirport = airport;
       this.updateTable();
     });
+
+    this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
+      this.updateTable();
+    });
   }
 
   ngAfterViewInit() {
@@ -55,12 +60,13 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   updateTable(): void {
-    this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.dataStoreService.getFlightScheduleRoutesForSelectedAirport());
+    this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.dataStoreService.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
   ngOnDestroy(): void {
     this.selectedAirportSubscription.unsubscribe();
+    this.currentlyRenderedRoutesSubscription.unsubscribe();
   }
 }

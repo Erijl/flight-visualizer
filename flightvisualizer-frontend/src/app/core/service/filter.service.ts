@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Airport, FlightScheduleRouteDto} from "../dto/airport";
+import {Airport, FlightScheduleRouteDto, SelectedTimeRange} from "../dto/airport";
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +39,26 @@ export class FilterService {
       }
     })
     return cleanedRoutes;
+  }
+
+  getFlightRoutesInTimeFrame(flightScheduleRouteDtos: FlightScheduleRouteDto[], timeRange: SelectedTimeRange) {
+    let filteredRoutes: FlightScheduleRouteDto[] = [];
+
+    flightScheduleRouteDtos.forEach(route => {
+      if(timeRange.start <= route.aircraftDepartureTimeUtc && route.aircraftDepartureTimeUtc <= timeRange.end) {
+        if(route.aircraftArrivalTimeUtc < route.aircraftDepartureTimeUtc) {
+          if(timeRange.start <= route.aircraftArrivalTimeUtc || route.aircraftArrivalTimeUtc <= timeRange.end) {
+            filteredRoutes.push(route);
+          }
+        } else {
+          if(timeRange.start <= route.aircraftArrivalTimeUtc && route.aircraftArrivalTimeUtc <= timeRange.end) {
+            filteredRoutes.push(route);
+          }
+        }
+      }
+    })
+
+    return filteredRoutes;
   }
 
   compareFlightScheduleRouteDtos(originalFlightRoute: FlightScheduleRouteDto, alteredFlightRoute: FlightScheduleRouteDto): boolean {

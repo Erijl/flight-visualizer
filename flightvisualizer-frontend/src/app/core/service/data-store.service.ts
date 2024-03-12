@@ -88,6 +88,10 @@ export class DataStoreService {
     return this.filterService.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.getSelectedAirport(), this.getSelectedAirportRoutesIncoming(), this.getSelectedAirportRoutesOutgoing());
   }
 
+  getFlightScheduleRoutesForSelectedAirportWithTimeFilter(): FlightScheduleRouteDto[] {
+    return this.filterService.getFlightRoutesInTimeFrame(this.filterService.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.getSelectedAirport(), this.getSelectedAirportRoutesIncoming(), this.getSelectedAirportRoutesOutgoing()), this.getSelectedTimeRange());
+  }
+
   getSelectedAirportRoutesOutgoing(): boolean {
     return this._selectedAirportRoutesOutgoing.getValue();
   }
@@ -102,6 +106,10 @@ export class DataStoreService {
 
   getSelectedDateRange(): SelectedDateRange {
     return this._selectedDateRange.getValue();
+  }
+
+  getSelectedTimeRange(): SelectedTimeRange {
+    return this._selectedTimeRange.getValue();
   }
 
 
@@ -141,8 +149,7 @@ export class DataStoreService {
   setSelectedTimeRange(selectedTimeRange: SelectedTimeRange): void {
     this._selectedTimeRange.next(selectedTimeRange);
 
-    //TODO add route filtering and displayment with new object properties
-    //this.setCurrentlyDisplayedRoutes();
+    this.setCurrentlyDisplayedRoutes(this.filterService.getFlightRoutesInTimeFrame(this.allFlightScheduleRouteDtos, this.getSelectedTimeRange()));
   }
 
   // FETCHING DATA
@@ -157,7 +164,6 @@ export class DataStoreService {
     this.dataService.getFlightScheduleLegRoutes(this.getSelectedDateRange()).subscribe(flightScheduleLegs => {
       this.allFlightScheduleRouteDtos = flightScheduleLegs;
       this.setCurrentlyDisplayedRoutes(this.allFlightScheduleRouteDtos);
-      console.log("lenght of fetched FLightScheduleLegs+Distance: " + flightScheduleLegs.length);
     });
   }
 

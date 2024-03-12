@@ -28,6 +28,7 @@
         <input [ngModel]="selectedTimeRange.end" (ngModelChange)="selectedTimeRange.end = $event" matSliderEndThumb>
       </mat-slider>
       <div class="values-container">
+        UTC:
         <span>{{ convertSliderValueToTime(selectedTimeRange.start) }}</span>
         -
         <span>{{ convertSliderValueToTime(selectedTimeRange.end) }}</span>
