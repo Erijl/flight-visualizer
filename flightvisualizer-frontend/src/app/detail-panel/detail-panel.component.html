@@ -1,0 +1,15 @@
+<h1>Detail Panel</h1>
+Select:
+<br>
+<mat-button-toggle-group [(ngModel)]="selectionType" (change)="onSelectionTypeChange()" name="fontStyle"
+                         aria-label="Font Style">
+  <mat-button-toggle value="airport">Airport</mat-button-toggle>
+  <mat-button-toggle value="route">Route</mat-button-toggle>
+</mat-button-toggle-group>
+
+<div *ngIf="selectionType == 'airport'">
+  <app-airport-info></app-airport-info>
+</div>
+<div *ngIf="selectionType == 'route'">
+  <app-route-info></app-route-info>
+</div>

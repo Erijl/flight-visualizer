@@ -25,3 +25,8 @@ export enum AircraftTimeFilterType {
   DEPARTURE = "Departure in period",
   ARRIVAL = "Arrival in period",
 }
+
+export enum DetailSelectionType {
+  AIRPORT = "airport",
+  ROUTE = "route",
+}

@@ -12,7 +12,7 @@ import {
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {FilterService} from "./filter.service";
-import {AirportDisplayType, RouteDisplayType} from "../enum";
+import {AirportDisplayType, DetailSelectionType, RouteDisplayType} from "../enum";
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +45,9 @@ export class DataStoreService {
 
   private _generalFilter: BehaviorSubject<GeneralFilter> = new BehaviorSubject<GeneralFilter>(new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL));
   generalFilter = this._generalFilter.asObservable();
+
+  private _detailSelectionType: BehaviorSubject<DetailSelectionType> = new BehaviorSubject<DetailSelectionType>(DetailSelectionType.AIRPORT);
+  detailSelectionType = this._detailSelectionType.asObservable();
 
 
   // selected data
@@ -154,7 +157,7 @@ export class DataStoreService {
   }
 
   getSpecificFlightSchedule(id: number): FlightSchedule {
-    if (this.fetchedFlightSchedule.flightScheduleId == id) return this.fetchedFlightSchedule;
+    if (this.fetchedFlightSchedule?.flightScheduleId == id) return this.fetchedFlightSchedule;
     this.getFlightScheduleById(id);
     return this.fetchedFlightSchedule;
   }
@@ -169,6 +172,10 @@ export class DataStoreService {
 
   getGeneralFilter(): GeneralFilter {
     return this._generalFilter.getValue();
+  }
+
+  getDetailSelectionType(): DetailSelectionType {
+    return this._detailSelectionType.getValue();
   }
 
 
@@ -216,6 +223,10 @@ export class DataStoreService {
 
   setGeneralFilter(generalFilter: GeneralFilter): void {
     this._generalFilter.next(generalFilter);
+  }
+
+  setDetailSelectionType(detailSelectionType: DetailSelectionType): void {
+    this._detailSelectionType.next(detailSelectionType);
   }
 
   // FETCHING DATA

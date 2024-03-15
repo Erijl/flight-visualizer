@@ -35,6 +35,7 @@ import {BrowserAnimationsModule, provideAnimations} from "@angular/platform-brow
 import { TimePanelComponent } from './time-panel/time-panel.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { FilterPanelComponent } from './filter-panel/filter-panel.component';
+import { DetailPanelComponent } from './detail-panel/detail-panel.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { FilterPanelComponent } from './filter-panel/filter-panel.component';
     AirportInfoComponent,
     RouteInfoComponent,
     TimePanelComponent,
-    FilterPanelComponent
+    FilterPanelComponent,
+    DetailPanelComponent
   ],
   imports: [
     BrowserModule,

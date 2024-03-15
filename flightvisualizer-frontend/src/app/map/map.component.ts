@@ -3,7 +3,7 @@ import mapboxgl from "mapbox-gl";
 import {Airport, FlightScheduleRouteDto, GeneralFilter} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
-import {AirportDisplayType, RouteDisplayType} from "../core/enum";
+import {AirportDisplayType, DetailSelectionType, RouteDisplayType} from "../core/enum";
 import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
@@ -24,6 +24,7 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedRouteSubscription!: Subscription;
   selectedAirportSubscription!: Subscription;
   generalFilterSubscription!: Subscription;
+  detailSelectionTypeSubscription!: Subscription;
 
   // UI data
   generalFilter: GeneralFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
@@ -31,7 +32,7 @@ export class MapComponent implements OnInit, OnDestroy {
   // UI state
   selectedAirport: Airport = new Airport();
   selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
-  selectionType: string = 'airport';
+  selectionType: DetailSelectionType = DetailSelectionType.AIRPORT;
 
   constructor(private geoService: GeoService, private filterService: FilterService, private dataStoreService: DataStoreService) {
   }
@@ -79,6 +80,11 @@ export class MapComponent implements OnInit, OnDestroy {
       this.renderRoutes();
     });
 
+    this.detailSelectionTypeSubscription = this.dataStoreService.detailSelectionType.subscribe((type: DetailSelectionType) => {
+      this.selectionType = type;
+      this.onSelectionTypeChange();
+    });
+
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXJpamwiLCJhIjoiY2xza2JpemdmMDIzejJyczBvZGk2aG44eiJ9.eJkFfrXg1dGFasDJRkmnIg';
     this.map = new mapboxgl.Map({
@@ -99,10 +105,10 @@ export class MapComponent implements OnInit, OnDestroy {
       const features = this.map.queryRenderedFeatures(e.point, {layers: ['airportLayer', 'routeLayer']});
 
       if (!features.length) {
-        if (this.selectionType === 'airport') {
+        if (this.selectionType === DetailSelectionType.AIRPORT) {
           this.selectedAirport = new Airport();
           this.dataStoreService.setSelectedAirport(this.selectedAirport);
-        } else if (this.selectionType === 'route') {
+        } else if (this.selectionType === DetailSelectionType.ROUTE) {
           this.selectedRoute = new FlightScheduleRouteDto();
           this.dataStoreService.setSelectedRoute(this.selectedRoute);
         }
@@ -111,12 +117,12 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   onSelectionTypeChange(): void {
-    if (this.selectionType === 'airport') {
+    if (this.selectionType === DetailSelectionType.AIRPORT) {
       this.selectedRoute = new FlightScheduleRouteDto();
       this.dataStoreService.setSelectedRoute(this.selectedRoute);
 
       this.enableAirportLayerSelection();
-    } else if (this.selectionType === 'route') {
+    } else if (this.selectionType === DetailSelectionType.ROUTE) {
       this.selectedAirport = new Airport();
       this.dataStoreService.setSelectedAirport(this.selectedAirport);
 
@@ -221,7 +227,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.geoService.removeLayerFromMap(this.map, 'airportLayerTEMP');
     this.geoService.removeSourceFromMap(this.map, 'airportSourceTEMP');
 
-    if (this.selectionType === 'airport') {
+    if (this.selectionType === DetailSelectionType.AIRPORT) {
       this.enableAirportLayerSelection();
     }
   }
@@ -247,7 +253,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.geoService.removeLayerFromMap(this.map, 'routeLayerTEMP');
     this.geoService.removeSourceFromMap(this.map, 'routeSourceTEMP');
 
-    if (this.selectionType === 'routes') {
+    if (this.selectionType === DetailSelectionType.ROUTE) {
       this.enableRouteLayerSelection();
     }
   }
@@ -288,6 +294,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.selectedRouteSubscription.unsubscribe();
     this.selectedAirportSubscription.unsubscribe();
     this.generalFilterSubscription.unsubscribe();
+    this.detailSelectionTypeSubscription.unsubscribe();
   }
 
   protected readonly AirportDisplayType = AirportDisplayType;
