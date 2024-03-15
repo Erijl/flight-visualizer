@@ -4,7 +4,8 @@ import {
   FlightDateFrequencyDto,
   FlightScheduleRouteDto,
   SelectedDateRange,
-  SelectedTimeRange
+  SelectedTimeRange,
+  FlightSchedule
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
@@ -18,6 +19,7 @@ export class DataStoreService {
   // 'raw' data
   allFlightScheduleRouteDtos: FlightScheduleRouteDto[] = [];
   allAirports: Airport[] = [];
+  fetchedFlightSchedule: FlightSchedule = new FlightSchedule();
 
   private _allFlightDateFrequencies: BehaviorSubject<FlightDateFrequencyDto[]> = new BehaviorSubject<FlightDateFrequencyDto[]>([]);
   allFlightDateFrequencies = this._allFlightDateFrequencies.asObservable();
@@ -116,6 +118,16 @@ export class DataStoreService {
     return this._selectedTimeRange.getValue();
   }
 
+  getSpecificFlightSchedule(id: number): FlightSchedule {
+    if (this.fetchedFlightSchedule.flightScheduleId == id) return this.fetchedFlightSchedule;
+    this.getFlightScheduleById(id);
+    return this.fetchedFlightSchedule;
+  }
+
+  getAllRoutesForFlightSchedule(id: number): FlightScheduleRouteDto[] {
+    return this.allFlightScheduleRouteDtos.filter(route => route.flightScheduleId == id);
+  }
+
 
   // SETTERS
 
@@ -178,6 +190,12 @@ export class DataStoreService {
   private getFlightDateFrequencies(): void {
     this.dataService.getFlightDateFrequencies().subscribe(flightDateFrequencies => {
       this._allFlightDateFrequencies.next(flightDateFrequencies);
+    });
+  }
+
+  private getFlightScheduleById(id: number): void {
+    this.dataService.getFlightScheduleById(id).subscribe(flightSchedule => {
+      this.fetchedFlightSchedule = flightSchedule;
     });
   }
 }

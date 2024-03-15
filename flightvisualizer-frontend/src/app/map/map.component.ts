@@ -7,9 +7,23 @@ import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enu
 import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
+import {state, style, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-map',
+  animations: [
+    trigger('openClose', [
+      // ...
+      state('open', style({
+        transition: 'transform 0.5s',
+        transform: 'rotate(0deg)'
+      })),
+      state('closed', style({
+        transition: 'transform 0.5s',
+        transform: 'rotate(180deg)'
+      })),
+    ]),
+  ],
   templateUrl: './map.component.html',
   styleUrl: './map.component.css'
 })
@@ -48,10 +62,12 @@ export class MapComponent implements OnInit, OnDestroy {
 
   lowerValue = 10;
   upperValue = 90;
+  hideToggle: boolean = false;
+  panelOpenState = false;
 
   dateFilter = this.getIsDateAvailableInputFilter();
 
-  constructor(private geoService: GeoService, private filterSerice: FilterService, private dataStoreService: DataStoreService) {
+  constructor(private geoService: GeoService, private filterService: FilterService, private dataStoreService: DataStoreService) {
   }
 
   ngOnInit(): void {
@@ -210,7 +226,7 @@ export class MapComponent implements OnInit, OnDestroy {
     if (this.airportDisplayType === AirportDisplayType.ALL) {
       this.dataStoreService.setCurrentlyDisplayedAirports(this.dataStoreService.getAllAirports());
     } else if (this.airportDisplayType === AirportDisplayType.WITHROUTES) {
-      this.dataStoreService.setCurrentlyDisplayedAirports(this.filterSerice.getAllAirportsPresentInFlightScheduleRouteDtos(this.dataStoreService.getRenderedRoutes()));
+      this.dataStoreService.setCurrentlyDisplayedAirports(this.filterService.getAllAirportsPresentInFlightScheduleRouteDtos(this.dataStoreService.getRenderedRoutes()));
     } else if (this.airportDisplayType === AirportDisplayType.NONE) {
       this.dataStoreService.setCurrentlyDisplayedAirports([]);
     }
@@ -265,7 +281,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.geoService.removeSourceFromMap(this.map, 'airportSource');
 
     this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', airportsGeoJson);
-    this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
+    let before = this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
 
     this.geoService.removeLayerFromMap(this.map, 'airportLayerTEMP');
     this.geoService.removeSourceFromMap(this.map, 'airportSourceTEMP');

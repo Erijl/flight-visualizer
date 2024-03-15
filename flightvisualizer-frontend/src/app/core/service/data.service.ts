@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import {catchError, Observable, of, tap} from "rxjs";
-import {Airport, FlightDateFrequencyDto, FlightScheduleRouteDto, SelectedDateRange} from "../dto/airport";
+import {
+  Airport,
+  FlightDateFrequencyDto,
+  FlightSchedule,
+  FlightScheduleRouteDto,
+  SelectedDateRange
+} from "../dto/airport";
 import {HttpClient} from "@angular/common/http";
 
 @Injectable({
@@ -32,6 +38,14 @@ export class DataService {
       .pipe(
         tap(_ => this.log('fetched getFlightDateFrequencies')),
         catchError(this.handleError<FlightDateFrequencyDto[]>('getFlightDateFrequencies', []))
+      );
+  }
+
+  getFlightScheduleById(id: number) {
+    return this.http.get<FlightSchedule>(this.apiEndpoint + 'flightschedule?id=' + id)
+      .pipe(
+        tap(_ => this.log('fetched getFlightScheduleById')),
+        catchError(this.handleError<FlightSchedule>('getFlightScheduleById', new FlightSchedule()))
       );
   }
 

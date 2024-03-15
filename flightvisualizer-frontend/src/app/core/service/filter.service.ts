@@ -45,7 +45,7 @@ export class FilterService {
     let filteredRoutes: FlightScheduleRouteDto[] = [];
 
     flightScheduleRouteDtos.forEach(route => {
-      if(timeRange.start <= route.aircraftDepartureTimeUtc && route.aircraftDepartureTimeUtc <= timeRange.end) {
+      if(timeRange.start <= route.aircraftDepartureTimeUtc && route.aircraftDepartureTimeUtc <= timeRange.end && route.aircraftArrivalTimeDateDiffUtc == 0) {
         if(route.aircraftArrivalTimeUtc < route.aircraftDepartureTimeUtc) {
           if(timeRange.start <= route.aircraftArrivalTimeUtc || route.aircraftArrivalTimeUtc <= timeRange.end) {
             filteredRoutes.push(route);

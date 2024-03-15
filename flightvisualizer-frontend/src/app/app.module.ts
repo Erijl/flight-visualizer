@@ -29,6 +29,9 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {provideNativeDateAdapter} from "@angular/material/core";
 import {MatSlideToggle} from "@angular/material/slide-toggle";
 import { RouteInfoComponent } from './route-info/route-info.component';
+import {MatExpansionModule} from "@angular/material/expansion";
+import {MatIcon} from "@angular/material/icon";
+import {BrowserAnimationsModule, provideAnimations} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -38,37 +41,41 @@ import { RouteInfoComponent } from './route-info/route-info.component';
     AirportInfoComponent,
     RouteInfoComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        HttpClientModule,
-        FormsModule,
-        MatSlider,
-        MatSliderRangeThumb,
-        MatTable,
-        MatColumnDef,
-        MatHeaderCell,
-        MatCell,
-        MatPaginator,
-        MatHeaderCellDef,
-        MatCellDef,
-        MatHeaderRowDef,
-        MatRowDef,
-        MatHeaderRow,
-        MatRow,
-        MatButtonToggleGroup,
-        MatButtonToggle,
-        MatSort,
-        MatSortModule,
-        CommonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatDatepickerModule,
-        MatSlideToggle
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    MatSlider,
+    MatSliderRangeThumb,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCell,
+    MatCell,
+    MatPaginator,
+    MatHeaderCellDef,
+    MatCellDef,
+    MatHeaderRowDef,
+    MatRowDef,
+    MatHeaderRow,
+    MatRow,
+    MatButtonToggleGroup,
+    MatButtonToggle,
+    MatSort,
+    MatSortModule,
+    CommonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatSlideToggle,
+    MatExpansionModule,
+    MatIcon
+  ],
   providers: [
     provideAnimationsAsync('noop'),
-    provideNativeDateAdapter()
+    provideNativeDateAdapter(),
+    provideAnimations(),
   ],
   bootstrap: [AppComponent]
 })

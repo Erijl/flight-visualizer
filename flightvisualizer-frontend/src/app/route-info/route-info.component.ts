@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
 import {DataStoreService} from "../core/service/data-store.service";
-import {FlightScheduleRouteDto} from "../core/dto/airport";
+import {FlightSchedule, FlightScheduleRouteDto} from "../core/dto/airport";
 
 @Component({
   selector: 'app-route-info',
@@ -13,6 +13,9 @@ export class RouteInfoComponent implements OnInit, OnDestroy{
 
   selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
 
+  flightSchedule: FlightSchedule = new FlightSchedule();
+  allRoutesInFLightSchedule: FlightScheduleRouteDto[] = [];
+
   //TODO show the route its part of
   //TODO replace convertIntToTimeOfDay with a pipe
   constructor(private dataStoreService: DataStoreService) {
@@ -21,6 +24,8 @@ export class RouteInfoComponent implements OnInit, OnDestroy{
   ngOnInit(): void {
     this.selectedRouteSubscription = this.dataStoreService.selectedRoute.subscribe(route => {
       this.selectedRoute = route;
+      this.flightSchedule = this.dataStoreService.getSpecificFlightSchedule(route.flightScheduleId);
+      this.allRoutesInFLightSchedule = this.dataStoreService.getAllRoutesForFlightSchedule(route.flightScheduleId);
     });
   }
 

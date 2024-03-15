@@ -57,6 +57,22 @@ export class FlightScheduleRouteDto {
   }
 }
 
+export class FlightSchedule {
+  flightScheduleId: number;
+  airline: string;
+  operationPeriod: string;
+  flightNumber: number;
+  suffix: string;
+
+  constructor(flightScheduleId?: number, airline?: string, operationPeriod?: string, flightNumber?: number, suffix?: string) {
+    this.flightScheduleId = flightScheduleId || -1;
+    this.airline = airline || '';
+    this.operationPeriod = operationPeriod || '';
+    this.flightNumber = flightNumber || -1;
+    this.suffix = suffix || '';
+  }
+}
+
 export class FlightDateFrequencyDto {
   startDateUtc: Date;
   count: number;
