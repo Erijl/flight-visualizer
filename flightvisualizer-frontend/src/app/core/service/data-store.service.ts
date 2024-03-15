@@ -106,7 +106,25 @@ export class DataStoreService {
 
   getFlightScheduleRoutesWithinSameCountryWithTimeFilter(): FlightScheduleRouteDto[] {
     return this.filterService.getFlightRoutesInTimeFrame(
-      this.filterService.getFLightScheduleRouteDtosWithinCountry(
+      this.filterService.getFLightScheduleRouteDtosWithinSameCountry(
+        this.allFlightScheduleRouteDtos
+      ),
+      this.getTimeFilter()
+    );
+  }
+
+  getFlightScheduleRoutesWithinSameRegionWithTimeFilter(): FlightScheduleRouteDto[] {
+    return this.filterService.getFlightRoutesInTimeFrame(
+      this.filterService.getFLightScheduleRouteDtosWithinSameRegion(
+        this.allFlightScheduleRouteDtos
+      ),
+      this.getTimeFilter()
+    );
+  }
+
+  getFlightScheduleRoutesWithinSameTimezoneWithTimeFilter(): FlightScheduleRouteDto[] {
+    return this.filterService.getFlightRoutesInTimeFrame(
+      this.filterService.getFLightScheduleRouteDtosWithinSameTimezone(
         this.allFlightScheduleRouteDtos
       ),
       this.getTimeFilter()

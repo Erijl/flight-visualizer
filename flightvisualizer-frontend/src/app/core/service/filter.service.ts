@@ -105,7 +105,15 @@ export class FilterService {
       );
   }
 
-  getFLightScheduleRouteDtosWithinCountry(flightScheduleRouteDtos: FlightScheduleRouteDto[]): FlightScheduleRouteDto[] {
+  getFLightScheduleRouteDtosWithinSameCountry(flightScheduleRouteDtos: FlightScheduleRouteDto[]): FlightScheduleRouteDto[] {
     return flightScheduleRouteDtos.filter(route => route.originAirport.isoCountryCode == route.destinationAirport.isoCountryCode);
+  }
+
+  getFLightScheduleRouteDtosWithinSameRegion(flightScheduleRouteDtos: FlightScheduleRouteDto[]): FlightScheduleRouteDto[] {
+    return flightScheduleRouteDtos.filter(route => route.originAirport.timezoneId?.split('/')[0] == route.destinationAirport.timezoneId?.split('/')[0]);
+  }
+
+  getFLightScheduleRouteDtosWithinSameTimezone(flightScheduleRouteDtos: FlightScheduleRouteDto[]): FlightScheduleRouteDto[] {
+    return flightScheduleRouteDtos.filter(route => route.originAirport.offsetUtc == route.destinationAirport.offsetUtc);
   }
 }

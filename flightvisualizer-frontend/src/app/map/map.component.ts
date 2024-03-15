@@ -176,6 +176,10 @@ export class MapComponent implements OnInit, OnDestroy {
       this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
     } else if(this.routeDisplayType === RouteDisplayType.ONLYWITHINSAMECOUNTRY) {
       this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesWithinSameCountryWithTimeFilter());
+    } else if(this.routeDisplayType === RouteDisplayType.WITHINSAMEREGION) {
+      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesWithinSameRegionWithTimeFilter());
+    } else if(this.routeDisplayType === RouteDisplayType.WITHINSAMETIMEZONE) {
+      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesWithinSameTimezoneWithTimeFilter());
     }
   }
 

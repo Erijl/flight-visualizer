@@ -9,6 +9,8 @@ export enum RouteDisplayType {
   ALL = "All",
   SPECIFICAIRPORT = "Specific Airport",
   ONLYWITHINSAMECOUNTRY = "Only within same country",
+  WITHINSAMEREGION = "Within same region",
+  WITHINSAMETIMEZONE = "Within same timezone",
   //TODO add for specifc country
 }
 
