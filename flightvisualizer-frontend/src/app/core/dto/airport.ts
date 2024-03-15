@@ -1,3 +1,5 @@
+import {AircraftTimeFilterType} from "../enum";
+
 export class Airport {
   iataAirportCode: string;
   airportName: string;
@@ -83,7 +85,7 @@ export class FlightDateFrequencyDto {
   }
 }
 
-export class SelectedDateRange {
+export class DateRange {
   start: Date | null;
   end: Date | null;
 
@@ -93,12 +95,26 @@ export class SelectedDateRange {
   }
 }
 
-export class SelectedTimeRange {
+export class TimeRange {
   start: number;
   end: number;
+  inverted: boolean = false;
 
-  constructor(start: number, end: number) {
+  constructor(start: number, end: number, inverted: boolean = false) {
     this.start = start;
     this.end = end;
+    this.inverted = inverted;
+  }
+}
+
+export class TimeFilter {
+  dateRange: DateRange;
+  timeRange: TimeRange;
+  aircraftDepOrArrInTimeRange: AircraftTimeFilterType;
+
+  constructor(dateRange: DateRange, timeRange: TimeRange, aircraftTimeFilter: AircraftTimeFilterType = AircraftTimeFilterType.ARRIVALANDDEPARTURE) {
+    this.dateRange = dateRange;
+    this.timeRange = timeRange;
+    this.aircraftDepOrArrInTimeRange = aircraftTimeFilter;
   }
 }

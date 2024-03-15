@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
-import {SelectedDateRange, SelectedTimeRange} from "../core/dto/airport";
+import {DateRange, TimeFilter, TimeRange} from "../core/dto/airport";
 import {state, style, trigger} from "@angular/animations";
 import {Subscription} from "rxjs";
 import {RouteDisplayType} from "../core/enum";
@@ -32,15 +32,14 @@ export class TimePanelComponent implements OnInit, OnDestroy {
 
   // Subscriptions
   flightDateFrequenciesSubscription!: Subscription;
+  timeFilterSubscription!: Subscription;
 
   //UI Data
   flightDateFrequencies: Set<string> = new Set();
+  timeFilter: TimeFilter = new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439));
 
 
   // UI State
-  selectedTimeRange: SelectedTimeRange = new SelectedTimeRange(this.minTime, this.maxTime);
-  selectedDateRange: SelectedDateRange = new SelectedDateRange(new Date(), new Date());
-
   panelOpenState = false;
 
   // Callbacks
@@ -50,7 +49,6 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.selectedDateRange = this.dataStoreService.getSelectedDateRange();
 
     this.flightDateFrequenciesSubscription = this.dataStoreService.allFlightDateFrequencies.subscribe(frequencies => {
       const dates = frequencies.map(frequency => {
@@ -59,6 +57,10 @@ export class TimePanelComponent implements OnInit, OnDestroy {
       });
       this.flightDateFrequencies = new Set(dates);
       this.dateFilter = this.getIsDateAvailableInputFilter();
+    });
+
+    this.timeFilterSubscription = this.dataStoreService.timeFilter.subscribe(timeFilter => {
+      this.timeFilter = timeFilter;
     });
   }
 
@@ -73,10 +75,8 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   }
 
   onDateRangeChange(): void {
-    this.dataStoreService.setSelectedDateRange(this.selectedDateRange);
-    this.selectedTimeRange = new SelectedTimeRange(this.minTime, this.maxTime);
-    //this.routeDisplayType = RouteDisplayType.ALL;
-    this.onTimeRangeChange();
+    this.timeFilter.timeRange = new TimeRange(this.minTime, this.maxTime);
+    this.dataStoreService.setTimeFilter(this.timeFilter);
   }
 
   protected convertIntToTimeOfDay(value: number | null): string {
@@ -88,7 +88,7 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   }
 
   onTimeRangeChange(): void  {
-    this.dataStoreService.setSelectedTimeRange(this.selectedTimeRange);
+    this.dataStoreService.setTimeFilter(this.timeFilter);
   }
 
   ngOnDestroy(): void {

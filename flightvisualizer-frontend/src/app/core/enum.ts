@@ -16,3 +16,9 @@ export enum RouteFilterType {
   DISTANCE = "Distance",
   ROUTECOUNT = "Route Count", //TODO AIRPORTROUTECOUNT(?)
 }
+
+export enum AircraftTimeFilterType {
+  ARRIVALANDDEPARTURE = "Arrival and Departure in period",
+  DEPARTURE = "Departure in period",
+  ARRIVAL = "Arrival in period",
+}

@@ -3,9 +3,9 @@ import {
   Airport,
   FlightDateFrequencyDto,
   FlightScheduleRouteDto,
-  SelectedDateRange,
-  SelectedTimeRange,
-  FlightSchedule
+  DateRange,
+  TimeRange,
+  FlightSchedule, TimeFilter
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
@@ -24,6 +24,7 @@ export class DataStoreService {
   private _allFlightDateFrequencies: BehaviorSubject<FlightDateFrequencyDto[]> = new BehaviorSubject<FlightDateFrequencyDto[]>([]);
   allFlightDateFrequencies = this._allFlightDateFrequencies.asObservable();
 
+
   // displayed data
   private _currentlyDisplayedRoutes: BehaviorSubject<FlightScheduleRouteDto[]> = new BehaviorSubject<FlightScheduleRouteDto[]>([]);
   currentlyDisplayedRoutes: FlightScheduleRouteDto[] = [];
@@ -34,6 +35,12 @@ export class DataStoreService {
   private _renderedRoutes: BehaviorSubject<FlightScheduleRouteDto[]> = new BehaviorSubject<FlightScheduleRouteDto[]>([]);
   renderedRoutes = this._renderedRoutes.asObservable();
 
+
+  // filter
+  private _timeFilter: BehaviorSubject<TimeFilter> = new BehaviorSubject<TimeFilter>(new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439)));
+  timeFilter = this._timeFilter.asObservable();
+
+
   // selected data
   private _selectedAirport: BehaviorSubject<Airport> = new BehaviorSubject<Airport>(new Airport());
   selectedAirport = this._selectedAirport.asObservable();
@@ -41,11 +48,6 @@ export class DataStoreService {
   private _selectedRoute: BehaviorSubject<FlightScheduleRouteDto> = new BehaviorSubject<FlightScheduleRouteDto>(new FlightScheduleRouteDto());
   selectedRoute = this._selectedRoute.asObservable();
 
-  private _selectedDateRange: BehaviorSubject<SelectedDateRange> = new BehaviorSubject<SelectedDateRange>(new SelectedDateRange(new Date(), null));
-  selectedDateRange = this._selectedDateRange.asObservable();
-
-  private _selectedTimeRange: BehaviorSubject<SelectedTimeRange> = new BehaviorSubject<SelectedTimeRange>(new SelectedTimeRange(0, 1439));
-  selectedTimeRange = this._selectedTimeRange.asObservable();
 
   // state
   private _selectedAirportRoutesOutgoing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
@@ -91,7 +93,15 @@ export class DataStoreService {
   }
 
   getFlightScheduleRoutesForSelectedAirportWithTimeFilter(): FlightScheduleRouteDto[] {
-    return this.filterService.getFlightRoutesInTimeFrame(this.filterService.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.getSelectedAirport(), this.getSelectedAirportRoutesIncoming(), this.getSelectedAirportRoutesOutgoing()), this.getSelectedTimeRange());
+    return this.filterService.getFlightRoutesInTimeFrame(
+      this.filterService.getFlightScheduleRouteDtosByAirport(
+        this.allFlightScheduleRouteDtos,
+        this.getSelectedAirport(),
+        this.getSelectedAirportRoutesIncoming(),
+        this.getSelectedAirportRoutesOutgoing()
+      ),
+      this.getTimeFilter()
+    );
   }
 
   getSelectedAirportRoutesOutgoing(): boolean {
@@ -107,15 +117,7 @@ export class DataStoreService {
   }
 
   getAllFlightScheduleRouteDtosWithTimeFilter() {
-    return this.filterService.getFlightRoutesInTimeFrame(this.allFlightScheduleRouteDtos, this.getSelectedTimeRange());
-  }
-
-  getSelectedDateRange(): SelectedDateRange {
-    return this._selectedDateRange.getValue();
-  }
-
-  getSelectedTimeRange(): SelectedTimeRange {
-    return this._selectedTimeRange.getValue();
+    return this.filterService.getFlightRoutesInTimeFrame(this.allFlightScheduleRouteDtos, this.getTimeFilter());
   }
 
   getSpecificFlightSchedule(id: number): FlightSchedule {
@@ -126,6 +128,10 @@ export class DataStoreService {
 
   getAllRoutesForFlightSchedule(id: number): FlightScheduleRouteDto[] {
     return this.allFlightScheduleRouteDtos.filter(route => route.flightScheduleId == id);
+  }
+
+  getTimeFilter(): TimeFilter {
+    return this._timeFilter.getValue();
   }
 
 
@@ -156,19 +162,18 @@ export class DataStoreService {
     this._selectedAirportRoutesIncoming.next(incoming);
   }
 
-  setSelectedDateRange(selectedDateRange: SelectedDateRange): void {
-    this._selectedDateRange.next(selectedDateRange);
+  setTimeFilter(timeFilter: TimeFilter): void {
+    let oldTimeFilter = this.getTimeFilter();
+    this._timeFilter.next(timeFilter);
 
-    this.getFlightScheduleLegRoutes();
-  }
-
-  setSelectedTimeRange(selectedTimeRange: SelectedTimeRange): void {
-    this._selectedTimeRange.next(selectedTimeRange);
-
-    if(this.getSelectedAirport().iataAirportCode !== "") {
-      this.setCurrentlyDisplayedRoutes(this.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
+    if(oldTimeFilter.dateRange.start === timeFilter.dateRange.start && oldTimeFilter.dateRange.end === timeFilter.dateRange.end) {
+      if(this.getSelectedAirport().iataAirportCode !== "") {
+        this.setCurrentlyDisplayedRoutes(this.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
+      } else {
+        this.setCurrentlyDisplayedRoutes(this.getAllFlightScheduleRouteDtosWithTimeFilter());
+      }
     } else {
-      this.setCurrentlyDisplayedRoutes(this.getAllFlightScheduleRouteDtosWithTimeFilter());
+      this.getFlightScheduleLegRoutes();
     }
   }
 
@@ -181,7 +186,7 @@ export class DataStoreService {
   }
 
   private getFlightScheduleLegRoutes(): void {
-    this.dataService.getFlightScheduleLegRoutes(this.getSelectedDateRange()).subscribe(flightScheduleLegs => {
+    this.dataService.getFlightScheduleLegRoutes(this.getTimeFilter().dateRange).subscribe(flightScheduleLegs => {
       this.allFlightScheduleRouteDtos = flightScheduleLegs;
       this.setCurrentlyDisplayedRoutes(this.allFlightScheduleRouteDtos);
     });

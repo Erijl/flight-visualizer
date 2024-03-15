@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit,} from '@angular/core';
 import mapboxgl from "mapbox-gl";
-import {Airport, FlightScheduleRouteDto, SelectedDateRange, SelectedTimeRange} from "../core/dto/airport";
+import {Airport, FlightScheduleRouteDto} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
 import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enum";

@@ -5,7 +5,7 @@ import {
   FlightDateFrequencyDto,
   FlightSchedule,
   FlightScheduleRouteDto,
-  SelectedDateRange
+  DateRange
 } from "../dto/airport";
 import {HttpClient} from "@angular/common/http";
 
@@ -25,7 +25,7 @@ export class DataService {
         );
   }
 
-  getFlightScheduleLegRoutes(dateRange: SelectedDateRange) {
+  getFlightScheduleLegRoutes(dateRange: DateRange) {
     return this.http.get<FlightScheduleRouteDto[]>(this.apiEndpoint + 'flightScheduleLeg/distance?startDate=' + this.convertDateToUTCString(dateRange.start) + '&endDate=' + this.convertDateToUTCString(dateRange.end))
       .pipe(
         tap(_ => this.log('fetched getFlightScheduleLegRoutes')),
