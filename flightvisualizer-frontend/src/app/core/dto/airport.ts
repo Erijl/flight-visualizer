@@ -111,10 +111,14 @@ export class TimeFilter {
   dateRange: DateRange;
   timeRange: TimeRange;
   aircraftDepOrArrInTimeRange: AircraftTimeFilterType;
+  includeDifferentDayDepartures: boolean;
+  includeDifferentDayArrivals: boolean;
 
-  constructor(dateRange: DateRange, timeRange: TimeRange, aircraftTimeFilter: AircraftTimeFilterType = AircraftTimeFilterType.ARRIVALANDDEPARTURE) {
+  constructor(dateRange: DateRange, timeRange: TimeRange, includeDifferentDayDepartures = false, includeDifferentDayArrivals = false, aircraftTimeFilter: AircraftTimeFilterType = AircraftTimeFilterType.ARRIVALANDDEPARTURE) {
     this.dateRange = dateRange;
     this.timeRange = timeRange;
     this.aircraftDepOrArrInTimeRange = aircraftTimeFilter;
+    this.includeDifferentDayDepartures = includeDifferentDayDepartures;
+    this.includeDifferentDayArrivals = includeDifferentDayArrivals;
   }
 }

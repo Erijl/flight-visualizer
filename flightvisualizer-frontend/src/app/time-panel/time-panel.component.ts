@@ -4,7 +4,7 @@ import {DataStoreService} from "../core/service/data-store.service";
 import {DateRange, TimeFilter, TimeRange} from "../core/dto/airport";
 import {state, style, trigger} from "@angular/animations";
 import {Subscription} from "rxjs";
-import {RouteDisplayType} from "../core/enum";
+import {AircraftTimeFilterType, RouteDisplayType} from "../core/enum";
 
 @Component({
   selector: 'app-time-panel',
@@ -37,6 +37,8 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   //UI Data
   flightDateFrequencies: Set<string> = new Set();
   timeFilter: TimeFilter = new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439));
+  aircraftTimeFilterTypes = Object.values(AircraftTimeFilterType);
+  aircraftTimeFilterType: AircraftTimeFilterType = AircraftTimeFilterType.ARRIVALANDDEPARTURE;
 
 
   // UI State
@@ -76,6 +78,20 @@ export class TimePanelComponent implements OnInit, OnDestroy {
 
   onDateRangeChange(): void {
     this.timeFilter.timeRange = new TimeRange(this.minTime, this.maxTime);
+    this.dataStoreService.setTimeFilter(this.timeFilter);
+  }
+
+  onAircraftTimeFilterTypeChange(): void {
+    this.timeFilter.aircraftDepOrArrInTimeRange = this.aircraftTimeFilterType;
+    this.dataStoreService.setTimeFilter(this.timeFilter);
+  }
+  onTimeRangeInvertChange(): void {
+    this.timeFilter.includeDifferentDayDepartures = true;
+    this.timeFilter.includeDifferentDayArrivals = true;
+    this.dataStoreService.setTimeFilter(this.timeFilter);
+  }
+
+  onIncludeMultiDayFlightChange(): void {
     this.dataStoreService.setTimeFilter(this.timeFilter);
   }
 

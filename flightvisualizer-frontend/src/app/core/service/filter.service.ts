@@ -1,12 +1,14 @@
 import {Injectable} from '@angular/core';
-import {Airport, FlightScheduleRouteDto, TimeFilter, TimeRange} from "../dto/airport";
+import {Airport, FlightScheduleRouteDto, TimeFilter} from "../dto/airport";
+import {AircraftTimeFilterType} from "../enum";
 
 @Injectable({
   providedIn: 'root'
 })
 export class FilterService {
 
-  constructor() { }
+  constructor() {
+  }
 
   getAllAirportsPresentInFlightScheduleRouteDtos(allFlightScheduleRouteDtos: FlightScheduleRouteDto[]): Airport[] {
     const allAirports: any = [];
@@ -41,24 +43,54 @@ export class FilterService {
     return cleanedRoutes;
   }
 
-  getFlightRoutesInTimeFrame(flightScheduleRouteDtos: FlightScheduleRouteDto[], timeRange: TimeFilter) {
-    let filteredRoutes: FlightScheduleRouteDto[] = [];
+  getFlightRoutesInTimeFrame(flightScheduleRouteDtos: FlightScheduleRouteDto[], timeFilter: TimeFilter) {
+    const minTime = 0;
+    const maxTime = 1439;
 
-    flightScheduleRouteDtos.forEach(route => {
-      if(timeRange.timeRange.start <= route.aircraftDepartureTimeUtc && route.aircraftDepartureTimeUtc <= timeRange.timeRange.end && route.aircraftArrivalTimeDateDiffUtc == 0) {
-        if(route.aircraftArrivalTimeUtc < route.aircraftDepartureTimeUtc) {
-          if(timeRange.timeRange.start <= route.aircraftArrivalTimeUtc || route.aircraftArrivalTimeUtc <= timeRange.timeRange.end) {
-            filteredRoutes.push(route);
-          }
-        } else {
-          if(timeRange.timeRange.start <= route.aircraftArrivalTimeUtc && route.aircraftArrivalTimeUtc <= timeRange.timeRange.end) {
-            filteredRoutes.push(route);
-          }
+    return flightScheduleRouteDtos.filter(route => {
+      const isDifferentDayDeparture = timeFilter.includeDifferentDayDepartures && route.aircraftDepartureTimeDateDiffUtc >= 0;
+      const isSameDayDeparture = !timeFilter.includeDifferentDayDepartures && route.aircraftDepartureTimeDateDiffUtc == 0;
+      const isDifferentDayArrival = timeFilter.includeDifferentDayArrivals && route.aircraftArrivalTimeDateDiffUtc >= 0;
+      const isSameDayArrival = !timeFilter.includeDifferentDayArrivals && route.aircraftArrivalTimeDateDiffUtc == 0;
+
+      if ((isDifferentDayDeparture || isSameDayDeparture) && (isDifferentDayArrival || isSameDayArrival)) {
+        switch (timeFilter.aircraftDepOrArrInTimeRange) {
+          case AircraftTimeFilterType.ARRIVALANDDEPARTURE:
+            return this.isRouteInTimeRange(route, timeFilter, minTime, maxTime);
+          case AircraftTimeFilterType.ARRIVAL:
+            return this.isArrivalInTimeRange(route, timeFilter, minTime);
+          case AircraftTimeFilterType.DEPARTURE:
+            return this.isDepartureInTimeRange(route, timeFilter, maxTime);
         }
       }
-    })
+      return false;
+    });
+  }
 
-    return filteredRoutes;
+  isRouteInTimeRange(route: FlightScheduleRouteDto, timeFilter: TimeFilter, minTime: number, maxTime: number): boolean {
+    if (timeFilter.timeRange.inverted) {
+      return minTime <= route.aircraftArrivalTimeUtc && route.aircraftArrivalTimeUtc <= timeFilter.timeRange.start &&
+        timeFilter.timeRange.end <= route.aircraftDepartureTimeUtc && route.aircraftDepartureTimeUtc <= maxTime;
+    } else {
+      return timeFilter.timeRange.start <= route.aircraftArrivalTimeUtc && route.aircraftArrivalTimeUtc <= timeFilter.timeRange.end &&
+        timeFilter.timeRange.start <= route.aircraftDepartureTimeUtc && route.aircraftDepartureTimeUtc <= timeFilter.timeRange.end;
+    }
+  }
+
+  isArrivalInTimeRange(route: FlightScheduleRouteDto, timeFilter: TimeFilter, minTime: number): boolean {
+    if (timeFilter.timeRange.inverted) {
+      return minTime <= route.aircraftArrivalTimeUtc && route.aircraftArrivalTimeUtc <= timeFilter.timeRange.start;
+    } else {
+      return timeFilter.timeRange.start <= route.aircraftArrivalTimeUtc && route.aircraftArrivalTimeUtc <= timeFilter.timeRange.end;
+    }
+  }
+
+  isDepartureInTimeRange(route: FlightScheduleRouteDto, timeFilter: TimeFilter, maxTime: number): boolean {
+    if (timeFilter.timeRange.inverted) {
+      return timeFilter.timeRange.end <= route.aircraftDepartureTimeUtc && route.aircraftDepartureTimeUtc <= maxTime;
+    } else {
+      return timeFilter.timeRange.start <= route.aircraftDepartureTimeUtc && route.aircraftDepartureTimeUtc <= timeFilter.timeRange.end;
+    }
   }
 
   compareFlightScheduleRouteDtos(originalFlightRoute: FlightScheduleRouteDto, alteredFlightRoute: FlightScheduleRouteDto): boolean {

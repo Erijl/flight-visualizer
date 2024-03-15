@@ -27,12 +27,13 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatInputModule} from "@angular/material/input";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {provideNativeDateAdapter} from "@angular/material/core";
-import {MatSlideToggle} from "@angular/material/slide-toggle";
+import {MatSlideToggle, MatSlideToggleModule} from "@angular/material/slide-toggle";
 import { RouteInfoComponent } from './route-info/route-info.component';
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatIcon} from "@angular/material/icon";
 import {BrowserAnimationsModule, provideAnimations} from "@angular/platform-browser/animations";
 import { TimePanelComponent } from './time-panel/time-panel.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -72,7 +73,9 @@ import { TimePanelComponent } from './time-panel/time-panel.component';
     MatDatepickerModule,
     MatSlideToggle,
     MatExpansionModule,
-    MatIcon
+    MatIcon,
+    MatCheckboxModule,
+    MatSlideToggleModule
   ],
   providers: [
     provideAnimationsAsync('noop'),
