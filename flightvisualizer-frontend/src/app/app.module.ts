@@ -32,6 +32,7 @@ import { RouteInfoComponent } from './route-info/route-info.component';
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatIcon} from "@angular/material/icon";
 import {BrowserAnimationsModule, provideAnimations} from "@angular/platform-browser/animations";
+import { TimePanelComponent } from './time-panel/time-panel.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import {BrowserAnimationsModule, provideAnimations} from "@angular/platform-brow
     MapComponent,
     HistogramComponent,
     AirportInfoComponent,
-    RouteInfoComponent
+    RouteInfoComponent,
+    TimePanelComponent
   ],
   imports: [
     BrowserModule,

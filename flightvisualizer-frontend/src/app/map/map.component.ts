@@ -11,27 +11,10 @@ import {state, style, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-map',
-  animations: [
-    trigger('openClose', [
-      // ...
-      state('open', style({
-        transition: 'transform 0.5s',
-        transform: 'rotate(0deg)'
-      })),
-      state('closed', style({
-        transition: 'transform 0.5s',
-        transform: 'rotate(180deg)'
-      })),
-    ]),
-  ],
   templateUrl: './map.component.html',
   styleUrl: './map.component.css'
 })
 export class MapComponent implements OnInit, OnDestroy {
-
-  // Constants
-  maxTime = 1439;
-  minTime = 0;
 
   // @ts-ignore
   map: mapboxgl.Map;
@@ -39,7 +22,6 @@ export class MapComponent implements OnInit, OnDestroy {
   // Subscriptions
   currentlyRenderedAirportsSubscription!: Subscription;
   currentlyRenderedRoutesSubscription!: Subscription;
-  flightDateFrequenciesSubscription!: Subscription;
   selectedRouteSubscription!: Subscription;
   selectedAirportSubscription!: Subscription;
 
@@ -50,28 +32,20 @@ export class MapComponent implements OnInit, OnDestroy {
   routeDisplayType: RouteDisplayType = RouteDisplayType.ALL;
   routeFilterTypes = Object.values(RouteFilterType);
   routeFilterType: RouteFilterType = RouteFilterType.DISTANCE;
-  flightDateFrequencies: Set<string> = new Set();
-  selectedTimeRange: SelectedTimeRange = new SelectedTimeRange(this.minTime, this.maxTime);
 
   // UI state
   histogramData: number[] = [];
   selectedAirport: Airport = new Airport();
   selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
   selectionType: string = 'airport';
-  selectedDateRange: SelectedDateRange = new SelectedDateRange(new Date(), new Date());
 
   lowerValue = 10;
   upperValue = 90;
-  hideToggle: boolean = false;
-  panelOpenState = false;
-
-  dateFilter = this.getIsDateAvailableInputFilter();
 
   constructor(private geoService: GeoService, private filterService: FilterService, private dataStoreService: DataStoreService) {
   }
 
   ngOnInit(): void {
-    this.selectedDateRange = this.dataStoreService.getSelectedDateRange();
 
     this.currentlyRenderedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
       this.replaceCurrentlyRenderedAirports(airports);
@@ -103,14 +77,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.highlightSelectedAirport();
     });
 
-    this.flightDateFrequenciesSubscription = this.dataStoreService.allFlightDateFrequencies.subscribe(frequencies => {
-      const dates = frequencies.map(frequency => {
-        const date = new Date(frequency.startDateUtc);
-        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      });
-      this.flightDateFrequencies = new Set(dates);
-      this.dateFilter = this.getIsDateAvailableInputFilter();
-    });
+
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXJpamwiLCJhIjoiY2xza2JpemdmMDIzejJyczBvZGk2aG44eiJ9.eJkFfrXg1dGFasDJRkmnIg';
     this.map = new mapboxgl.Map({
@@ -169,16 +136,6 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   };
 
-  getIsDateAvailableInputFilter() {
-    return (date: Date | null): boolean => {
-      if (!date || !this.flightDateFrequencies) {
-        return false;
-      }
-      const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      return this.flightDateFrequencies.has(dateString);
-    };
-  }
-
   // @ts-ignore
   routeLayerClickHandler = (e) => {
     // @ts-ignore
@@ -201,25 +158,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
   onAirportDisplayTypeChange(): void {
     this.renderAirports();
-  }
-
-  protected convertIntToTimeOfDay(value: number | null): string {
-    if(value == null) return '';
-    let hours = Math.floor((value)/60);
-    let minutes = Math.floor((value)%60);
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-  }
-
-  onDateRangeChange(): void {
-    this.dataStoreService.setSelectedDateRange(this.selectedDateRange);
-    this.selectedTimeRange = new SelectedTimeRange(this.minTime, this.maxTime);
-    this.routeDisplayType = RouteDisplayType.ALL;
-    this.onTimeRangeChange();
-  }
-
-  onTimeRangeChange(): void  {
-    this.dataStoreService.setSelectedTimeRange(this.selectedTimeRange);
   }
 
   renderAirports(): void {
@@ -281,7 +219,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.geoService.removeSourceFromMap(this.map, 'airportSource');
 
     this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', airportsGeoJson);
-    let before = this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
+    this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
 
     this.geoService.removeLayerFromMap(this.map, 'airportLayerTEMP');
     this.geoService.removeSourceFromMap(this.map, 'airportSourceTEMP');
@@ -350,7 +288,6 @@ export class MapComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.currentlyRenderedAirportsSubscription.unsubscribe();
     this.currentlyRenderedRoutesSubscription.unsubscribe();
-    this.flightDateFrequenciesSubscription.unsubscribe();
     this.selectedRouteSubscription.unsubscribe();
     this.selectedAirportSubscription.unsubscribe();
   }

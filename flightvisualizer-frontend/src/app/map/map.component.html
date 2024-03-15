@@ -3,65 +3,8 @@
   <div id="map"></div>
 
   <div class="left-side-panel">
-    <h1>Time Panel</h1> //TODO outsource to different component
+    <app-time-panel></app-time-panel>
 
-    <div class="slider-container">
-    <mat-form-field>
-      <mat-label>Enter date range or date</mat-label>
-      <mat-date-range-input [dateFilter]="dateFilter" [rangePicker]="rangePicker" [(ngModel)]="selectedDateRange">
-        <input [(ngModel)]="selectedDateRange.start" (ngModelChange)="onDateRangeChange()" matStartDate placeholder="Start date">
-        <input [(ngModel)]="selectedDateRange.end" (ngModelChange)="onDateRangeChange()" matEndDate placeholder="End date">
-      </mat-date-range-input>
-      <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
-      <mat-date-range-picker #rangePicker></mat-date-range-picker>
-    </mat-form-field>
-    </div>
-
-    <div class="slider-container">
-      <mat-slider
-        class="enlarged-slider"
-        thumbLabel
-        tickInterval="1"
-        min="0"
-        max="1439"
-        step="1"
-      (change)="onTimeRangeChange()">
-        <input [ngModel]="selectedTimeRange.start" (ngModelChange)="selectedTimeRange.start = $event" matSliderStartThumb>
-        <input [ngModel]="selectedTimeRange.end" (ngModelChange)="selectedTimeRange.end = $event" matSliderEndThumb>
-      </mat-slider>
-      <div class="values-container">
-        UTC:
-        <span>{{ convertIntToTimeOfDay(selectedTimeRange.start) }}</span>
-        -
-        <span>{{ convertIntToTimeOfDay(selectedTimeRange.end) }}</span>
-        <div *ngIf="panelOpenState"> (inclusive slider)</div>
-      </div>
-    </div>
-
-    <br>
-    <mat-expansion-panel (opened)="panelOpenState = true"
-                         (closed)="panelOpenState = false">
-
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Advanced Time Options
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      Time zone selection: (SelectedTimezone (UTC+Offset)
-      <br>
-      Slider / checkbox: including slider zone or excluding (inverse)
-      <br>
-      <br>
-      Filter Dropdown:
-      <br>
-      Arrival & Departure in period
-      <br>
-      Only Arrival in period
-      <br>
-      Only Departure in period
-      <br>
-
-    </mat-expansion-panel>
     <br>
 
     <h1>Detail Panel</h1> //TODO outsource to different component
