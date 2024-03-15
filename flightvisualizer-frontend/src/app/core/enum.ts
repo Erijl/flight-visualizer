@@ -8,7 +8,8 @@ export enum AirportDisplayType {
 export enum RouteDisplayType {
   ALL = "All",
   SPECIFICAIRPORT = "Specific Airport",
-  //TODO add for country
+  ONLYWITHINSAMECOUNTRY = "Only within same country",
+  //TODO add for specifc country
 }
 
 export enum RouteFilterType {

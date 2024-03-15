@@ -104,6 +104,15 @@ export class DataStoreService {
     );
   }
 
+  getFlightScheduleRoutesWithinSameCountryWithTimeFilter(): FlightScheduleRouteDto[] {
+    return this.filterService.getFlightRoutesInTimeFrame(
+      this.filterService.getFLightScheduleRouteDtosWithinCountry(
+        this.allFlightScheduleRouteDtos
+      ),
+      this.getTimeFilter()
+    );
+  }
+
   getSelectedAirportRoutesOutgoing(): boolean {
     return this._selectedAirportRoutesOutgoing.getValue();
   }

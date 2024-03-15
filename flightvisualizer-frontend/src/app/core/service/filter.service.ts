@@ -104,4 +104,8 @@ export class FilterService {
         originalFlightRoute.destinationAirport.iataAirportCode == alteredFlightRoute.originAirport.iataAirportCode
       );
   }
+
+  getFLightScheduleRouteDtosWithinCountry(flightScheduleRouteDtos: FlightScheduleRouteDto[]): FlightScheduleRouteDto[] {
+    return flightScheduleRouteDtos.filter(route => route.originAirport.isoCountryCode == route.destinationAirport.isoCountryCode);
+  }
 }

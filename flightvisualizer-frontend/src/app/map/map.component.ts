@@ -7,7 +7,6 @@ import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enu
 import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
-import {state, style, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-map',
@@ -175,6 +174,8 @@ export class MapComponent implements OnInit, OnDestroy {
       this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getAllFlightScheduleRouteDtosWithTimeFilter());
     } else if (this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) {
       this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
+    } else if(this.routeDisplayType === RouteDisplayType.ONLYWITHINSAMECOUNTRY) {
+      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesWithinSameCountryWithTimeFilter());
     }
   }
 
