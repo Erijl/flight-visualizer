@@ -1,4 +1,4 @@
-import {AircraftTimeFilterType} from "../enum";
+import {AircraftTimeFilterType, AirportDisplayType, RouteDisplayType} from "../enum";
 
 export class Airport {
   iataAirportCode: string;
@@ -121,4 +121,14 @@ export class TimeFilter {
     this.includeDifferentDayDepartures = includeDifferentDayDepartures;
     this.includeDifferentDayArrivals = includeDifferentDayArrivals;
   }
+}
+
+export class GeneralFilter {
+  airportDisplayType: AirportDisplayType;
+  routeDisplayType: RouteDisplayType;
+  //TODO add custom routeFilterType object with value
+    constructor(airportDisplayType: AirportDisplayType, routeDisplayType: RouteDisplayType) {
+        this.airportDisplayType = airportDisplayType;
+        this.routeDisplayType = routeDisplayType;
+    }
 }

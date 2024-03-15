@@ -25,45 +25,6 @@
   </div>
 
   <div class="side-panel">
-    <h1>Filter Panel</h1>
-
-    <h2>Airports</h2>//TODO fix rendering
-    <select [(ngModel)]="airportDisplayType" (change)="onAirportDisplayTypeChange()">
-      <option *ngFor="let type of airportDisplayTypes" [value]="type">{{ type }}</option>
-    </select>
-
-    <h2>Routes</h2>
-    <select [(ngModel)]="routeDisplayType" (change)="onRouteDisplayTypeChange()">
-      <option *ngFor="let type of routeDisplayTypes" [value]="type">{{ type }}</option>
-    </select>
-
-    <br>
-    <br>
-    Filter: //TODO add 'legCount in route'
-    <select [(ngModel)]="routeFilterType" (change)="onRouteFilterTypeChange()">
-      <option *ngFor="let type of routeFilterTypes" [value]="type">{{ type }}</option>
-    </select>
-
-    <!--
-    <input type="range" min="1" max="100" (change)="onSliderChange($event)">
-    -->
-
-    <br>
-    <br>
-    <div *ngIf="histogramData.length > 1">
-      <app-histogram [boxWidth]="300" [boxHeight]="300" [data]="histogramData"></app-histogram>
-    </div>
-    <br>
-    <br>
-    <mat-slider min="200" max="500">
-      <input value="300" matSliderStartThumb>
-      <input value="400" matSliderEndThumb>
-    </mat-slider>
-
-    <div class="values-container">
-      <span>{{ lowerValue }}</span>
-      <br>
-      <span>{{ upperValue }}</span>
-    </div>
+    <app-filter-panel></app-filter-panel>
   </div>
 </div>

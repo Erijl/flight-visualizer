@@ -1,15 +1,18 @@
 import {Injectable} from '@angular/core';
 import {
   Airport,
-  FlightDateFrequencyDto,
-  FlightScheduleRouteDto,
   DateRange,
-  TimeRange,
-  FlightSchedule, TimeFilter
+  FlightDateFrequencyDto,
+  FlightSchedule,
+  FlightScheduleRouteDto,
+  GeneralFilter,
+  TimeFilter,
+  TimeRange
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {FilterService} from "./filter.service";
+import {AirportDisplayType, RouteDisplayType} from "../enum";
 
 @Injectable({
   providedIn: 'root'
@@ -39,6 +42,9 @@ export class DataStoreService {
   // filter
   private _timeFilter: BehaviorSubject<TimeFilter> = new BehaviorSubject<TimeFilter>(new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439)));
   timeFilter = this._timeFilter.asObservable();
+
+  private _generalFilter: BehaviorSubject<GeneralFilter> = new BehaviorSubject<GeneralFilter>(new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL));
+  generalFilter = this._generalFilter.asObservable();
 
 
   // selected data
@@ -161,6 +167,10 @@ export class DataStoreService {
     return this._timeFilter.getValue();
   }
 
+  getGeneralFilter(): GeneralFilter {
+    return this._generalFilter.getValue();
+  }
+
 
   // SETTERS
 
@@ -202,6 +212,10 @@ export class DataStoreService {
     } else {
       this.getFlightScheduleLegRoutes();
     }
+  }
+
+  setGeneralFilter(generalFilter: GeneralFilter): void {
+    this._generalFilter.next(generalFilter);
   }
 
   // FETCHING DATA

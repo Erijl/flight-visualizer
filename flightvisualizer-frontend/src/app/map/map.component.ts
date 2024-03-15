@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit,} from '@angular/core';
 import mapboxgl from "mapbox-gl";
-import {Airport, FlightScheduleRouteDto} from "../core/dto/airport";
+import {Airport, FlightScheduleRouteDto, GeneralFilter} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
 import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enum";
@@ -23,23 +23,16 @@ export class MapComponent implements OnInit, OnDestroy {
   currentlyRenderedRoutesSubscription!: Subscription;
   selectedRouteSubscription!: Subscription;
   selectedAirportSubscription!: Subscription;
+  generalFilterSubscription!: Subscription;
 
   // UI data
-  airportDisplayTypes = Object.values(AirportDisplayType);
-  airportDisplayType: AirportDisplayType = AirportDisplayType.ALL;
-  routeDisplayTypes = Object.values(RouteDisplayType);
-  routeDisplayType: RouteDisplayType = RouteDisplayType.ALL;
-  routeFilterTypes = Object.values(RouteFilterType);
-  routeFilterType: RouteFilterType = RouteFilterType.DISTANCE;
+  generalFilter: GeneralFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
 
   // UI state
-  histogramData: number[] = [];
   selectedAirport: Airport = new Airport();
   selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
   selectionType: string = 'airport';
 
-  lowerValue = 10;
-  upperValue = 90;
 
   constructor(private geoService: GeoService, private filterService: FilterService, private dataStoreService: DataStoreService) {
   }
@@ -49,7 +42,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.currentlyRenderedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
       this.replaceCurrentlyRenderedAirports(airports);
 
-      if(!airports.includes(this.selectedAirport)) {
+      if (!airports.includes(this.selectedAirport)) {
         this.selectedAirport = new Airport();
         this.dataStoreService.setSelectedAirport(this.selectedAirport);
       }
@@ -58,9 +51,13 @@ export class MapComponent implements OnInit, OnDestroy {
     this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
       this.replaceCurrentlyRenderedRoutes(routes);
 
-      if(!routes.includes(this.selectedRoute)) {
+      if (!routes.includes(this.selectedRoute)) {
         this.selectedRoute = new FlightScheduleRouteDto();
         this.dataStoreService.setSelectedRoute(this.selectedRoute);
+      }
+
+      if (this.generalFilter.airportDisplayType === AirportDisplayType.WITHROUTES) {
+        this.renderAirports();
       }
     });
 
@@ -76,6 +73,12 @@ export class MapComponent implements OnInit, OnDestroy {
       this.highlightSelectedAirport();
     });
 
+    this.generalFilterSubscription = this.dataStoreService.generalFilter.subscribe(generalFilter => {
+      this.generalFilter = generalFilter;
+
+      this.renderAirports();
+      this.renderRoutes();
+    });
 
 
     mapboxgl.accessToken = 'pk.eyJ1IjoiZXJpamwiLCJhIjoiY2xza2JpemdmMDIzejJyczBvZGk2aG44eiJ9.eJkFfrXg1dGFasDJRkmnIg';
@@ -94,7 +97,7 @@ export class MapComponent implements OnInit, OnDestroy {
     });
 
     this.map.on('click', (e) => {
-      const features = this.map.queryRenderedFeatures(e.point, { layers: ['airportLayer', 'routeLayer'] });
+      const features = this.map.queryRenderedFeatures(e.point, {layers: ['airportLayer', 'routeLayer']});
 
       if (!features.length) {
         if (this.selectionType === 'airport') {
@@ -131,7 +134,7 @@ export class MapComponent implements OnInit, OnDestroy {
     if (selectedAirport && selectedAirport.iataAirportCode != '' && selectedAirport.iataAirportCode != this.selectedAirport.iataAirportCode) {
       this.selectedAirport = selectedAirport;
       this.dataStoreService.setSelectedAirport(this.selectedAirport);
-      if (this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
+      if (this.generalFilter.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
     }
   };
 
@@ -155,30 +158,28 @@ export class MapComponent implements OnInit, OnDestroy {
     this.map.getCanvas().style.cursor = '';
   }
 
-  onAirportDisplayTypeChange(): void {
-    this.renderAirports();
-  }
-
+  //TODO move handling to dataStoreService
   renderAirports(): void {
-    if (this.airportDisplayType === AirportDisplayType.ALL) {
+    if (this.generalFilter.airportDisplayType === AirportDisplayType.ALL) {
       this.dataStoreService.setCurrentlyDisplayedAirports(this.dataStoreService.getAllAirports());
-    } else if (this.airportDisplayType === AirportDisplayType.WITHROUTES) {
+    } else if (this.generalFilter.airportDisplayType === AirportDisplayType.WITHROUTES) {
       this.dataStoreService.setCurrentlyDisplayedAirports(this.filterService.getAllAirportsPresentInFlightScheduleRouteDtos(this.dataStoreService.getRenderedRoutes()));
-    } else if (this.airportDisplayType === AirportDisplayType.NONE) {
+    } else if (this.generalFilter.airportDisplayType === AirportDisplayType.NONE) {
       this.dataStoreService.setCurrentlyDisplayedAirports([]);
     }
   }
 
+  //TODO move handling to dataStoreService
   renderRoutes(): void {
-    if (this.routeDisplayType === RouteDisplayType.ALL) {
+    if (this.generalFilter.routeDisplayType === RouteDisplayType.ALL) {
       this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getAllFlightScheduleRouteDtosWithTimeFilter());
-    } else if (this.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) {
+    } else if (this.generalFilter.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) {
       this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
-    } else if(this.routeDisplayType === RouteDisplayType.ONLYWITHINSAMECOUNTRY) {
+    } else if (this.generalFilter.routeDisplayType === RouteDisplayType.ONLYWITHINSAMECOUNTRY) {
       this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesWithinSameCountryWithTimeFilter());
-    } else if(this.routeDisplayType === RouteDisplayType.WITHINSAMEREGION) {
+    } else if (this.generalFilter.routeDisplayType === RouteDisplayType.WITHINSAMEREGION) {
       this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesWithinSameRegionWithTimeFilter());
-    } else if(this.routeDisplayType === RouteDisplayType.WITHINSAMETIMEZONE) {
+    } else if (this.generalFilter.routeDisplayType === RouteDisplayType.WITHINSAMETIMEZONE) {
       this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesWithinSameTimezoneWithTimeFilter());
     }
   }
@@ -199,14 +200,6 @@ export class MapComponent implements OnInit, OnDestroy {
     if (this.selectedAirport.iataAirportCode != '') {
       this.geoService.highlightAirportOnMap(this.map, 'airportHighlightSource', 'airportHighlightLayer', this.selectedAirport);
     }
-  }
-
-  onRouteDisplayTypeChange(): void {
-    this.renderRoutes();
-  }
-
-  onRouteFilterTypeChange(): void {
-
   }
 
   onSpecificAirportChange(): void {
@@ -295,6 +288,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.currentlyRenderedRoutesSubscription.unsubscribe();
     this.selectedRouteSubscription.unsubscribe();
     this.selectedAirportSubscription.unsubscribe();
+    this.generalFilterSubscription.unsubscribe();
   }
 
   protected readonly AirportDisplayType = AirportDisplayType;
