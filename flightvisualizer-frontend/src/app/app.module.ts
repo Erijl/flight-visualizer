@@ -34,6 +34,7 @@ import {MatIcon} from "@angular/material/icon";
 import {BrowserAnimationsModule, provideAnimations} from "@angular/platform-browser/animations";
 import { TimePanelComponent } from './time-panel/time-panel.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import { FilterPanelComponent } from './filter-panel/filter-panel.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     HistogramComponent,
     AirportInfoComponent,
     RouteInfoComponent,
-    TimePanelComponent
+    TimePanelComponent,
+    FilterPanelComponent
   ],
   imports: [
     BrowserModule,

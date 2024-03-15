@@ -1,9 +1,9 @@
-import {Component, OnDestroy, OnInit,} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import mapboxgl from "mapbox-gl";
 import {Airport, FlightScheduleRouteDto, GeneralFilter} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
-import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enum";
+import {AirportDisplayType, RouteDisplayType} from "../core/enum";
 import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
@@ -32,7 +32,6 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedAirport: Airport = new Airport();
   selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
   selectionType: string = 'airport';
-
 
   constructor(private geoService: GeoService, private filterService: FilterService, private dataStoreService: DataStoreService) {
   }
