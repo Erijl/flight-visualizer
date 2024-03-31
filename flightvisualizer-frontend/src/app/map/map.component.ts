@@ -3,7 +3,14 @@ import mapboxgl from "mapbox-gl";
 import {Airport, FlightScheduleRouteDto, GeneralFilter} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
-import {AirportDisplayType, DetailSelectionType, RouteDisplayType} from "../core/enum";
+import {
+  AirportDisplayType, CursorStyles,
+  DetailSelectionType,
+  LayerType,
+  MapEventType,
+  RouteDisplayType,
+  SourceType
+} from "../core/enum";
 import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
@@ -101,8 +108,8 @@ export class MapComponent implements OnInit, OnDestroy {
       this.map.resize();
     });
 
-    this.map.on('click', (e) => {
-      const features = this.map.queryRenderedFeatures(e.point, {layers: ['airportLayer', 'routeLayer']});
+    this.map.on(MapEventType.CLICK, (e) => {
+      const features = this.map.queryRenderedFeatures(e.point, {layers: [LayerType.AIRPORTLAYER, LayerType.ROUTELAYER]});
 
       if (!features.length) {
         if (this.selectionType === DetailSelectionType.AIRPORT) {
@@ -156,11 +163,11 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   layerMouseEnterHandler = () => {
-    this.map.getCanvas().style.cursor = 'pointer';
+    this.map.getCanvas().style.cursor = CursorStyles.POINTER;
   }
 
   layerMouseLeaveHandler = () => {
-    this.map.getCanvas().style.cursor = '';
+    this.map.getCanvas().style.cursor = CursorStyles.DEFAULT;
   }
 
   //TODO move handling to dataStoreService
@@ -190,20 +197,20 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   highlightSelectedRoute(): void {
-    this.geoService.removeLayerFromMap(this.map, 'routeHighlightLayer');
-    this.geoService.removeSourceFromMap(this.map, 'routeHighlightSource');
+    this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
+    this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
 
     if (this.selectedRoute.originAirport.iataAirportCode != '' && this.selectedRoute.destinationAirport.iataAirportCode != '') {
-      this.geoService.highlightRouteOnMap(this.map, 'routeHighlightSource', 'routeHighlightLayer', this.selectedRoute);
+      this.geoService.highlightRouteOnMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE, LayerType.ROUTEHIGHLIGHTLAYER, this.selectedRoute);
     }
   }
 
   highlightSelectedAirport(): void {
-    this.geoService.removeLayerFromMap(this.map, 'airportHighlightLayer');
-    this.geoService.removeSourceFromMap(this.map, 'airportHighlightSource');
+    this.geoService.removeLayerFromMap(this.map, LayerType.AIRPORTHIGHLIGHTLAYER);
+    this.geoService.removeSourceFromMap(this.map, SourceType.AIRPORTHIGHLIGHTSOURCE);
 
     if (this.selectedAirport.iataAirportCode != '') {
-      this.geoService.highlightAirportOnMap(this.map, 'airportHighlightSource', 'airportHighlightLayer', this.selectedAirport);
+      this.geoService.highlightAirportOnMap(this.map, SourceType.AIRPORTHIGHLIGHTSOURCE, LayerType.AIRPORTHIGHLIGHTLAYER, this.selectedAirport);
     }
   }
 
@@ -215,17 +222,12 @@ export class MapComponent implements OnInit, OnDestroy {
   replaceCurrentlyRenderedAirports(newAirports: Airport[]): void {
     let airportsGeoJson = this.geoService.convertAirportsToGeoJson(newAirports);
 
-    this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSourceTEMP', airportsGeoJson);
-    this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayerTEMP', 'airportSourceTEMP', 8, '#eea719');
-
-    this.geoService.removeLayerFromMap(this.map, 'airportLayer');
-    this.geoService.removeSourceFromMap(this.map, 'airportSource');
-
-    this.geoService.addFeatureCollectionSourceToMap(this.map, 'airportSource', airportsGeoJson);
-    this.geoService.addLayerTypeCircleToMap(this.map, 'airportLayer', 'airportSource', 8, '#eea719');
-
-    this.geoService.removeLayerFromMap(this.map, 'airportLayerTEMP');
-    this.geoService.removeSourceFromMap(this.map, 'airportSourceTEMP');
+    if(this.map.getSource(SourceType.AIRPORTSOURCE)) {
+      this.geoService.updateMapSourceData(this.map, SourceType.AIRPORTSOURCE, airportsGeoJson);
+    } else {
+      this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.AIRPORTSOURCE, airportsGeoJson);
+      this.geoService.addLayerTypeCircleToMap(this.map, LayerType.AIRPORTLAYER, SourceType.AIRPORTSOURCE, 8, '#eea719');
+    }
 
     if (this.selectionType === DetailSelectionType.AIRPORT) {
       this.enableAirportLayerSelection();
@@ -235,23 +237,15 @@ export class MapComponent implements OnInit, OnDestroy {
   replaceCurrentlyRenderedRoutes(newRoutes: FlightScheduleRouteDto[]): void {
     let routesGeoJson = this.geoService.convertFlightScheduleRouteDtosToGeoJson(newRoutes);
 
-    this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSourceTEMP', routesGeoJson);
-    this.geoService.addLayerTypeLineToMap(this.map, 'routeLayerTEMP', 'routeSourceTEMP', {}, {
-      'line-color': '#ffffff',
-      'line-width': 2
-    })
-
-    this.geoService.removeLayerFromMap(this.map, 'routeLayer');
-    this.geoService.removeSourceFromMap(this.map, 'routeSource');
-
-    this.geoService.addFeatureCollectionSourceToMap(this.map, 'routeSource', routesGeoJson);
-    this.geoService.addLayerTypeLineToMap(this.map, 'routeLayer', 'routeSource', {}, {
-      'line-color': '#ffffff',
-      'line-width': 2
-    })
-
-    this.geoService.removeLayerFromMap(this.map, 'routeLayerTEMP');
-    this.geoService.removeSourceFromMap(this.map, 'routeSourceTEMP');
+    if(this.map.getSource(SourceType.ROUTESOURCE)) {
+      this.geoService.updateMapSourceData(this.map, SourceType.ROUTESOURCE, routesGeoJson);
+    } else {
+      this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.ROUTESOURCE, routesGeoJson);
+      this.geoService.addLayerTypeLineToMap(this.map, LayerType.ROUTELAYER, SourceType.ROUTESOURCE, {}, {
+        'line-color': '#ffffff',
+        'line-width': 2
+      });
+    }
 
     if (this.selectionType === DetailSelectionType.ROUTE) {
       this.enableRouteLayerSelection();
@@ -259,31 +253,29 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   enableRouteLayerSelection(): void {
-    this.map.off('click', 'airportLayer', this.airportLayerClickHandler);
-    this.map.off('mouseenter', 'airportLayer', this.layerMouseEnterHandler);
-    this.map.off('mouseleave', 'airportLayer', this.layerMouseLeaveHandler);
+    this.disableLayerSelection();
 
-    this.map.off('click', 'routeLayer', this.routeLayerClickHandler);
-    this.map.off('mouseenter', 'routeLayer', this.layerMouseEnterHandler);
-    this.map.off('mouseleave', 'routeLayer', this.layerMouseLeaveHandler);
-
-    this.map.on('click', 'routeLayer', this.routeLayerClickHandler);
-    this.map.on('mouseenter', 'routeLayer', this.layerMouseEnterHandler);
-    this.map.on('mouseleave', 'routeLayer', this.layerMouseLeaveHandler);
+    this.map.on(MapEventType.CLICK, LayerType.ROUTELAYER, this.routeLayerClickHandler);
+    this.map.on(MapEventType.MOUSEENTER, LayerType.ROUTELAYER, this.layerMouseEnterHandler);
+    this.map.on(MapEventType.MOUSELEAVE, LayerType.ROUTELAYER, this.layerMouseLeaveHandler);
   }
 
   enableAirportLayerSelection(): void {
-    this.map.off('click', 'routeLayer', this.routeLayerClickHandler);
-    this.map.off('mouseenter', 'routeLayer', this.layerMouseEnterHandler);
-    this.map.off('mouseleave', 'routeLayer', this.layerMouseLeaveHandler);
+    this.disableLayerSelection();
 
-    this.map.off('click', 'airportLayer', this.airportLayerClickHandler);
-    this.map.off('mouseenter', 'airportLayer', this.layerMouseEnterHandler);
-    this.map.off('mouseleave', 'airportLayer', this.layerMouseLeaveHandler);
+    this.map.on(MapEventType.CLICK, LayerType.AIRPORTLAYER, this.airportLayerClickHandler);
+    this.map.on(MapEventType.MOUSEENTER, LayerType.AIRPORTLAYER, this.layerMouseEnterHandler);
+    this.map.on(MapEventType.MOUSELEAVE, LayerType.AIRPORTLAYER, this.layerMouseLeaveHandler);
+  }
 
-    this.map.on('click', 'airportLayer', this.airportLayerClickHandler);
-    this.map.on('mouseenter', 'airportLayer', this.layerMouseEnterHandler);
-    this.map.on('mouseleave', 'airportLayer', this.layerMouseLeaveHandler);
+  disableLayerSelection(): void {
+    this.map.off(MapEventType.CLICK, LayerType.ROUTELAYER, this.routeLayerClickHandler);
+    this.map.off(MapEventType.MOUSEENTER, LayerType.ROUTELAYER, this.layerMouseEnterHandler);
+    this.map.off(MapEventType.MOUSELEAVE, LayerType.ROUTELAYER, this.layerMouseLeaveHandler);
+
+    this.map.off(MapEventType.CLICK, LayerType.AIRPORTLAYER, this.airportLayerClickHandler);
+    this.map.off(MapEventType.MOUSEENTER, LayerType.AIRPORTLAYER, this.layerMouseEnterHandler);
+    this.map.off(MapEventType.MOUSELEAVE, LayerType.AIRPORTLAYER, this.layerMouseLeaveHandler);
   }
 
   //this.histogramData = this.geoService.generateRouteDistanceArray(this.allFlightScheduleRouteDtos);

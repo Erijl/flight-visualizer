@@ -30,3 +30,28 @@ export enum DetailSelectionType {
   AIRPORT = "airport",
   ROUTE = "route",
 }
+
+export enum LayerType {
+  AIRPORTLAYER = "airportLayer",
+  ROUTELAYER = "routeLayer",
+  AIRPORTHIGHLIGHTLAYER = "airportHighlightLayer",
+  ROUTEHIGHLIGHTLAYER = "routeHighlightLayer",
+}
+
+export enum SourceType {
+  AIRPORTSOURCE = "airportSource",
+  ROUTESOURCE = "routeSource",
+  AIRPORTHIGHLIGHTSOURCE = "airportHighlightSource",
+  ROUTEHIGHLIGHTSOURCE = "routeHighlightSource",
+}
+
+export enum MapEventType {
+  CLICK = "click",
+  MOUSEENTER = "mouseenter",
+  MOUSELEAVE = "mouseleave",
+}
+
+export enum CursorStyles {
+  POINTER = "pointer",
+  DEFAULT = "",
+}

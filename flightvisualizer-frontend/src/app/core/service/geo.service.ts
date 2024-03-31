@@ -124,6 +124,14 @@ export class GeoService {
     }
   }
 
+  updateMapSourceData(map: mapboxgl.Map, sourceId: string, features: any): void {
+    // @ts-ignore
+    map.getSource(sourceId).setData({
+      'type': 'FeatureCollection',
+      'features': features
+    });
+  }
+
   generateRouteDistanceArray(flightScheduleRouteDtos: any[]): number[] {
     const routeDistances: number[] = [];
     flightScheduleRouteDtos.forEach(flightScheduleRouteDto => {
