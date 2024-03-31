@@ -278,8 +278,6 @@ export class MapComponent implements OnInit, OnDestroy {
     this.map.off(MapEventType.MOUSELEAVE, LayerType.AIRPORTLAYER, this.layerMouseLeaveHandler);
   }
 
-  //this.histogramData = this.geoService.generateRouteDistanceArray(this.allFlightScheduleRouteDtos);
-
   ngOnDestroy(): void {
     this.currentlyRenderedAirportsSubscription.unsubscribe();
     this.currentlyRenderedRoutesSubscription.unsubscribe();

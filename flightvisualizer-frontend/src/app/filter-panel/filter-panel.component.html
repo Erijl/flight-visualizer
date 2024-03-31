@@ -17,21 +17,44 @@ Filter: //TODO add 'legCount in route'
   <option *ngFor="let type of routeFilterTypes" [value]="type">{{ type }}</option>
 </select>
 
-<!--
-<input type="range" min="1" max="100" (change)="onSliderChange($event)">
--->
 
 <br>
 <br>
-<div *ngIf="histogramData.length > 1">
-  <app-histogram [boxWidth]="300" [boxHeight]="300" [data]="histogramData"></app-histogram>
+<div class="slider-container">
+  <mat-slider
+    class="enlarged-slider"
+    thumbLabel
+    tickInterval="1"
+    min="0"
+    max="1439"
+    step="1"
+    (change)="onTimeRangeChange()">
+    <input [ngModel]="timeFilter.timeRange.start" (ngModelChange)="timeFilter.timeRange.start = $event" matSliderStartThumb>
+    <input [ngModel]="timeFilter.timeRange.end" (ngModelChange)="timeFilter.timeRange.end = $event" matSliderEndThumb>
+  </mat-slider>
+  <div class="values-container">
+    <div *ngIf="!timeFilter.timeRange.inverted">
+      UTC:
+      <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.start) }}</span>
+      -
+      <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.end) }}</span>
+    </div>
+
+    <div *ngIf="timeFilter.timeRange.inverted">
+      UTC:
+      <span>{{ convertIntToTimeOfDay(minTime) }}</span>
+      -
+      <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.start) }}</span>
+      and
+
+      <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.end) }}</span>
+      -
+      <span>{{ convertIntToTimeOfDay(maxTime) }}</span>
+    </div>
+
+    <div *ngIf="panelOpenState"> ({{ timeFilter.timeRange.inverted ? 'exlcuding' : 'including'}} slider)</div>
+  </div>
 </div>
-<br>
-<br>
-<mat-slider min="200" max="500">
-  <input value="300" matSliderStartThumb>
-  <input value="400" matSliderEndThumb>
-</mat-slider>
 
 <div class="values-container">
   <span>{{ lowerValue }}</span>

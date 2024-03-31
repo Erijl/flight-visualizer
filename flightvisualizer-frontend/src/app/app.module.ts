@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
-import { HistogramComponent } from './histogram/histogram.component';
 import {MatSlider, MatSliderRangeThumb} from "@angular/material/slider";
 import {
   MatCell,
@@ -41,7 +40,6 @@ import { DetailPanelComponent } from './detail-panel/detail-panel.component';
   declarations: [
     AppComponent,
     MapComponent,
-    HistogramComponent,
     AirportInfoComponent,
     RouteInfoComponent,
     TimePanelComponent,

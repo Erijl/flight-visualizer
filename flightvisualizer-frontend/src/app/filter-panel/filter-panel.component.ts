@@ -24,7 +24,6 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   generalFilter: GeneralFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
 
   //UI state
-  histogramData: number[] = [];
 
   lowerValue = 10;
   upperValue = 90;
