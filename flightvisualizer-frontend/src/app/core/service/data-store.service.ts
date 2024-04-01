@@ -6,13 +6,14 @@ import {
   FlightSchedule,
   FlightScheduleRouteDto,
   GeneralFilter,
+  RouteFilter,
   TimeFilter,
   TimeRange
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {FilterService} from "./filter.service";
-import {AirportDisplayType, DetailSelectionType, RouteDisplayType} from "../enum";
+import {AirportDisplayType, DetailSelectionType, RouteDisplayType, RouteFilterType} from "../enum";
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +46,9 @@ export class DataStoreService {
 
   private _generalFilter: BehaviorSubject<GeneralFilter> = new BehaviorSubject<GeneralFilter>(new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL));
   generalFilter = this._generalFilter.asObservable();
+
+  private _routeFilter: BehaviorSubject<RouteFilter> = new BehaviorSubject<RouteFilter>(new RouteFilter(RouteFilterType.DISTANCE, 0, 1000));
+  routeFilter = this._routeFilter.asObservable();
 
   private _detailSelectionType: BehaviorSubject<DetailSelectionType> = new BehaviorSubject<DetailSelectionType>(DetailSelectionType.AIRPORT);
   detailSelectionType = this._detailSelectionType.asObservable();
@@ -174,8 +178,24 @@ export class DataStoreService {
     return this._generalFilter.getValue();
   }
 
+  getRouteFilter(): RouteFilter {
+    return this._routeFilter.getValue();
+  }
+
   getDetailSelectionType(): DetailSelectionType {
     return this._detailSelectionType.getValue();
+  }
+
+  getFurthestFlightRoute(): FlightScheduleRouteDto {
+    return this.allFlightScheduleRouteDtos.reduce((a, b) => a.kilometerDistance > b.kilometerDistance ? a : b);
+  }
+
+  getFlightScheduleRouteDtosWithRouteFilter(): FlightScheduleRouteDto[] {
+    return this.filterService.getFlightScheduleRouteDtosByRouteFilter(this.allFlightScheduleRouteDtos, this.getRouteFilter());
+  }
+
+  getLongestFlightRoute(): FlightScheduleRouteDto {
+    return this.allFlightScheduleRouteDtos.reduce((a, b) => this.filterService.calculateFlightDurationInMinutes(a) > this.filterService.calculateFlightDurationInMinutes(b) ? a : b);
   }
 
 
@@ -190,6 +210,7 @@ export class DataStoreService {
   }
 
   setCurrentlyDisplayedRoutes(routes: FlightScheduleRouteDto[]): void {
+    console.log("Set AllFlighroutes: " + routes.length)
     this._currentlyDisplayedRoutes.next(routes);
     this._renderedRoutes.next(this.filterService.getCleanedFlightScheduleRouteDtos(routes));
   }
@@ -207,18 +228,9 @@ export class DataStoreService {
   }
 
   setTimeFilter(timeFilter: TimeFilter): void {
-    let oldTimeFilter = this.getTimeFilter();
     this._timeFilter.next(timeFilter);
 
-    if(oldTimeFilter.dateRange.start === timeFilter.dateRange.start && oldTimeFilter.dateRange.end === timeFilter.dateRange.end) {
-      if(this.getSelectedAirport().iataAirportCode !== "") {
-        this.setCurrentlyDisplayedRoutes(this.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
-      } else {
-        this.setCurrentlyDisplayedRoutes(this.getAllFlightScheduleRouteDtosWithTimeFilter());
-      }
-    } else {
-      this.getFlightScheduleLegRoutes();
-    }
+    this.getFlightScheduleLegRoutes();
   }
 
   setGeneralFilter(generalFilter: GeneralFilter): void {
@@ -227,6 +239,11 @@ export class DataStoreService {
 
   setDetailSelectionType(detailSelectionType: DetailSelectionType): void {
     this._detailSelectionType.next(detailSelectionType);
+  }
+
+  setRouteFilter(routeFilter: RouteFilter): void {
+    this._routeFilter.next(routeFilter);
+    this.setCurrentlyDisplayedRoutes(this.getFlightScheduleRouteDtosWithRouteFilter());
   }
 
   // FETCHING DATA
@@ -239,6 +256,7 @@ export class DataStoreService {
 
   private getFlightScheduleLegRoutes(): void {
     this.dataService.getFlightScheduleLegRoutes(this.getTimeFilter().dateRange).subscribe(flightScheduleLegs => {
+      console.log('Fetched new Routes: ' + flightScheduleLegs.length)
       this.allFlightScheduleRouteDtos = flightScheduleLegs;
       this.setCurrentlyDisplayedRoutes(this.allFlightScheduleRouteDtos);
     });

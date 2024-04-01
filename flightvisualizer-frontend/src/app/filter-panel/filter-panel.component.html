@@ -13,7 +13,7 @@
 <br>
 <br>
 Filter: //TODO add 'legCount in route'
-<select [(ngModel)]="routeFilterType" (change)="onRouteFilterTypeChange()">
+<select [(ngModel)]="routeFilter.routeFilterType" (change)="onRouteFilterTypeChange()">
   <option *ngFor="let type of routeFilterTypes" [value]="type">{{ type }}</option>
 </select>
 
@@ -23,41 +23,25 @@ Filter: //TODO add 'legCount in route'
 <div class="slider-container">
   <mat-slider
     class="enlarged-slider"
-    thumbLabel
-    tickInterval="1"
-    min="0"
-    max="1439"
+    min="{{ minSliderValue }}"
+    max="{{ maxSliderValue }}"
     step="1"
-    (change)="onTimeRangeChange()">
-    <input [ngModel]="timeFilter.timeRange.start" (ngModelChange)="timeFilter.timeRange.start = $event" matSliderStartThumb>
-    <input [ngModel]="timeFilter.timeRange.end" (ngModelChange)="timeFilter.timeRange.end = $event" matSliderEndThumb>
+    (change)="onSliderRangeChange()">
+    <input [ngModel]="routeFilter.start" (ngModelChange)="routeFilter.start = $event" matSliderStartThumb>
+    <input [ngModel]="routeFilter.end" (ngModelChange)="routeFilter.end = $event" matSliderEndThumb>
   </mat-slider>
-  <div class="values-container">
-    <div *ngIf="!timeFilter.timeRange.inverted">
-      UTC:
-      <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.start) }}</span>
-      -
-      <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.end) }}</span>
-    </div>
-
-    <div *ngIf="timeFilter.timeRange.inverted">
-      UTC:
-      <span>{{ convertIntToTimeOfDay(minTime) }}</span>
-      -
-      <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.start) }}</span>
-      and
-
-      <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.end) }}</span>
-      -
-      <span>{{ convertIntToTimeOfDay(maxTime) }}</span>
-    </div>
-
-    <div *ngIf="panelOpenState"> ({{ timeFilter.timeRange.inverted ? 'exlcuding' : 'including'}} slider)</div>
-  </div>
 </div>
 
 <div class="values-container">
-  <span>{{ lowerValue }}</span>
-  <br>
-  <span>{{ upperValue }}</span>
+  <div *ngIf="routeFilter.routeFilterType == RouteFilterType.DURATION">
+    <span>{{ convertIntToTimeOfDay(routeFilter.start) }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+    -
+    <span>{{ convertIntToTimeOfDay(routeFilter.end) }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+  </div>
+
+  <div *ngIf="routeFilter.routeFilterType == RouteFilterType.DISTANCE">
+    <span>{{ routeFilter.start }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+    -
+    <span>{{ routeFilter.end }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+  </div>
 </div>

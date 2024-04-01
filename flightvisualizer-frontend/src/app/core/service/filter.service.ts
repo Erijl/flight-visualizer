@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Airport, FlightScheduleRouteDto, TimeFilter} from "../dto/airport";
-import {AircraftTimeFilterType} from "../enum";
+import {Airport, FlightScheduleRouteDto, RouteFilter, TimeFilter} from "../dto/airport";
+import {AircraftTimeFilterType, RouteFilterType} from "../enum";
 
 @Injectable({
   providedIn: 'root'
@@ -115,5 +115,31 @@ export class FilterService {
 
   getFLightScheduleRouteDtosWithinSameTimezone(flightScheduleRouteDtos: FlightScheduleRouteDto[]): FlightScheduleRouteDto[] {
     return flightScheduleRouteDtos.filter(route => route.originAirport.offsetUtc == route.destinationAirport.offsetUtc);
+  }
+
+  getFlightScheduleRouteDtosByRouteFilter(flightScheduleRouteDtos: FlightScheduleRouteDto[], routeFilter: RouteFilter): FlightScheduleRouteDto[] {
+    return flightScheduleRouteDtos.filter(route => {
+      switch (routeFilter.routeFilterType) {
+        case RouteFilterType.DISTANCE:
+          return route.kilometerDistance >= routeFilter.start && route.kilometerDistance <= routeFilter.end;
+        case RouteFilterType.DURATION:
+          const flightDurationMinutes = this.calculateFlightDurationInMinutes(route);
+          return flightDurationMinutes >= routeFilter.start && flightDurationMinutes <= routeFilter.end;
+      }
+      return false;
+    });
+  }
+
+  calculateFlightDurationInMinutes(flightScheduleRouteDto: FlightScheduleRouteDto): number {
+    if(flightScheduleRouteDto.aircraftArrivalTimeDateDiffUtc >= 1) {
+
+      //TODO check MBA -> ZNZ connection again
+      if(flightScheduleRouteDto.originAirport.iataAirportCode == 'MBA' && flightScheduleRouteDto.destinationAirport.iataAirportCode == 'ZNZ') {
+        return 50;
+      }
+      return (Math.floor(1439 - flightScheduleRouteDto.aircraftDepartureTimeUtc) + flightScheduleRouteDto.aircraftArrivalTimeUtc);
+    } else {
+      return Math.floor(flightScheduleRouteDto.aircraftArrivalTimeUtc - flightScheduleRouteDto.aircraftDepartureTimeUtc);
+    }
   }
 }

@@ -35,6 +35,7 @@ import { TimePanelComponent } from './time-panel/time-panel.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { FilterPanelComponent } from './filter-panel/filter-panel.component';
 import { DetailPanelComponent } from './detail-panel/detail-panel.component';
+import { RouteFilterTypePipe } from './pipes/route-filter-type.pipe';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { DetailPanelComponent } from './detail-panel/detail-panel.component';
     RouteInfoComponent,
     TimePanelComponent,
     FilterPanelComponent,
-    DetailPanelComponent
+    DetailPanelComponent,
+    RouteFilterTypePipe
   ],
   imports: [
     BrowserModule,

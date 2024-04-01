@@ -11,13 +11,12 @@ export enum RouteDisplayType {
   ONLYWITHINSAMECOUNTRY = "Only within same country",
   WITHINSAMEREGION = "Within same region",
   WITHINSAMETIMEZONE = "Within same timezone",
-  //TODO add for specifc country
 }
 
 export enum RouteFilterType {
   DURATION = "Duration",
   DISTANCE = "Distance",
-  ROUTECOUNT = "Route Count", //TODO AIRPORTROUTECOUNT(?)
+  //TODO AIRPORTROUTECOUNT(?)
 }
 
 export enum AircraftTimeFilterType {

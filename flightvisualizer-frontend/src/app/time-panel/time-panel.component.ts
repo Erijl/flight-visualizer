@@ -77,7 +77,6 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   }
 
   onDateRangeChange(): void {
-    this.timeFilter.timeRange = new TimeRange(this.minTime, this.maxTime);
     this.dataStoreService.setTimeFilter(this.timeFilter);
   }
 
