@@ -1,12 +1,12 @@
 <h1>Detail Panel</h1>
 
 <div class="selection-container">
-  <h2>Select</h2>
-  <mat-button-toggle-group [(ngModel)]="selectionType" (change)="onSelectionTypeChange()" name="fontStyle"
-                           aria-label="Font Style">
-    <mat-button-toggle value="airport">Airport</mat-button-toggle>
-    <mat-button-toggle value="route">Route</mat-button-toggle>
-  </mat-button-toggle-group>
+    <span class="custom-header">Select:</span>
+    <mat-button-toggle-group [(ngModel)]="selectionType" (change)="onSelectionTypeChange()" name="fontStyle"
+                             aria-label="Font Style">
+      <mat-button-toggle value="airport">Airport</mat-button-toggle>
+      <mat-button-toggle value="route">Route</mat-button-toggle>
+    </mat-button-toggle-group>
 </div>
 
 <div *ngIf="selectionType == 'airport'">
