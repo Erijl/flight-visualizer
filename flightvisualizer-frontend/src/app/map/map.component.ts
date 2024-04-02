@@ -45,7 +45,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
+    //TODO check for unnecessary calls or outsourcing to datastore
     this.currentlyRenderedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
       this.replaceCurrentlyRenderedAirports(airports);
 
@@ -57,15 +57,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
       this.replaceCurrentlyRenderedRoutes(routes);
-
-      if (!routes.includes(this.selectedRoute)) {
-        this.selectedRoute = new FlightScheduleRouteDto();
-        this.dataStoreService.setSelectedRoute(this.selectedRoute);
-      }
-
-      if (this.generalFilter.airportDisplayType === AirportDisplayType.WITHROUTES) {
-        this.renderAirports();
-      }
     });
 
     this.selectedRouteSubscription = this.dataStoreService.selectedRoute.subscribe(route => {
@@ -82,9 +73,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.generalFilterSubscription = this.dataStoreService.generalFilter.subscribe(generalFilter => {
       this.generalFilter = generalFilter;
-
-      this.renderAirports();
-      this.renderRoutes();
     });
 
     this.detailSelectionTypeSubscription = this.dataStoreService.detailSelectionType.subscribe((type: DetailSelectionType) => {
@@ -101,9 +89,9 @@ export class MapComponent implements OnInit, OnDestroy {
       zoom: 0
     });
 
-    this.map.on('load', () => {
-      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getAllFlightScheduleRouteDtos());
-      this.dataStoreService.setCurrentlyDisplayedAirports(this.dataStoreService.getAllAirports());
+    this.map.on('load', () => { //TODO add delay?
+      this.dataStoreService.reRenderRoutes();
+      this.dataStoreService.reRenderAirports();
 
       this.map.resize();
     });
@@ -125,13 +113,11 @@ export class MapComponent implements OnInit, OnDestroy {
 
   onSelectionTypeChange(): void {
     if (this.selectionType === DetailSelectionType.AIRPORT) {
-      this.selectedRoute = new FlightScheduleRouteDto();
-      this.dataStoreService.setSelectedRoute(this.selectedRoute);
+      this.dataStoreService.setSelectedRoute(new FlightScheduleRouteDto());
 
       this.enableAirportLayerSelection();
     } else if (this.selectionType === DetailSelectionType.ROUTE) {
-      this.selectedAirport = new Airport();
-      this.dataStoreService.setSelectedAirport(this.selectedAirport);
+      this.dataStoreService.setSelectedAirport(new Airport());
 
       this.enableRouteLayerSelection();
     }
@@ -146,7 +132,6 @@ export class MapComponent implements OnInit, OnDestroy {
     if (selectedAirport && selectedAirport.iataAirportCode != '' && selectedAirport.iataAirportCode != this.selectedAirport.iataAirportCode) {
       this.selectedAirport = selectedAirport;
       this.dataStoreService.setSelectedAirport(this.selectedAirport);
-      if (this.generalFilter.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) this.onSpecificAirportChange();
     }
   };
 
@@ -170,32 +155,6 @@ export class MapComponent implements OnInit, OnDestroy {
     this.map.getCanvas().style.cursor = CursorStyles.DEFAULT;
   }
 
-  //TODO move handling to dataStoreService
-  renderAirports(): void {
-    if (this.generalFilter.airportDisplayType === AirportDisplayType.ALL) {
-      this.dataStoreService.setCurrentlyDisplayedAirports(this.dataStoreService.getAllAirports());
-    } else if (this.generalFilter.airportDisplayType === AirportDisplayType.WITHROUTES) {
-      this.dataStoreService.setCurrentlyDisplayedAirports(this.filterService.getAllAirportsPresentInFlightScheduleRouteDtos(this.dataStoreService.getRenderedRoutes()));
-    } else if (this.generalFilter.airportDisplayType === AirportDisplayType.NONE) {
-      this.dataStoreService.setCurrentlyDisplayedAirports([]);
-    }
-  }
-
-  //TODO move handling to dataStoreService
-  renderRoutes(): void {
-    if (this.generalFilter.routeDisplayType === RouteDisplayType.ALL) {
-      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getAllFlightScheduleRouteDtosWithTimeFilter());
-    } else if (this.generalFilter.routeDisplayType === RouteDisplayType.SPECIFICAIRPORT) {
-      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
-    } else if (this.generalFilter.routeDisplayType === RouteDisplayType.ONLYWITHINSAMECOUNTRY) {
-      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesWithinSameCountryWithTimeFilter());
-    } else if (this.generalFilter.routeDisplayType === RouteDisplayType.WITHINSAMEREGION) {
-      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesWithinSameRegionWithTimeFilter());
-    } else if (this.generalFilter.routeDisplayType === RouteDisplayType.WITHINSAMETIMEZONE) {
-      this.dataStoreService.setCurrentlyDisplayedRoutes(this.dataStoreService.getFlightScheduleRoutesWithinSameTimezoneWithTimeFilter());
-    }
-  }
-
   highlightSelectedRoute(): void {
     this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
     this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
@@ -212,11 +171,6 @@ export class MapComponent implements OnInit, OnDestroy {
     if (this.selectedAirport.iataAirportCode != '') {
       this.geoService.highlightAirportOnMap(this.map, SourceType.AIRPORTHIGHLIGHTSOURCE, LayerType.AIRPORTHIGHLIGHTLAYER, this.selectedAirport);
     }
-  }
-
-  onSpecificAirportChange(): void {
-    this.renderRoutes();
-    this.renderAirports();
   }
 
   replaceCurrentlyRenderedAirports(newAirports: Airport[]): void {

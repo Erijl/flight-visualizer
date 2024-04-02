@@ -105,45 +105,6 @@ export class DataStoreService {
     return this.filterService.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.getSelectedAirport(), this.getSelectedAirportRoutesIncoming(), this.getSelectedAirportRoutesOutgoing());
   }
 
-  getFlightScheduleRoutesForSelectedAirportWithTimeFilter(): FlightScheduleRouteDto[] {
-    return this.filterService.getFlightRoutesInTimeFrame(
-      this.filterService.getFlightScheduleRouteDtosByAirport(
-        this.allFlightScheduleRouteDtos,
-        this.getSelectedAirport(),
-        this.getSelectedAirportRoutesIncoming(),
-        this.getSelectedAirportRoutesOutgoing()
-      ),
-      this.getTimeFilter()
-    );
-  }
-
-  getFlightScheduleRoutesWithinSameCountryWithTimeFilter(): FlightScheduleRouteDto[] {
-    return this.filterService.getFlightRoutesInTimeFrame(
-      this.filterService.getFLightScheduleRouteDtosWithinSameCountry(
-        this.allFlightScheduleRouteDtos
-      ),
-      this.getTimeFilter()
-    );
-  }
-
-  getFlightScheduleRoutesWithinSameRegionWithTimeFilter(): FlightScheduleRouteDto[] {
-    return this.filterService.getFlightRoutesInTimeFrame(
-      this.filterService.getFLightScheduleRouteDtosWithinSameRegion(
-        this.allFlightScheduleRouteDtos
-      ),
-      this.getTimeFilter()
-    );
-  }
-
-  getFlightScheduleRoutesWithinSameTimezoneWithTimeFilter(): FlightScheduleRouteDto[] {
-    return this.filterService.getFlightRoutesInTimeFrame(
-      this.filterService.getFLightScheduleRouteDtosWithinSameTimezone(
-        this.allFlightScheduleRouteDtos
-      ),
-      this.getTimeFilter()
-    );
-  }
-
   getSelectedAirportRoutesOutgoing(): boolean {
     return this._selectedAirportRoutesOutgoing.getValue();
   }
@@ -198,24 +159,32 @@ export class DataStoreService {
     return this.allFlightScheduleRouteDtos.reduce((a, b) => this.filterService.calculateFlightDurationInMinutes(a) > this.filterService.calculateFlightDurationInMinutes(b) ? a : b);
   }
 
+  getCurrentlyDisplayedRoutesForSelectedAirport(): FlightScheduleRouteDto[] {
+    const selectedAirportIataCode = this.getSelectedAirport().iataAirportCode;
+    return this.getCurrentlyDisplayedRoutes().filter(route => route.originAirport.iataAirportCode == selectedAirportIataCode || route.destinationAirport.iataAirportCode == selectedAirportIataCode);
+  }
+
 
   // SETTERS
 
   setSelectedAirport(airport: Airport): void {
     this._selectedAirport.next(airport);
+
+    if (this.getGeneralFilter().routeDisplayType == RouteDisplayType.SPECIFICAIRPORT) {
+      this.updateRenderedRoutes();
+    }
   }
 
   setSelectedRoute(route: FlightScheduleRouteDto): void {
     this._selectedRoute.next(route);
   }
 
-  setCurrentlyDisplayedRoutes(routes: FlightScheduleRouteDto[]): void {
-    console.log("Set AllFlighroutes: " + routes.length)
+  private setCurrentlyDisplayedRoutes(routes: FlightScheduleRouteDto[]): void {
     this._currentlyDisplayedRoutes.next(routes);
     this._renderedRoutes.next(this.filterService.getCleanedFlightScheduleRouteDtos(routes));
   }
 
-  setCurrentlyDisplayedAirports(airports: Airport[]): void {
+  private setCurrentlyDisplayedAirports(airports: Airport[]): void {
     this._currentlyDisplayedAirports.next(airports);
   }
 
@@ -235,6 +204,8 @@ export class DataStoreService {
 
   setGeneralFilter(generalFilter: GeneralFilter): void {
     this._generalFilter.next(generalFilter);
+
+    this.updateRenderedRoutes();
   }
 
   setDetailSelectionType(detailSelectionType: DetailSelectionType): void {
@@ -243,22 +214,21 @@ export class DataStoreService {
 
   setRouteFilter(routeFilter: RouteFilter): void {
     this._routeFilter.next(routeFilter);
-    this.setCurrentlyDisplayedRoutes(this.getFlightScheduleRouteDtosWithRouteFilter());
+    this.reRenderRoutes();
   }
 
   // FETCHING DATA
   private getAirports(): void {
     this.dataService.getAirports().subscribe(airports => {
       this.allAirports = airports.filter(airport => airport.locationType === "Airport");
-      this.setCurrentlyDisplayedAirports(this.allAirports);
+      this.reRenderAirports();
     });
   }
 
   private getFlightScheduleLegRoutes(): void {
     this.dataService.getFlightScheduleLegRoutes(this.getTimeFilter().dateRange).subscribe(flightScheduleLegs => {
-      console.log('Fetched new Routes: ' + flightScheduleLegs.length)
       this.allFlightScheduleRouteDtos = flightScheduleLegs;
-      this.setCurrentlyDisplayedRoutes(this.allFlightScheduleRouteDtos);
+      this.reRenderRoutes();
     });
   }
 
@@ -272,5 +242,67 @@ export class DataStoreService {
     this.dataService.getFlightScheduleById(id).subscribe(flightSchedule => {
       this.fetchedFlightSchedule = flightSchedule;
     });
+  }
+
+  // RENDERING
+
+  reRenderAirports() {
+    this.updateRenderedAirports();
+  }
+
+  reRenderRoutes() {
+    this.updateRenderedRoutes();
+  }
+
+  private updateRenderedAirports() {
+    switch (this.getGeneralFilter().airportDisplayType) {
+      default:
+      case AirportDisplayType.ALL:
+        this.setCurrentlyDisplayedAirports(this.getAllAirports());
+        break;
+      case AirportDisplayType.WITHROUTES:
+        this.setCurrentlyDisplayedAirports(this.filterService.getAllAirportsPresentInFlightScheduleRouteDtos(this.getRenderedRoutes()));
+        break;
+      case AirportDisplayType.NONE:
+        this.setCurrentlyDisplayedAirports([]);
+        break;
+    }
+  }
+
+  private updateRenderedRoutes() {
+    let routesToBeDisplayed: FlightScheduleRouteDto[] = this.getAllFlightScheduleRouteDtos();
+
+    switch (this.getGeneralFilter().routeDisplayType) {
+      default:
+      case RouteDisplayType.ALL:
+        routesToBeDisplayed = this.getAllFlightScheduleRouteDtos();
+        break;
+      case RouteDisplayType.SPECIFICAIRPORT:
+        routesToBeDisplayed = this.getFlightScheduleRoutesForSelectedAirport();
+        break;
+      case RouteDisplayType.ONLYWITHINSAMECOUNTRY:
+        routesToBeDisplayed = this.filterService.getFLightScheduleRouteDtosWithinSameCountry(this.getAllFlightScheduleRouteDtos());
+        break;
+      case RouteDisplayType.WITHINSAMEREGION:
+        routesToBeDisplayed = this.filterService.getFLightScheduleRouteDtosWithinSameRegion((this.getAllFlightScheduleRouteDtos()));
+        break;
+      case RouteDisplayType.WITHINSAMETIMEZONE:
+        routesToBeDisplayed = this.filterService.getFLightScheduleRouteDtosWithinSameTimezone(this.getAllFlightScheduleRouteDtos());
+        break;
+    }
+
+    routesToBeDisplayed = this.filterService.getFlightRoutesInTimeFrame(routesToBeDisplayed, this.getTimeFilter());
+
+    routesToBeDisplayed = this.filterService.getFlightScheduleRouteDtosByRouteFilter(routesToBeDisplayed, this.getRouteFilter());
+
+    this.setCurrentlyDisplayedRoutes(routesToBeDisplayed);
+
+    if (this.getDetailSelectionType() == DetailSelectionType.ROUTE && !routesToBeDisplayed.includes(this.getSelectedRoute())) {
+      this.setSelectedRoute(new FlightScheduleRouteDto());
+    }
+
+    if (this.getGeneralFilter().airportDisplayType == AirportDisplayType.WITHROUTES) {
+      this.reRenderAirports();
+    }
   }
 }
