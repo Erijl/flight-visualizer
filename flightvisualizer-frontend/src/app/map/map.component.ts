@@ -48,11 +48,6 @@ export class MapComponent implements OnInit, OnDestroy {
     //TODO check for unnecessary calls or outsourcing to datastore
     this.currentlyRenderedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
       this.replaceCurrentlyRenderedAirports(airports);
-
-      if (!airports.includes(this.selectedAirport)) {
-        this.selectedAirport = new Airport();
-        this.dataStoreService.setSelectedAirport(this.selectedAirport);
-      }
     });
 
     this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {

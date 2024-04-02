@@ -47,7 +47,7 @@ export class DataStoreService {
   private _generalFilter: BehaviorSubject<GeneralFilter> = new BehaviorSubject<GeneralFilter>(new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL));
   generalFilter = this._generalFilter.asObservable();
 
-  private _routeFilter: BehaviorSubject<RouteFilter> = new BehaviorSubject<RouteFilter>(new RouteFilter(RouteFilterType.DISTANCE, 0, 1000));
+  private _routeFilter: BehaviorSubject<RouteFilter> = new BehaviorSubject<RouteFilter>(new RouteFilter(RouteFilterType.DISTANCE, 0, 100000));
   routeFilter = this._routeFilter.asObservable();
 
   private _detailSelectionType: BehaviorSubject<DetailSelectionType> = new BehaviorSubject<DetailSelectionType>(DetailSelectionType.AIRPORT);
@@ -151,10 +151,6 @@ export class DataStoreService {
     return this.allFlightScheduleRouteDtos.reduce((a, b) => a.kilometerDistance > b.kilometerDistance ? a : b);
   }
 
-  getFlightScheduleRouteDtosWithRouteFilter(): FlightScheduleRouteDto[] {
-    return this.filterService.getFlightScheduleRouteDtosByRouteFilter(this.allFlightScheduleRouteDtos, this.getRouteFilter());
-  }
-
   getLongestFlightRoute(): FlightScheduleRouteDto {
     return this.allFlightScheduleRouteDtos.reduce((a, b) => this.filterService.calculateFlightDurationInMinutes(a) > this.filterService.calculateFlightDurationInMinutes(b) ? a : b);
   }
@@ -205,6 +201,7 @@ export class DataStoreService {
   setGeneralFilter(generalFilter: GeneralFilter): void {
     this._generalFilter.next(generalFilter);
 
+    this.updateRenderedAirports();
     this.updateRenderedRoutes();
   }
 
@@ -271,7 +268,6 @@ export class DataStoreService {
 
   private updateRenderedRoutes() {
     let routesToBeDisplayed: FlightScheduleRouteDto[] = this.getAllFlightScheduleRouteDtos();
-
     switch (this.getGeneralFilter().routeDisplayType) {
       default:
       case RouteDisplayType.ALL:

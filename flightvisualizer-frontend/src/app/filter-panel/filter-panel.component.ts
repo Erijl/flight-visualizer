@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataStoreService} from "../core/service/data-store.service";
 import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enum";
 import {Subscription} from "rxjs";
-import {GeneralFilter, RouteFilter} from "../core/dto/airport";
+import {Airport, GeneralFilter, RouteFilter} from "../core/dto/airport";
 import {FilterService} from "../core/service/filter.service";
 
 @Component({
@@ -15,6 +15,7 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   //Subscriptions
   generalFilterSubscription!: Subscription;
   routeFilterSubscription!: Subscription;
+  currentlyRenderedRoutesSubscription!: Subscription;
 
   // UI data
   airportDisplayTypes = Object.values(AirportDisplayType);
@@ -23,7 +24,7 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
 
   //Filter
   generalFilter: GeneralFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
-  routeFilter: RouteFilter = new RouteFilter(RouteFilterType.DISTANCE, 0, 1000);
+  routeFilter: RouteFilter = new RouteFilter(RouteFilterType.DISTANCE, 0, 100000);
 
   //UI state
   minSliderValue = 0;
@@ -40,6 +41,11 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
     this.routeFilterSubscription = this.dataStoreService.routeFilter.subscribe((routeFilter: RouteFilter) => {
       this.routeFilter = routeFilter;
     });
+
+    this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
+      this.updateSlider();
+    });
+
   }
 
   onAirportDisplayTypeChange(): void {
@@ -51,24 +57,33 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   }
 
   onRouteFilterTypeChange(): void {
+    this.updateSlider();
+
+    this.dataStoreService.setRouteFilter(this.routeFilter);
+  }
+
+  updateSlider() {
     if (this.routeFilter.routeFilterType == RouteFilterType.DISTANCE) {
       const maxKilometers = this.dataStoreService.getFurthestFlightRoute().kilometerDistance;
-      this.minSliderValue = 0;
-      this.maxSliderValue = maxKilometers;
+      if(this.maxSliderValue != maxKilometers) {
+        this.minSliderValue = 0;
+        this.maxSliderValue = maxKilometers;
 
-      this.routeFilter.start = 0;
-      this.routeFilter.end = maxKilometers;
+        this.routeFilter.start = 0;
+        this.routeFilter.end = maxKilometers;
+      }
     } else if (this.routeFilter.routeFilterType == RouteFilterType.DURATION) {
       const maxDuration = this.filterService.calculateFlightDurationInMinutes(this.dataStoreService.getLongestFlightRoute());
 
-      this.minSliderValue = 0;
-      this.maxSliderValue = maxDuration;
+      if(this.maxSliderValue != maxDuration) {
 
-      this.routeFilter.start = 0;
-      this.routeFilter.end = maxDuration;
+        this.minSliderValue = 0;
+        this.maxSliderValue = maxDuration;
+
+        this.routeFilter.start = 0;
+        this.routeFilter.end = maxDuration;
+      }
     }
-
-    this.dataStoreService.setRouteFilter(this.routeFilter);
   }
 
   onSliderRangeChange(): void {
@@ -87,6 +102,7 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.generalFilterSubscription.unsubscribe();
     this.routeFilterSubscription.unsubscribe();
+    this.currentlyRenderedRoutesSubscription.unsubscribe();
   }
 
   protected readonly RouteFilterType = RouteFilterType;
