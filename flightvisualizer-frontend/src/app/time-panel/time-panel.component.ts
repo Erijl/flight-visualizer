@@ -102,6 +102,12 @@ export class TimePanelComponent implements OnInit, OnDestroy {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 
+  resetFilters(): void {
+    this.timeFilter = new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439));
+    this.dataStoreService.setTimeFilter(this.timeFilter);
+
+  }
+
   onTimeRangeChange(): void  {
     this.dataStoreService.setTimeFilter(this.timeFilter);
   }

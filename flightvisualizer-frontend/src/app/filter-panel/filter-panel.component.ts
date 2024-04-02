@@ -99,6 +99,14 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 
+  resetFilters(): void {
+    this.generalFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
+    this.routeFilter = new RouteFilter(RouteFilterType.DISTANCE, 0, this.dataStoreService.getFurthestFlightRoute()?.kilometerDistance ?? 100000);
+
+    this.dataStoreService.setGeneralFilter(this.generalFilter);
+    this.dataStoreService.setRouteFilter(this.routeFilter);
+  }
+
   ngOnDestroy(): void {
     this.generalFilterSubscription.unsubscribe();
     this.routeFilterSubscription.unsubscribe();
