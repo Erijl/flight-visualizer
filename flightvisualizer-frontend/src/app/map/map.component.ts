@@ -192,7 +192,9 @@ export class MapComponent implements OnInit, OnDestroy {
       this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.ROUTESOURCE, routesGeoJson);
       this.geoService.addLayerTypeLineToMap(this.map, LayerType.ROUTELAYER, SourceType.ROUTESOURCE, {}, {
         'line-color': '#ffffff',
-        'line-width': 2
+        'line-width': 2,
+        'line-opacity': 0.9,
+        //'line-dasharray': [2, 2]
       });
     }
 
