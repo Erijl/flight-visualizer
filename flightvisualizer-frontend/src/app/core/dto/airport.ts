@@ -145,7 +145,7 @@ export class RouteFilter {
   }
 }
 
-export const DefaultTimeFilter = new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439), false, false, AircraftTimeFilterType.ARRIVALANDDEPARTURE);
+export const DefaultTimeFilter = new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439), true, true, AircraftTimeFilterType.ARRIVALANDDEPARTURE);
 
 export const DefaultGeneralFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
 
