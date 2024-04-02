@@ -1,21 +1,50 @@
 <div [hidden]="selectedAirport.iataAirportCode == ''">
 
-  <div>
-    <h2>{{ selectedAirport.iataAirportCode }} Airport</h2>
-    <p>{{ selectedAirport.airportName }}</p>
-    <p>{{ selectedAirport.iataCityCode }}</p>
-    <p>{{ selectedAirport.isoCountryCode }}</p>
-    <p>{{ selectedAirport.latitude }}</p>
-    <p>{{ selectedAirport.longitude }}</p>
-    <p>{{ selectedAirport.timezoneId }}</p>
-    <p>UTC{{ selectedAirport.offsetUtc }}</p>
-  </div>
+  <mat-card class="airport-card">
+    <mat-card-header>
+      <mat-card-title>{{ selectedAirport.iataAirportCode }} Airport</mat-card-title>
+      <mat-card-subtitle>{{ selectedAirport.airportName }} - {{ selectedAirport.timezoneId ? selectedAirport.timezoneId.split('/')[0] : '?' }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="airport-card-content">
+      <div class="info-row">
+        <div class="info-pair">
+          <span class="info-title">City Code:</span>
+          <span class="info-value">{{ selectedAirport.iataCityCode }}</span>
+        </div>
+        <div class="info-pair">
+          <span class="info-title">Country Code:</span>
+          <span class="info-value">{{ selectedAirport.isoCountryCode }}</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-pair">
+          <span class="info-title">Latitude:</span>
+          <span class="info-value">{{ selectedAirport.latitude }}</span>
+        </div>
+        <div class="info-pair">
+          <span class="info-title">Longitude:</span>
+          <span class="info-value">{{ selectedAirport.longitude }}</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-pair">
+          <span class="info-title">Timezone:</span>
+          <span class="info-value">{{ selectedAirport.timezoneId ? selectedAirport.timezoneId.split('/')[1] : '?' }}</span>
+        </div>
+        <div class="info-pair">
+          <span class="info-title">UTC Offset:</span>
+          <span class="info-value">UTC{{ selectedAirport.offsetUtc }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
   <br>
   <h2>Flight Routes</h2>
   <div>
-    <input type="checkbox" [(ngModel)]="specificAirportRoutesOutgoing" (change)="onOutgoingChange()"> Outgoing
-    <input type="checkbox" [(ngModel)]="specificAirportRoutesIncoming" (change)="onIncomingChange()"> Incoming
+    <mat-checkbox [(ngModel)]="specificAirportRoutesOutgoing" [color]="'primary'" (change)="onOutgoingChange()">Outgoing</mat-checkbox>
+    <mat-checkbox [(ngModel)]="specificAirportRoutesIncoming" [color]="'primary'" (change)="onIncomingChange()">Incoming</mat-checkbox>
     <br>
     <!--<input type="checkbox" [(ngModel)]="compactFlightRouteInformationTable" (change)="oncompactFlightRouteInformationTableChange()"> Incoming-->
   </div>

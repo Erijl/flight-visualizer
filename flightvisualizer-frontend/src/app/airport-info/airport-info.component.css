@@ -1,0 +1,130 @@
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+h1, h2, h3 {
+  color: #ddd;
+}
+
+h2 {
+  padding-top: 15px;
+  font-weight: 500;
+}
+
+h3 {
+  font-weight: 450;
+}
+
+.panel-title {
+  color: #ddd;
+  font-family: Arial, sans-serif;
+  font-size: 1.65em;
+  font-weight: 500;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #333;
+  color: #ddd;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #555;
+  color: #ddd;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #777;
+}
+
+.mat-slider {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.mat-slider .mat-slider-wrapper {
+  background-color: #555;
+}
+
+.mat-slider .mat-slider-thumb {
+  background-color: #ddd;
+}
+
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  border-radius: 5px;
+}
+
+.values-container {
+  text-align: center;
+  color: #ddd;
+  font-size: 16px;
+}
+
+.enlarged-slider {
+  width: 80%;
+}
+
+.route-filter-container {
+  background-color: #333;
+  color: #ddd;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.inverted-select {
+  background-color: #282828;
+  color: #ddd;
+}
+
+
+.mat-expansion-panel {
+  background-color: #222;
+  color: #ddd;
+  border-radius: 5px;
+}
+
+.airport-card {
+  margin-top: 10px;
+  color: #ddd;
+}
+
+.airport-card-content {
+  margin-top: 10px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px; /* Add some space between the rows */
+}
+
+.info-pair {
+  display: flex;
+  justify-content: space-between;
+  width: 45%; /* Adjust this value as needed */
+}
+
+.info-title {
+  font-weight: 600;
+}
+
+.info-value {
+}

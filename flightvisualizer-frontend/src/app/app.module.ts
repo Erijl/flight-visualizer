@@ -36,6 +36,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import { FilterPanelComponent } from './filter-panel/filter-panel.component';
 import { DetailPanelComponent } from './detail-panel/detail-panel.component';
 import { RouteFilterTypePipe } from './pipes/route-filter-type.pipe';
+import {MatCardModule} from "@angular/material/card";
 
 @NgModule({
   declarations: [
@@ -79,7 +80,8 @@ import { RouteFilterTypePipe } from './pipes/route-filter-type.pipe';
     MatExpansionModule,
     MatIcon,
     MatCheckboxModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatCardModule
   ],
   providers: [
     provideAnimationsAsync('noop'),
