@@ -66,6 +66,15 @@ button:hover {
 }
 
 .mat-expansion-panel {
+  background-color: #222;
   color: #ddd;
   border-radius: 5px;
+}
+
+.reset-button {
+  margin-bottom: 20px;
+}
+
+.special-expansion-panel {
+  background-color: #333;
 }

@@ -1,4 +1,9 @@
-<h1>Detail Panel</h1>
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title class="panel-title">
+      Detail Panel
+    </mat-panel-title>
+  </mat-expansion-panel-header>
 
 <div class="selection-container">
     <span class="custom-header">Select:</span>
@@ -15,3 +20,4 @@
 <div *ngIf="selectionType == 'route'">
   <app-route-info></app-route-info>
 </div>
+</mat-expansion-panel>

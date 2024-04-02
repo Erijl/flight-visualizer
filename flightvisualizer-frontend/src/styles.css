@@ -5,3 +5,10 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.panel-title {
+  color: #ddd;
+  font-family: Arial, sans-serif;
+  font-size: 1.65em;
+  font-weight: 500;
+}
