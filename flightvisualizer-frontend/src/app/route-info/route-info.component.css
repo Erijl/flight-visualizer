@@ -61,3 +61,14 @@
   left: 48%;
   transform: rotate(90deg);
 }
+
+.error-message {
+  text-align: center;
+  font-size: 1.1em;
+  padding-top: 12px;
+  color: #e6e6e6;
+}
+
+.error-message p {
+  margin-bottom: 3px;
+}

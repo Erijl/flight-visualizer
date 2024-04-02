@@ -76,10 +76,10 @@
                    aria-label="Select page of incoming routes">
     </mat-paginator>
   </div>
+
 </div>
-<!--
-<ng-container [hidden]="selectedAirport.iataAirportCode != ''">
-  <h2>No Airport Selected</h2>
+
+<div [hidden]="selectedAirport.iataAirportCode != ''" class="error-message">
+  <p>No Airport Selected</p>
   <p>Please select an airport from the map</p>
-</ng-container>
--->
+</div>

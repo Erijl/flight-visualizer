@@ -1,4 +1,4 @@
-<mat-card [hidden]="selectedRoute.flightScheduleId <= 0" class="route-card">
+<mat-card *ngIf="selectedRoute.legId != -1" class="route-card">
 
   <mat-card-header>
     <mat-card-title>{{ selectedRoute.originAirport.iataAirportCode }} to {{ selectedRoute.destinationAirport.iataAirportCode }}</mat-card-title>
@@ -57,3 +57,9 @@
   </mat-card-content>
 
 </mat-card>
+
+
+<div *ngIf="selectedRoute.legId == -1" class="error-message">
+  <p>No Route Selected</p>
+  <p>Please select an airport from the map</p>
+</div>
