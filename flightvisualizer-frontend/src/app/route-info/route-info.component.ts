@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
 import {DataStoreService} from "../core/service/data-store.service";
 import {FlightSchedule, FlightScheduleRouteDto} from "../core/dto/airport";
+import {FilterService} from "../core/service/filter.service";
 
 @Component({
   selector: 'app-route-info',
@@ -18,7 +19,7 @@ export class RouteInfoComponent implements OnInit, OnDestroy{
 
   //TODO show the route its part of
   //TODO replace convertIntToTimeOfDay with a pipe
-  constructor(private dataStoreService: DataStoreService) {
+  constructor(private dataStoreService: DataStoreService, protected filterService: FilterService) {
   }
 
   ngOnInit(): void {

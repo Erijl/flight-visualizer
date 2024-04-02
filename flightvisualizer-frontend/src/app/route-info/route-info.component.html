@@ -1,15 +1,59 @@
-<div [hidden]="selectedRoute.flightScheduleId <= 0">
+<mat-card [hidden]="selectedRoute.flightScheduleId <= 0" class="route-card">
 
+  <mat-card-header>
+    <mat-card-title>{{ selectedRoute.originAirport.iataAirportCode }} to {{ selectedRoute.destinationAirport.iataAirportCode }}</mat-card-title>
+  </mat-card-header>
 
-  <h2>{{selectedRoute.originAirport.iataAirportCode}} to {{selectedRoute.destinationAirport.iataAirportCode}}</h2>
+  <mat-card-content class="route-card-content">
+    <div class="route-subtitle flex-container">
+      <span class="route-origin">{{ selectedRoute.originAirport.airportName }}</span>
+      <mat-icon class="route-icon">airplanemode_on</mat-icon>
+      <span class="route-destination">{{ selectedRoute.destinationAirport.airportName }}</span>
+    </div>
 
-  <p>{{selectedRoute.originAirport.iataAirportCode}}</p>
-  <p>{{selectedRoute.destinationAirport.iataAirportCode}}</p>
-  <p>UTC: {{convertIntToTimeOfDay(selectedRoute.aircraftDepartureTimeUtc)}}</p>
-  <p>{{selectedRoute.aircraftDepartureTimeDateDiffUtc}}</p>
-  <p>UTC: {{convertIntToTimeOfDay(selectedRoute.aircraftArrivalTimeUtc)}}</p>
-  <p>{{selectedRoute.aircraftArrivalTimeDateDiffUtc}}</p>
-  <p>{{selectedRoute.kilometerDistance}}Km</p>
+    <div class="info-row">
+      <div class="info-pair">
+        <span class="info-title">Departure:</span>
+        <span class="info-value">{{selectedRoute.originAirport.iataAirportCode}}</span>
+      </div>
+      <div class="info-pair">
+        <span class="info-title">Arrival:</span>
+        <span class="info-value">{{selectedRoute.destinationAirport.iataAirportCode}}</span>
+      </div>
+    </div>
 
+    <div class="info-row">
+      <div class="info-pair">
+        <span class="info-title">Departure Time:</span>
+        <span class="info-value">{{convertIntToTimeOfDay(selectedRoute.aircraftDepartureTimeUtc)}}</span>
+      </div>
+      <div class="info-pair">
+        <span class="info-title">Arrival Time:</span>
+        <span class="info-value">{{convertIntToTimeOfDay(selectedRoute.aircraftArrivalTimeUtc)}}</span>
+      </div>
+    </div>
 
-</div>
+    <div class="info-row">
+      <div class="info-pair">
+        <span class="info-title">Departure Date:</span>
+        <span class="info-value">+{{selectedRoute.aircraftDepartureTimeDateDiffUtc}}</span>
+      </div>
+      <div class="info-pair">
+        <span class="info-title">Arrival Date:</span>
+        <span class="info-value">+{{selectedRoute.aircraftArrivalTimeDateDiffUtc}}</span>
+      </div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-pair">
+        <span class="info-title">Distance (est.):</span>
+        <span class="info-value">{{selectedRoute.kilometerDistance}}Km</span>
+      </div>
+      <div class="info-pair">
+        <span class="info-title">Duration:</span>
+        <span class="info-value">{{ convertIntToTimeOfDay(filterService.calculateFlightDurationInMinutes(selectedRoute)) }}h</span>
+      </div>
+    </div>
+  </mat-card-content>
+
+</mat-card>
