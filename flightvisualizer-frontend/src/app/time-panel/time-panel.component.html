@@ -42,7 +42,7 @@
       <span>{{ convertIntToTimeOfDay(maxTime) }}</span>
     </div>
 
-    <div *ngIf="panelOpenState"> ({{ timeFilter.timeRange.inverted ? 'exlcuding' : 'including'}} slider)</div>
+    <div *ngIf="panelOpenState">slider: ({{ timeFilter.timeRange.inverted ? 'exlcuding' : 'including'}})</div>
   </div>
 </div>
 
@@ -80,6 +80,7 @@
 </mat-expansion-panel>
 
 <br>
-<br>
 
 <button (click)="resetFilters()">Reset Filters</button>
+
+<br>
