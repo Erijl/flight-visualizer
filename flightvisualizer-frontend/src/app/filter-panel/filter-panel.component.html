@@ -1,52 +1,61 @@
-<h1>Filter Panel</h1>
-
-<h2>Airports</h2>
-<select [(ngModel)]="generalFilter.airportDisplayType" (change)="onAirportDisplayTypeChange()">
-  <option *ngFor="let type of airportDisplayTypes" [value]="type">{{ type }}</option>
-</select>
-
-<h2>Routes</h2>
-<select [(ngModel)]="generalFilter.routeDisplayType" (change)="onRouteDisplayTypeChange()">
-  <option *ngFor="let type of routeDisplayTypes" [value]="type">{{ type }}</option>
-</select>
-
-<br>
-<br>
-Filter: //TODO add 'legCount in route'
-<select [(ngModel)]="routeFilter.routeFilterType" (change)="onRouteFilterTypeChange()">
-  <option *ngFor="let type of routeFilterTypes" [value]="type">{{ type }}</option>
-</select>
 
 
-<br>
-<br>
-<div class="slider-container">
-  <mat-slider
-    class="enlarged-slider"
-    min="{{ minSliderValue }}"
-    max="{{ maxSliderValue }}"
-    step="1"
-    (change)="onSliderRangeChange()">
-    <input [ngModel]="routeFilter.start" (ngModelChange)="routeFilter.start = $event" matSliderStartThumb>
-    <input [ngModel]="routeFilter.end" (ngModelChange)="routeFilter.end = $event" matSliderEndThumb>
-  </mat-slider>
-</div>
 
-<div class="values-container">
-  <div *ngIf="routeFilter.routeFilterType == RouteFilterType.DURATION">
-    <span>{{ convertIntToTimeOfDay(routeFilter.start) }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
-    -
-    <span>{{ convertIntToTimeOfDay(routeFilter.end) }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title class="panel-title">
+      Filter Panel
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <h2>Airports</h2>
+  <select [(ngModel)]="generalFilter.airportDisplayType" (change)="onAirportDisplayTypeChange()">
+    <option *ngFor="let type of airportDisplayTypes" [value]="type">{{ type }}</option>
+  </select>
+  <h2>Routes</h2>
+  <select [(ngModel)]="generalFilter.routeDisplayType" (change)="onRouteDisplayTypeChange()">
+    <option *ngFor="let type of routeDisplayTypes" [value]="type">{{ type }}</option>
+  </select>
+
+  <br>
+  <br>
+  <div class="route-filter-container">
+    <h3>Route Filters</h3>
+    <select class="inverted-select" [(ngModel)]="routeFilter.routeFilterType" (change)="onRouteFilterTypeChange()">
+      <option *ngFor="let type of routeFilterTypes" [value]="type">{{ type }}</option>
+    </select>
+
+    <br>
+    <div class="slider-container">
+      <mat-slider
+        class="enlarged-slider"
+        min="{{ minSliderValue }}"
+        max="{{ maxSliderValue }}"
+        step="1"
+        (change)="onSliderRangeChange()">
+        <input [ngModel]="routeFilter.start" (ngModelChange)="routeFilter.start = $event" matSliderStartThumb>
+        <input [ngModel]="routeFilter.end" (ngModelChange)="routeFilter.end = $event" matSliderEndThumb>
+      </mat-slider>
+    </div>
+
+    <div class="values-container">
+      <div *ngIf="routeFilter.routeFilterType == RouteFilterType.DURATION">
+        <span>{{ convertIntToTimeOfDay(routeFilter.start) }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+        -
+        <span>{{ convertIntToTimeOfDay(routeFilter.end) }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+      </div>
+
+      <div *ngIf="routeFilter.routeFilterType == RouteFilterType.DISTANCE">
+        <span>{{ routeFilter.start }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+        -
+        <span>{{ routeFilter.end }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+      </div>
+    </div>
   </div>
+  <br>
+  <br>
 
-  <div *ngIf="routeFilter.routeFilterType == RouteFilterType.DISTANCE">
-    <span>{{ routeFilter.start }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
-    -
-    <span>{{ routeFilter.end }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
-  </div>
-</div>
+  <button (click)="resetFilters()">Reset Filters</button>
 
-<br>
-<br>
-
-<button (click)="resetFilters()">Reset Filters</button>
+</mat-expansion-panel>
