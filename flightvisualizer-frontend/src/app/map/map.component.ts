@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import mapboxgl from "mapbox-gl";
-import {Airport, FlightScheduleRouteDto, GeneralFilter} from "../core/dto/airport";
+import {Airport, DefaultGeneralFilter, FlightScheduleRouteDto, GeneralFilter} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
 import {
@@ -34,7 +34,7 @@ export class MapComponent implements OnInit, OnDestroy {
   detailSelectionTypeSubscription!: Subscription;
 
   // UI data
-  generalFilter: GeneralFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
+  generalFilter: GeneralFilter = DefaultGeneralFilter;
 
   // UI state
   selectedAirport: Airport = new Airport();

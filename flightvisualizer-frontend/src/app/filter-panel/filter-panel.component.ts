@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataStoreService} from "../core/service/data-store.service";
 import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enum";
 import {Subscription} from "rxjs";
-import {Airport, GeneralFilter, RouteFilter} from "../core/dto/airport";
+import {Airport, DefaultGeneralFilter, DefaultRouteFilter, GeneralFilter, RouteFilter} from "../core/dto/airport";
 import {FilterService} from "../core/service/filter.service";
 
 @Component({
@@ -23,8 +23,8 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   routeFilterTypes = Object.values(RouteFilterType);
 
   //Filter
-  generalFilter: GeneralFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
-  routeFilter: RouteFilter = new RouteFilter(RouteFilterType.DISTANCE, 0, 100000);
+  generalFilter: GeneralFilter = DefaultGeneralFilter;
+  routeFilter: RouteFilter = DefaultRouteFilter;
 
   //UI state
   minSliderValue = 0;
@@ -100,7 +100,7 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   }
 
   resetFilters(): void {
-    this.generalFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
+    this.generalFilter = DefaultGeneralFilter;
     this.routeFilter = new RouteFilter(RouteFilterType.DISTANCE, 0, this.dataStoreService.getFurthestFlightRoute()?.kilometerDistance ?? 100000);
 
     this.dataStoreService.setGeneralFilter(this.generalFilter);

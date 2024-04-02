@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {
   Airport,
-  DateRange,
+  DateRange, DefaultGeneralFilter, DefaultRouteFilter, DefaultTimeFilter,
   FlightDateFrequencyDto,
   FlightSchedule,
   FlightScheduleRouteDto,
@@ -41,13 +41,13 @@ export class DataStoreService {
 
 
   // filter
-  private _timeFilter: BehaviorSubject<TimeFilter> = new BehaviorSubject<TimeFilter>(new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439)));
+  private _timeFilter: BehaviorSubject<TimeFilter> = new BehaviorSubject<TimeFilter>(DefaultTimeFilter);
   timeFilter = this._timeFilter.asObservable();
 
-  private _generalFilter: BehaviorSubject<GeneralFilter> = new BehaviorSubject<GeneralFilter>(new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL));
+  private _generalFilter: BehaviorSubject<GeneralFilter> = new BehaviorSubject<GeneralFilter>(DefaultGeneralFilter);
   generalFilter = this._generalFilter.asObservable();
 
-  private _routeFilter: BehaviorSubject<RouteFilter> = new BehaviorSubject<RouteFilter>(new RouteFilter(RouteFilterType.DISTANCE, 0, 100000));
+  private _routeFilter: BehaviorSubject<RouteFilter> = new BehaviorSubject<RouteFilter>(DefaultRouteFilter);
   routeFilter = this._routeFilter.asObservable();
 
   private _detailSelectionType: BehaviorSubject<DetailSelectionType> = new BehaviorSubject<DetailSelectionType>(DetailSelectionType.AIRPORT);

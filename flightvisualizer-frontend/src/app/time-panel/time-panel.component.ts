@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
-import {DateRange, TimeFilter, TimeRange} from "../core/dto/airport";
+import {DateRange, DefaultTimeFilter, TimeFilter, TimeRange} from "../core/dto/airport";
 import {state, style, trigger} from "@angular/animations";
 import {Subscription} from "rxjs";
 import {AircraftTimeFilterType, RouteDisplayType} from "../core/enum";
@@ -36,7 +36,7 @@ export class TimePanelComponent implements OnInit, OnDestroy {
 
   //UI Data
   flightDateFrequencies: Set<string> = new Set();
-  timeFilter: TimeFilter = new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439));
+  timeFilter: TimeFilter = DefaultTimeFilter;
   aircraftTimeFilterTypes = Object.values(AircraftTimeFilterType);
   aircraftTimeFilterType: AircraftTimeFilterType = AircraftTimeFilterType.ARRIVALANDDEPARTURE;
 
@@ -103,7 +103,7 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   }
 
   resetFilters(): void {
-    this.timeFilter = new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439));
+    this.timeFilter = DefaultTimeFilter;
     this.dataStoreService.setTimeFilter(this.timeFilter);
 
   }
