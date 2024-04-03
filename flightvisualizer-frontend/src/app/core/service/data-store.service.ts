@@ -159,9 +159,12 @@ export class DataStoreService {
 
   getCurrentlyDisplayedRoutesForSelectedAirport(): FlightScheduleRouteDto[] {
     const selectedAirportIataCode = this.getSelectedAirport().iataAirportCode;
-    return this.getCurrentlyDisplayedRoutes().filter(route => route.originAirport.iataAirportCode == selectedAirportIataCode || route.destinationAirport.iataAirportCode == selectedAirportIataCode);
+    return this.getCurrentlyDisplayedRoutes()
+      .filter(route =>
+        (route.originAirport.iataAirportCode == selectedAirportIataCode || route.destinationAirport.iataAirportCode == selectedAirportIataCode)
+        && ((route.originAirport.iataAirportCode == selectedAirportIataCode && this.getSelectedAirportRoutesOutgoing()) || (route.destinationAirport.iataAirportCode == selectedAirportIataCode && this.getSelectedAirportRoutesIncoming()))
+      );
   }
-
 
   // SETTERS
 
