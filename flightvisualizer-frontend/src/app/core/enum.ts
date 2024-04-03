@@ -16,7 +16,7 @@ export enum RouteDisplayType {
 export enum RouteFilterType {
   DURATION = "Duration",
   DISTANCE = "Distance",
-  //TODO AIRPORTROUTECOUNT(?)
+  //possibly add AIRPORTROUTECOUNT(?) in the future
 }
 
 export enum AircraftTimeFilterType {

@@ -17,8 +17,7 @@ export class RouteInfoComponent implements OnInit, OnDestroy{
   flightSchedule: FlightSchedule = new FlightSchedule();
   allRoutesInFLightSchedule: FlightScheduleRouteDto[] = [];
 
-  //TODO show the route its part of
-  //TODO replace convertIntToTimeOfDay with a pipe
+  //(TODO) (show the route its part of)
   constructor(private dataStoreService: DataStoreService, protected filterService: FilterService) {
   }
 
@@ -28,14 +27,6 @@ export class RouteInfoComponent implements OnInit, OnDestroy{
       this.flightSchedule = this.dataStoreService.getSpecificFlightSchedule(route.flightScheduleId);
       this.allRoutesInFLightSchedule = this.dataStoreService.getAllRoutesForFlightSchedule(route.flightScheduleId);
     });
-  }
-
-  protected convertIntToTimeOfDay(value: number | null): string {
-    if(value == null) return '';
-    let hours = Math.floor((value)/60);
-    let minutes = Math.floor((value)%60);
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 
   ngOnDestroy(): void {

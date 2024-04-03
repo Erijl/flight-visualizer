@@ -94,14 +94,6 @@ export class TimePanelComponent implements OnInit, OnDestroy {
     this.dataStoreService.setTimeFilter(this.timeFilter);
   }
 
-  protected convertIntToTimeOfDay(value: number | null): string {
-    if(value == null) return '';
-    let hours = Math.floor((value)/60);
-    let minutes = Math.floor((value)%60);
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-  }
-
   resetFilters(): void {
     this.timeFilter = DefaultTimeFilter;
     this.dataStoreService.setTimeFilter(this.timeFilter);

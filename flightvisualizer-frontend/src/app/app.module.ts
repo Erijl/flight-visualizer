@@ -38,6 +38,7 @@ import { DetailPanelComponent } from './detail-panel/detail-panel.component';
 import { RouteFilterTypePipe } from './pipes/route-filter-type.pipe';
 import {MatCardModule} from "@angular/material/card";
 import { LiabilityModalComponent } from './liability-modal/liability-modal.component';
+import { IntToTimeofdayPipe } from './pipes/int-to-timeofday.pipe';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { LiabilityModalComponent } from './liability-modal/liability-modal.compo
     FilterPanelComponent,
     DetailPanelComponent,
     RouteFilterTypePipe,
-    LiabilityModalComponent
+    LiabilityModalComponent,
+    IntToTimeofdayPipe
   ],
   imports: [
     BrowserModule,

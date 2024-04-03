@@ -37,9 +37,9 @@
 
     <div class="values-container">
       <div *ngIf="routeFilter.routeFilterType == RouteFilterType.DURATION">
-        <span>{{ convertIntToTimeOfDay(routeFilter.start) }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+        <span>{{ routeFilter.start | intToTimeofday }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
         -
-        <span>{{ convertIntToTimeOfDay(routeFilter.end) }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+        <span>{{ routeFilter.end | intToTimeofday }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
       </div>
 
       <div *ngIf="routeFilter.routeFilterType == RouteFilterType.DISTANCE">

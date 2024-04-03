@@ -90,14 +90,6 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
     this.dataStoreService.setRouteFilter(this.routeFilter);
   }
 
-  //TODO convert to pipe
-  protected convertIntToTimeOfDay(value: number | null): string {
-    if(value == null) return '';
-    let hours = Math.floor((value)/60);
-    let minutes = Math.floor((value)%60);
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-  }
 
   resetFilters(): void {
     this.generalFilter = DefaultGeneralFilter;

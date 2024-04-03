@@ -33,21 +33,21 @@
     <div class="values-container">
       <div *ngIf="!timeFilter.timeRange.inverted">
         UTC:
-        <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.start) }}</span>
+        <span>{{ timeFilter.timeRange.start | intToTimeofday }}</span>
         -
-        <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.end) }}</span>
+        <span>{{ timeFilter.timeRange.end | intToTimeofday }}</span>
       </div>
 
       <div *ngIf="timeFilter.timeRange.inverted">
         UTC:
-        <span>{{ convertIntToTimeOfDay(minTime) }}</span>
+        <span>{{ minTime | intToTimeofday }}</span>
         -
-        <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.start) }}</span>
+        <span>{{ timeFilter.timeRange.start | intToTimeofday }}</span>
         and
 
-        <span>{{ convertIntToTimeOfDay(timeFilter.timeRange.end) }}</span>
+        <span>{{ timeFilter.timeRange.end | intToTimeofday }}</span>
         -
-        <span>{{ convertIntToTimeOfDay(maxTime) }}</span>
+        <span>{{ maxTime | intToTimeofday }}</span>
       </div>
 
       <div *ngIf="panelOpenState">slider: ({{ timeFilter.timeRange.inverted ? 'exlcuding' : 'including' }})</div>

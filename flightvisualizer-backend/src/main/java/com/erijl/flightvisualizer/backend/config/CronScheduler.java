@@ -103,7 +103,6 @@ public class CronScheduler {
             }.getType();
             aggregatedFlights = this.gson.fromJson(response.getBody(), listType);
         } else {
-            //TODO add proper error handling, especially for 206 & 400
             System.out.println("Request Failed");
             System.out.println(response.getStatusCode());
         }

@@ -45,7 +45,6 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    //TODO check for unnecessary calls or outsourcing to datastore
     this.currentlyRenderedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
       this.replaceCurrentlyRenderedAirports(airports);
     });
@@ -84,7 +83,7 @@ export class MapComponent implements OnInit, OnDestroy {
       zoom: 0
     });
 
-    this.map.on('load', () => { //TODO add delay?
+    this.map.on('load', () => {
       this.dataStoreService.reRenderRoutes();
       this.dataStoreService.reRenderAirports();
 

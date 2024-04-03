@@ -25,11 +25,11 @@
     <div class="info-row">
       <div class="info-pair">
         <span class="info-title">Departure Time:</span>
-        <span class="info-value">{{convertIntToTimeOfDay(selectedRoute.aircraftDepartureTimeUtc)}}</span>
+        <span class="info-value">{{ selectedRoute.aircraftDepartureTimeUtc | intToTimeofday }}</span>
       </div>
       <div class="info-pair">
         <span class="info-title">Arrival Time:</span>
-        <span class="info-value">{{convertIntToTimeOfDay(selectedRoute.aircraftArrivalTimeUtc)}}</span>
+        <span class="info-value">{{ selectedRoute.aircraftArrivalTimeUtc | intToTimeofday }}</span>
       </div>
     </div>
 
@@ -51,7 +51,7 @@
       </div>
       <div class="info-pair">
         <span class="info-title">Duration:</span>
-        <span class="info-value">{{ convertIntToTimeOfDay(filterService.calculateFlightDurationInMinutes(selectedRoute)) }}h</span>
+        <span class="info-value">{{ filterService.calculateFlightDurationInMinutes(selectedRoute) | intToTimeofday }}h</span>
       </div>
     </div>
   </mat-card-content>
