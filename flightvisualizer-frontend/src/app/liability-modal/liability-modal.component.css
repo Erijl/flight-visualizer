@@ -12,6 +12,9 @@
   justify-content: space-between;
   border-radius: 5px;
   color: #ddd;
+
+  width: 400px;
+  height: 500px;
 }
 
 body.modal-open {
@@ -51,13 +54,15 @@ body.modal-open::before {
 
 .keypoints {
   list-style-type: none;
-  padding: 0;
+  padding: 0 20px;
   margin: 0;
-  text-align: center;
+  text-align: left;
 }
 
 .keypoints li {
   margin-bottom: 10px;
+  text-indent: -20px;
+  padding-left: 20px;
 }
 
 .understand-button {
@@ -65,12 +70,28 @@ body.modal-open::before {
   font-size: 1.2em;
   margin-top: 20px;
   margin-bottom: 15px;
+  background: #e91e62;
+  color: #fff;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.understand-button:hover {
+  background: #c2185b;
 }
 
 .contact-link {
   position: absolute;
   bottom: 10px;
   right: 10px;
+  color: #ddd;
+  text-decoration: none;
+}
+
+.imprint-link {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
   color: #ddd;
   text-decoration: none;
 }
