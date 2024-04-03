@@ -113,12 +113,14 @@ export class GeoService {
   }
 
   removeLayerFromMap(map: mapboxgl.Map, layerId: string): void {
+    if(!map) return;
     if(map.getLayer(layerId)) {
       map.removeLayer(layerId);
     }
   }
 
   removeSourceFromMap(map: mapboxgl.Map, sourceId: string): void {
+    if(!map) return;
     if(map.getSource(sourceId)) {
       map.removeSource(sourceId);
     }

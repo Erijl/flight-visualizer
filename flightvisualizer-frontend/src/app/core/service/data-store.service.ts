@@ -148,10 +148,12 @@ export class DataStoreService {
   }
 
   getFurthestFlightRoute(): FlightScheduleRouteDto {
+    if(this.allFlightScheduleRouteDtos.length == 0) return new FlightScheduleRouteDto();
     return this.allFlightScheduleRouteDtos.reduce((a, b) => a.kilometerDistance > b.kilometerDistance ? a : b);
   }
 
   getLongestFlightRoute(): FlightScheduleRouteDto {
+    if(this.allFlightScheduleRouteDtos.length == 0) return new FlightScheduleRouteDto();
     return this.allFlightScheduleRouteDtos.reduce((a, b) => this.filterService.calculateFlightDurationInMinutes(a) > this.filterService.calculateFlightDurationInMinutes(b) ? a : b);
   }
 

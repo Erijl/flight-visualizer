@@ -170,6 +170,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   replaceCurrentlyRenderedAirports(newAirports: Airport[]): void {
     let airportsGeoJson = this.geoService.convertAirportsToGeoJson(newAirports);
+    if(!this.map) return;
 
     if(this.map.getSource(SourceType.AIRPORTSOURCE)) {
       this.geoService.updateMapSourceData(this.map, SourceType.AIRPORTSOURCE, airportsGeoJson);
@@ -185,6 +186,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   replaceCurrentlyRenderedRoutes(newRoutes: FlightScheduleRouteDto[]): void {
     let routesGeoJson = this.geoService.convertFlightScheduleRouteDtosToGeoJson(newRoutes);
+    if(!this.map) return;
 
     if(this.map.getSource(SourceType.ROUTESOURCE)) {
       this.geoService.updateMapSourceData(this.map, SourceType.ROUTESOURCE, routesGeoJson);
@@ -205,7 +207,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   enableRouteLayerSelection(): void {
     this.disableLayerSelection();
-
+    if(!this.map) return;
     this.map.on(MapEventType.CLICK, LayerType.ROUTELAYER, this.routeLayerClickHandler);
     this.map.on(MapEventType.MOUSEENTER, LayerType.ROUTELAYER, this.layerMouseEnterHandler);
     this.map.on(MapEventType.MOUSELEAVE, LayerType.ROUTELAYER, this.layerMouseLeaveHandler);
@@ -213,13 +215,14 @@ export class MapComponent implements OnInit, OnDestroy {
 
   enableAirportLayerSelection(): void {
     this.disableLayerSelection();
-
+    if(!this.map) return;
     this.map.on(MapEventType.CLICK, LayerType.AIRPORTLAYER, this.airportLayerClickHandler);
     this.map.on(MapEventType.MOUSEENTER, LayerType.AIRPORTLAYER, this.layerMouseEnterHandler);
     this.map.on(MapEventType.MOUSELEAVE, LayerType.AIRPORTLAYER, this.layerMouseLeaveHandler);
   }
 
   disableLayerSelection(): void {
+    if(!this.map) return;
     this.map.off(MapEventType.CLICK, LayerType.ROUTELAYER, this.routeLayerClickHandler);
     this.map.off(MapEventType.MOUSEENTER, LayerType.ROUTELAYER, this.layerMouseEnterHandler);
     this.map.off(MapEventType.MOUSELEAVE, LayerType.ROUTELAYER, this.layerMouseLeaveHandler);
