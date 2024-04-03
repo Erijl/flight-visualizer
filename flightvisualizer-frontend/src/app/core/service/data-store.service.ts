@@ -72,8 +72,8 @@ export class DataStoreService {
 
   constructor(private dataService: DataService, private filterService: FilterService) {
     this.getAirports();
-    this.getFlightScheduleLegRoutes();
     this.getFlightDateFrequencies();
+    this.getFlightScheduleLegRoutes();
   }
 
   // GETTERS
@@ -271,9 +271,6 @@ export class DataStoreService {
 
   private updateRenderedRoutes() {
     let routesToBeDisplayed: FlightScheduleRouteDto[] = this.getAllFlightScheduleRouteDtos();
-    console.log(routesToBeDisplayed.length);
-    console.log(routesToBeDisplayed[0]);
-    console.log('LENGTH')
     switch (this.getGeneralFilter().routeDisplayType) {
       default:
       case RouteDisplayType.ALL:
@@ -317,6 +314,7 @@ export class DataStoreService {
     }
 
     timeFilter.dateRange.start = flightDateFrequencies.reverse().find(flightDateFrequency => flightDateFrequency.count > 0 && flightDateFrequency.startDateUtc)?.startDateUtc ?? null;
+    if(timeFilter.dateRange.start) timeFilter.dateRange.start = new Date(timeFilter.dateRange.start);
 
     this.setTimeFilter(timeFilter);
   }
