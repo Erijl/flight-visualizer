@@ -34,6 +34,5 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: flightvisualizer-frontend/dist/flightvisualizer-frontend/browser/
           protocol: ftp
-          log-level: verbose
           timeout: 60000
           security: loose
