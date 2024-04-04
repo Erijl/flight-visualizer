@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import mapboxgl from "mapbox-gl";
+import mapboxgl from 'mapbox-gl';
 import {Airport} from "../dto/airport";
 
 @Injectable({
@@ -113,15 +113,25 @@ export class GeoService {
   }
 
   removeLayerFromMap(map: mapboxgl.Map, layerId: string): void {
+    if(!map) return;
     if(map.getLayer(layerId)) {
       map.removeLayer(layerId);
     }
   }
 
   removeSourceFromMap(map: mapboxgl.Map, sourceId: string): void {
+    if(!map) return;
     if(map.getSource(sourceId)) {
       map.removeSource(sourceId);
     }
+  }
+
+  updateMapSourceData(map: mapboxgl.Map, sourceId: string, features: any): void {
+    // @ts-ignore
+    map.getSource(sourceId).setData({
+      'type': 'FeatureCollection',
+      'features': features
+    });
   }
 
   generateRouteDistanceArray(flightScheduleRouteDtos: any[]): number[] {

@@ -25,19 +25,24 @@ body {
   top: 20px;
   right: 20px;
   width: 300px;
-  background-color: white;
-  padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #222;
+
+  border-radius: 5px;
 }
 
 .left-side-panel {
   position: absolute;
   top: 20px;
   left: 20px;
-  width: 400px;
-  background-color: white;
-  padding: 20px;
+  width: 420px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  overflow-y: auto;
+  max-height: 95vh;
+  direction: rtl;
+  scrollbar-width: thin;
+  scrollbar-color: #444 #222;
 }
 
 .table-row {
@@ -50,4 +55,17 @@ body {
 
 table {
   width: 100%;
+}
+
+.left-side-panel::-webkit-scrollbar {
+  width: 10px;
+}
+
+.left-side-panel::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 5px;
+}
+
+.left-side-panel::-webkit-scrollbar-thumb:hover {
+  background: #666;
 }

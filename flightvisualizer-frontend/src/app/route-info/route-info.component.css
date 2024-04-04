@@ -1,0 +1,74 @@
+.route-card {
+  margin-top: 10px;
+  color: #ddd;
+}
+
+.route-title {
+
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.info-pair {
+  display: flex;
+  justify-content: space-between;
+  width: 45%;
+}
+
+.info-title {
+  font-weight: 600;
+}
+
+.info-value {
+}
+
+.mat-card-subtitle {
+  width: 100% !important;
+  padding-bottom: 7px;
+}
+
+
+.route-subtitle {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+  padding-bottom: 12px;
+}
+
+.route-origin,
+.route-destination {
+  width: 45%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.route-origin {
+  text-align: left;
+}
+
+.route-destination {
+  text-align: right;
+}
+
+.route-icon {
+  position: absolute;
+  left: 48%;
+  transform: rotate(90deg);
+}
+
+.error-message {
+  text-align: center;
+  font-size: 1.1em;
+  padding-top: 12px;
+  color: #e6e6e6;
+}
+
+.error-message p {
+  margin-bottom: 3px;
+}

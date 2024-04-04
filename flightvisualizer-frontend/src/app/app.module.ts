@@ -6,7 +6,6 @@ import { AppComponent } from './app.component';
 import { MapComponent } from './map/map.component';
 import {HttpClientModule} from "@angular/common/http";
 import {FormsModule} from "@angular/forms";
-import { HistogramComponent } from './histogram/histogram.component';
 import {MatSlider, MatSliderRangeThumb} from "@angular/material/slider";
 import {
   MatCell,
@@ -36,17 +35,23 @@ import { TimePanelComponent } from './time-panel/time-panel.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { FilterPanelComponent } from './filter-panel/filter-panel.component';
 import { DetailPanelComponent } from './detail-panel/detail-panel.component';
+import { RouteFilterTypePipe } from './pipes/route-filter-type.pipe';
+import {MatCardModule} from "@angular/material/card";
+import { LiabilityModalComponent } from './liability-modal/liability-modal.component';
+import { IntToTimeofdayPipe } from './pipes/int-to-timeofday.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     MapComponent,
-    HistogramComponent,
     AirportInfoComponent,
     RouteInfoComponent,
     TimePanelComponent,
     FilterPanelComponent,
-    DetailPanelComponent
+    DetailPanelComponent,
+    RouteFilterTypePipe,
+    LiabilityModalComponent,
+    IntToTimeofdayPipe
   ],
   imports: [
     BrowserModule,
@@ -79,7 +84,8 @@ import { DetailPanelComponent } from './detail-panel/detail-panel.component';
     MatExpansionModule,
     MatIcon,
     MatCheckboxModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatCardModule
   ],
   providers: [
     provideAnimationsAsync('noop'),

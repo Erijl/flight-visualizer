@@ -1,0 +1,26 @@
+<div class="backdrop" (click)="closeModal()"></div>
+<div class="modal-content">
+  <h2 class="modal-title">Liability Disclaimer</h2>
+  <ul class="keypoints">
+    <li>
+      <p>The information provided on this page is a compilation of data from many different sources.</p>
+      <p>The data is provided as is, there are no guarantees that the information is fully correct or up to date.
+        Changes and errors may occur.</p>
+      <p>Therefore, flight-visualizer and all it's legal parties cannot be held liable either for the accuracy of the information or for ensuring
+        that the information is up-to-date at all times.</p>
+      <p>Furthermore, some of the flights presented may be charter, cargo, ambulance or other types of flights not
+        available for passenger travel.</p>
+    </li>
+    <li>
+      <p>The provided visualization of, as established above, not-reliable data, is purely a visualization and does not
+        reflect real world routes, flight paths or accurate distance measurements.</p>
+    </li>
+  </ul>
+  <button class="understand-button" (click)="closeModal()">I Understand</button>
+  <div class="link-container">
+    <a href="mailto:support@flight-visualizer.com" class="link-item">Contact</a>
+    <div class="link-item">Imprint</div>
+    <a href="/3rdpartylicenses.txt" target="_parent" class="link-item">Licenses</a>
+    <a href="https://github.com/Erijl" target="_blank" class="link-item">Github</a>
+  </div>
+</div>

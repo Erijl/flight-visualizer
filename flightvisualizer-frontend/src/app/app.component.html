@@ -1,1 +1,5 @@
-<app-map></app-map>
+
+<div [class.blur]="showModal">
+  <app-liability-modal *ngIf="showModal" (closeModalEvent)="showModal = false"></app-liability-modal>
+  <app-map></app-map>
+</div>

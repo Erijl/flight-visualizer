@@ -1,4 +1,4 @@
-import {AircraftTimeFilterType, AirportDisplayType, RouteDisplayType} from "../enum";
+import {AircraftTimeFilterType, AirportDisplayType, RouteDisplayType, RouteFilterType} from "../enum";
 
 export class Airport {
   iataAirportCode: string;
@@ -132,3 +132,21 @@ export class GeneralFilter {
         this.routeDisplayType = routeDisplayType;
     }
 }
+
+export class RouteFilter {
+  routeFilterType: RouteFilterType;
+  start: number;
+  end: number;
+
+  constructor(routeFilterType: RouteFilterType, start: number, end: number) {
+    this.routeFilterType = routeFilterType;
+    this.start = start;
+    this.end = end;
+  }
+}
+
+export const DefaultTimeFilter = new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439), true, true, AircraftTimeFilterType.ARRIVALANDDEPARTURE);
+
+export const DefaultGeneralFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
+
+export const DefaultRouteFilter = new RouteFilter(RouteFilterType.DISTANCE, 0, 100000);

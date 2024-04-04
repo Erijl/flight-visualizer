@@ -60,7 +60,7 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   updateTable(): void {
-    this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.dataStoreService.getFlightScheduleRoutesForSelectedAirportWithTimeFilter());
+    this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.dataStoreService.getCurrentlyDisplayedRoutesForSelectedAirport());
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }

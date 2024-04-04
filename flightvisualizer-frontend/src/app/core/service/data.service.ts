@@ -26,7 +26,7 @@ export class DataService {
   }
 
   getFlightScheduleLegRoutes(dateRange: DateRange) {
-    return this.http.get<FlightScheduleRouteDto[]>(this.apiEndpoint + 'flightScheduleLeg/distance?startDate=' + this.convertDateToUTCString(dateRange.start) + '&endDate=' + this.convertDateToUTCString(dateRange.end))
+    return this.http.get<FlightScheduleRouteDto[]>(this.apiEndpoint + 'flightScheduleLeg/distance?startDate=' + this.convertDateToUTCString(dateRange.start?.toUTCString()) + '&endDate=' + this.convertDateToUTCString(dateRange.end?.toUTCString()))
       .pipe(
         tap(_ => this.log('fetched getFlightScheduleLegRoutes')),
         catchError(this.handleError<FlightScheduleRouteDto[]>('getFlightScheduleLegRoutes', []))
@@ -74,7 +74,9 @@ export class DataService {
     console.log(`DEBUG: ${message}`);
   }
 
-  private convertDateToUTCString(date: Date | null) {
-    return date ? date.getUTCFullYear() + '-' + ((date.getUTCMonth() + 1) > 9 ? (date.getUTCMonth() + 1) : '0' + (date.getUTCMonth() + 1)) + '-' + (date.getUTCDate() > 9 ? (date.getUTCDate()) : '0' + (date.getUTCDate())) : '';
+  private convertDateToUTCString(date: string | undefined) {
+    if(!date) return '';
+    const utcDate = new Date(date);
+    return utcDate ? utcDate.getUTCFullYear() + '-' + ((utcDate.getUTCMonth() + 1) > 9 ? (utcDate.getUTCMonth() + 1) : '0' + (utcDate.getUTCMonth() + 1)) + '-' + (utcDate.getUTCDate() > 9 ? (utcDate.getUTCDate()) : '0' + (utcDate.getUTCDate())) : '';
   }
 }

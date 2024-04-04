@@ -63,14 +63,14 @@ public class CronScheduler {
         this.flightScheduleLegRepository = flightScheduleLegRepository;
     }
 
-    @Scheduled(initialDelay = 1000)
-    public void fetchTodaysFLightSchedule() {
+    @Scheduled(fixedRate = 1000 * 60 * 60)
+    public void fetchTodaysFlightSchedule() {
         String currentLocalDateString = LocalDate.now(ZoneId.of("UTC")).toString();
         FlightScheduleCronRun possibleCronRuns = this.flightScheduleCronRunRepository.
                 findFlightScheduleCronRunByCronRunDateUtcEquals(currentLocalDateString);
 
         if (possibleCronRuns != null && possibleCronRuns.getCronRunDateUtc().equals(currentLocalDateString)) {
-            System.out.printf("Cron Run Already Exists for %s", currentLocalDateString);
+            System.out.printf("Cron Run Already Exists for %s%n", currentLocalDateString);
             return;
         }
 
@@ -103,7 +103,6 @@ public class CronScheduler {
             }.getType();
             aggregatedFlights = this.gson.fromJson(response.getBody(), listType);
         } else {
-            //TODO add proper error handling, especially for 206 & 400
             System.out.println("Request Failed");
             System.out.println(response.getStatusCode());
         }
