@@ -36,9 +36,13 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
-              "src/styles.css",
-              "src/assets/mapbox-gl.css"
+              "src/styles.css"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/assets"
+              ]
+            },
             "scripts": []
           },
           "configurations": {
@@ -97,9 +101,13 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
-              "src/styles.css",
-              "src/assets/mapbox-gl.css"
+              "src/styles.css"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/assets"
+              ]
+            },
             "scripts": []
           }
         }
