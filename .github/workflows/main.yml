@@ -26,7 +26,7 @@ jobs:
         run: npm run build --prod
         working-directory: ./flightvisualizer-frontend
 
-      - name: FTP Upload
+      - name: FTP Upload / Deployment
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_SERVER }}
