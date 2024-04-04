@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import mapboxgl from "mapbox-gl";
+import mapboxgl from 'mapbox-gl';
 import {Airport, DefaultGeneralFilter, FlightScheduleRouteDto, GeneralFilter} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
@@ -80,7 +80,7 @@ export class MapComponent implements OnInit, OnDestroy {
       container: 'map',
       style: 'mapbox://styles/mapbox/dark-v11',
       center: [-74.5, 40],
-      zoom: 0
+      zoom: 3
     });
 
     this.map.on('load', () => {
@@ -90,6 +90,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.map.resize();
     });
 
+    // @ts-ignore
     this.map.on(MapEventType.CLICK, (e) => {
       const features = this.map.queryRenderedFeatures(e.point, {layers: [LayerType.AIRPORTLAYER, LayerType.ROUTELAYER]});
 

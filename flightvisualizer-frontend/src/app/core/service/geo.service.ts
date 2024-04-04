@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import mapboxgl from "mapbox-gl";
+import mapboxgl from 'mapbox-gl';
 import {Airport} from "../dto/airport";
 
 @Injectable({
