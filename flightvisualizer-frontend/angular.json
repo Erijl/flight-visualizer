@@ -38,11 +38,6 @@
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.css"
             ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "src/assets"
-              ]
-            },
             "scripts": []
           },
           "configurations": {
@@ -103,11 +98,6 @@
               "@angular/material/prebuilt-themes/pink-bluegrey.css",
               "src/styles.css"
             ],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "src/assets"
-              ]
-            },
             "scripts": []
           }
         }
