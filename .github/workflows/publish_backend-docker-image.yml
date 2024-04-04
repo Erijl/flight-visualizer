@@ -21,6 +21,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
+          file: flightvisualizer-backend/Dockerfile
           tags: erijl/flight-visualizer:latest
           build-args: |
             SPRING_TASK_SCHEDULING_POOL_SIZE=${{ secrets.SPRING_TASK_SCHEDULING_POOL_SIZE }}
