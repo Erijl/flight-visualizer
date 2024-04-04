@@ -29,8 +29,7 @@ jobs:
       - name: FTP Upload
         uses: SamKirkland/FTP-Deploy-Action@3.1.1
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          ftp-server: ${{ secrets.FTP_SERVER }}
+          ftp-username: ${{ secrets.FTP_USERNAME }}
+          ftp-password: ${{ secrets.FTP_PASSWORD }}
           local-dir: /dist/flightvisualizer-frontend/browser
-          server-dir: ./
