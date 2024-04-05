@@ -75,7 +75,7 @@ export class MapComponent implements OnInit, OnDestroy {
     });
 
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoiZXJpamwiLCJhIjoiY2xza2JpemdmMDIzejJyczBvZGk2aG44eiJ9.eJkFfrXg1dGFasDJRkmnIg';
+    mapboxgl.accessToken = 'pk.eyJ1IjoiZXJpamwiLCJhIjoiY2xzejRzZXpuMGx2MzJxcDI4cXRzaTh4ZSJ9.Smf0UR38mewgm12ORBGymQ';
     this.map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/mapbox/dark-v11',
