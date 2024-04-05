@@ -8,13 +8,14 @@ import {
   DateRange
 } from "../dto/airport";
 import {HttpClient} from "@angular/common/http";
+import {environment} from "../../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataService {
 
-  private apiEndpoint = 'https://api.flight-visualizer.com/';
+  private apiEndpoint = environment.apiEndpoint;
   constructor(private http: HttpClient) { }
 
   getAirports() {
