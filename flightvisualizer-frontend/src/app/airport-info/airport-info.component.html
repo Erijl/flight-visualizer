@@ -30,7 +30,7 @@
       <div class="info-row">
         <div class="info-pair">
           <span class="info-title">Timezone:</span>
-          <span class="info-value">{{ selectedAirport.timezoneId ? selectedAirport.timezoneId.split('/')[1] : '?' }}</span>
+          <span class="info-value">{{ selectedAirport.timezoneId ? selectedAirport.timezoneId.split('/')[1].replaceAll("_", " ") : '?' }}</span>
         </div>
         <div class="info-pair">
           <span class="info-title">UTC Offset:</span>
