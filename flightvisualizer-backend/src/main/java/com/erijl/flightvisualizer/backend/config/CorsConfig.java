@@ -28,9 +28,9 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) { //TODO: make more secure (rate limit, ...)
                 registry.addMapping("/**")
-                        .allowedOrigins(corsAllowedOrigins)
-                        .allowedMethods(corsAllowedMethods)
-                        .allowedHeaders(corsAllowedHeaders)
+                        .allowedOrigins(corsAllowedOrigins.split(","))
+                        .allowedMethods(corsAllowedMethods.split(","))
+                        .allowedHeaders(corsAllowedHeaders.split(","))
                         .maxAge(corsMaxAge);
             }
         };
