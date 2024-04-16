@@ -59,11 +59,11 @@
                        (closed)="panelOpenState = false" class="special-expansion-panel">
 
     <mat-expansion-panel-header>
-      <mat-panel-title>
+      <mat-panel-title class="sub-panel-title">
         Advanced Time Options
       </mat-panel-title>
     </mat-expansion-panel-header>
-    Time zone selection: (SelectedTimezone (UTC+Offset)
+    <!--Time zone selection: (SelectedTimezone (UTC+Offset)//TODO-->
     <br>
     <mat-slide-toggle [(ngModel)]="timeFilter.includeDifferentDayDepartures" (change)="onIncludeMultiDayFlightChange()">
       Include Different Day Departures
@@ -79,8 +79,8 @@
     </mat-slide-toggle>
     <br>
     <br>
-    <h3>Arrival / Departure Filter</h3>
-    <select [(ngModel)]="aircraftTimeFilterType" (change)="onAircraftTimeFilterTypeChange()">
+    <div class="sub-sub-header">Arrival / Departure Filter</div>
+    <select [(ngModel)]="aircraftTimeFilterType" (change)="onAircraftTimeFilterTypeChange()" class="inverted-select">
       <option *ngFor="let type of aircraftTimeFilterTypes" [value]="type">{{ type }}</option>
     </select>
     <br>
