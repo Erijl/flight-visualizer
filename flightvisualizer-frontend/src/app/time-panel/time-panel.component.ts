@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
 import {DateRange, DefaultTimeFilter, TimeFilter, TimeRange} from "../core/dto/airport";
@@ -43,6 +43,7 @@ export class TimePanelComponent implements OnInit, OnDestroy {
 
   // UI State
   panelOpenState = false;
+  expanded: boolean = true;
 
   // Callbacks
   dateFilter = this.getIsDateAvailableInputFilter();

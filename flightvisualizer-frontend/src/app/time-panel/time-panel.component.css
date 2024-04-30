@@ -13,6 +13,7 @@ h1, h2 {
   font-size: 1.25em;
   font-weight: 400;
   padding-left: 1px;
+  padding-bottom: 5px;
 }
 
 select {
