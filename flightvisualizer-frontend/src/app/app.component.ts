@@ -24,7 +24,7 @@ export class AppComponent {
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     console.log(event)
-    if (event.key === 'Escape') {
+    if (event.key === 'Escape' && !this.showModeSelect) {
       this.showModeSelect = true;
     }
   }

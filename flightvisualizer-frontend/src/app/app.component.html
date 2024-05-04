@@ -1,6 +1,11 @@
 <div [class.blur]="showModal">
   <app-liability-modal *ngIf="showModal" (closeModalEvent)="closeModal()"></app-liability-modal>
   <div *ngIf="showModeSelect" class="mode-select-screen">
+    <div class="header-container">
+      <h1 class="header">Welcome to Flightvisualizer</h1>
+      <h2 class="subheader">Please select a mode</h2>
+    </div>
+    <div class="cards-container">
       <div class="card" (click)="selectMode(1)">
         <img ngSrc="assets/no-text-side.PNG" alt="" height="1073" width="1070">
         <div class="card-content">
@@ -10,24 +15,24 @@
         </div>
       </div>
 
-    <div class="card" (click)="selectMode(2)">
-      <img ngSrc="assets/no-text-placeholder.PNG" alt="" height="1073" width="1070">
-      <div class="card-content">
-        <h2>
-          Live Feed
-        </h2>
+      <div class="card" (click)="selectMode(2)">
+        <img ngSrc="assets/no-text-placeholder.PNG" alt="" height="1073" width="1070">
+        <div class="card-content">
+          <h2>
+            Live Feed
+          </h2>
+        </div>
+      </div>
+
+      <div class="card" (click)="selectMode(3)">
+        <img ngSrc="assets/graph-theory.PNG" alt="" height="1073" width="1070">
+        <div class="card-content">
+          <h2>
+            Graph Theory
+          </h2>
+        </div>
       </div>
     </div>
-
-    <div class="card" (click)="selectMode(3)">
-      <img ngSrc="assets/graph-theory.PNG" alt="" height="1073" width="1070">
-      <div class="card-content">
-        <h2>
-          Graph Theory
-        </h2>
-      </div>
-    </div>
-
   </div>
   <app-map *ngIf="renderMap"></app-map>
 </div>
