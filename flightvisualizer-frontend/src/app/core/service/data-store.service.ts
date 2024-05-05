@@ -6,14 +6,14 @@ import {
   FlightSchedule,
   FlightScheduleRouteDto,
   GeneralFilter,
-  RouteFilter,
   TimeFilter,
   TimeRange
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {FilterService} from "./filter.service";
-import {AirportDisplayType, DetailSelectionType, RouteDisplayType, RouteFilterType} from "../enum";
+import {AirportDisplayType, DetailSelectionType, RouteDisplayType} from "../enum";
+import {RouteFilter} from "../../protos/filters";
 
 @Injectable({
   providedIn: 'root'

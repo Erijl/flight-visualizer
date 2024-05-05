@@ -13,11 +13,11 @@ export enum RouteDisplayType {
   WITHINSAMETIMEZONE = "Within same timezone",
 }
 
-export enum RouteFilterType {
-  DURATION = "Duration",
-  DISTANCE = "Distance",
-  //possibly add AIRPORTROUTECOUNT(?) in the future
-}
+//export enum RouteFilterType {
+//  DURATION = "Duration",
+//  DISTANCE = "Distance",
+//  //possibly add AIRPORTROUTECOUNT(?) in the future
+//}
 
 export enum AircraftTimeFilterType {
   ARRIVALANDDEPARTURE = "Arrival and Departure in period",

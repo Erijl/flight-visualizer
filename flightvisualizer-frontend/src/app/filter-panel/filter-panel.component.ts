@@ -1,9 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataStoreService} from "../core/service/data-store.service";
-import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../core/enum";
+import {AirportDisplayType, RouteDisplayType} from "../core/enum";
 import {Subscription} from "rxjs";
-import {Airport, DefaultGeneralFilter, DefaultRouteFilter, GeneralFilter, RouteFilter} from "../core/dto/airport";
+import {Airport, DefaultGeneralFilter, DefaultRouteFilter, GeneralFilter} from "../core/dto/airport";
 import {FilterService} from "../core/service/filter.service";
+import {RouteFilter, RouteFilterType} from "../protos/filters";
 
 @Component({
   selector: 'app-filter-panel',
@@ -93,7 +94,7 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
 
   resetFilters(): void {
     this.generalFilter = DefaultGeneralFilter;
-    this.routeFilter = new RouteFilter(RouteFilterType.DISTANCE, 0, this.dataStoreService.getFurthestFlightRoute()?.kilometerDistance ?? 100000);
+    this.routeFilter = RouteFilter.create({routeFilterType: RouteFilterType.DISTANCE, start: 0, end: this.dataStoreService.getFurthestFlightRoute()?.kilometerDistance ?? 100000});
 
     this.dataStoreService.setGeneralFilter(this.generalFilter);
     this.dataStoreService.setRouteFilter(this.routeFilter);

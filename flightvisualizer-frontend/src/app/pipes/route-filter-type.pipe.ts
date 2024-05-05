@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {RouteFilterType} from "../core/enum";
+import {RouteFilterType} from "../protos/filters";
 
 @Pipe({
   name: 'routeFilterType'
