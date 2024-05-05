@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package tutorial;
+
+option java_multiple_files = true;
+option java_package = "com.erijl.flightvisualizer.protos";
+option java_outer_classname = "AddressBookProtos";
+
+enum RouteFilterType {
+  DURATION = 0;
+  DISTANCE = 1;
+}
+
+message RouteFilter {
+  RouteFilterType routeFilterType = 1;
+  int32 start = 2;
+  int32 end = 3;
+}
