@@ -1,18 +1,18 @@
+// Proto Configuration
 syntax = "proto3";
+package proto.filter;
 
-package tutorial;
-
+// Java Configuration
 option java_multiple_files = true;
-option java_package = "com.erijl.flightvisualizer.protos";
-option java_outer_classname = "AddressBookProtos";
+option java_package = "com.erijl.flightvisualizer.protos.filter";
+option java_outer_classname = "Filter";
 
-enum RouteFilterType {
-  DURATION = 0;
-  DISTANCE = 1;
-}
+// Imports
+import "enums.proto";
 
+// Classes
 message RouteFilter {
-  RouteFilterType routeFilterType = 1;
+  enums.RouteFilterType routeFilterType = 1;
   int32 start = 2;
   int32 end = 3;
 }

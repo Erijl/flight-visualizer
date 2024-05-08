@@ -13,7 +13,7 @@ TS_OUTPUT_DIR="../../flightvisualizer-frontend/src/app/protos"
 PROTOC_GEN_TS_PATH=".\\..\\..\\flightvisualizer-frontend\\node_modules\\.bin\\protoc-gen-ts_proto.cmd"
 
 # Generate Java definitions
-protoc -I="$PROTO_DIR" --java_out="$JAVA_OUTPUT_DIR" "$PROTO_DIR/filters.proto"
+protoc -I="$PROTO_DIR" --java_out="$JAVA_OUTPUT_DIR" "$PROTO_DIR/*.proto"
 
 # Generate TypeScript definitions
-protoc -I="$PROTO_DIR" --plugin=protoc-gen-ts_proto=$PROTOC_GEN_TS_PATH  "$PROTO_DIR/filters.proto" --ts_proto_out=$TS_OUTPUT_DIR
+protoc -I="$PROTO_DIR" --plugin=protoc-gen-ts_proto=$PROTOC_GEN_TS_PATH --ts_proto_out=$TS_OUTPUT_DIR "$PROTO_DIR/*.proto"

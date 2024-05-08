@@ -1,0 +1,17 @@
+// Proto Configuration
+syntax = "proto3";
+package proto.enums;
+
+// Java Configuration
+option java_multiple_files = true;
+option java_package = "com.erijl.flightvisualizer.protos.enums";
+option java_outer_classname = "Enums";
+
+// Imports
+
+
+// Classes
+enum RouteFilterType {
+  DURATION = 0;
+  DISTANCE = 1;
+}
