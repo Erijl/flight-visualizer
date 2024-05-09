@@ -1,5 +1,6 @@
 import {AircraftTimeFilterType, AirportDisplayType, RouteDisplayType} from "../enum";
-import {RouteFilter, RouteFilterType} from "../../protos/filters";
+import {RouteFilter} from "../../protos/filters";
+import {RouteFilterType} from "../../protos/enums";
 
 export class Airport {
   iataAirportCode: string;

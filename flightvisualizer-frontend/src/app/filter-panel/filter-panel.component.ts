@@ -4,7 +4,8 @@ import {AirportDisplayType, RouteDisplayType} from "../core/enum";
 import {Subscription} from "rxjs";
 import {Airport, DefaultGeneralFilter, DefaultRouteFilter, GeneralFilter} from "../core/dto/airport";
 import {FilterService} from "../core/service/filter.service";
-import {RouteFilter, RouteFilterType} from "../protos/filters";
+import {RouteFilter} from "../protos/filters";
+import {RouteFilterType} from "../protos/enums";
 
 @Component({
   selector: 'app-filter-panel',
