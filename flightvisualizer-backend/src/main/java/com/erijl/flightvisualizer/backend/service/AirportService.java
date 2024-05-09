@@ -1,9 +1,9 @@
 package com.erijl.flightvisualizer.backend.service;
 
-import com.erijl.flightvisualizer.backend.dto.AirportResponse;
+import com.erijl.flightvisualizer.backend.model.dto.AirportResponse;
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
-import com.erijl.flightvisualizer.backend.model.Airport;
-import com.erijl.flightvisualizer.backend.repository.AirportRepository;
+import com.erijl.flightvisualizer.backend.model.entities.Airport;
+import com.erijl.flightvisualizer.backend.model.repository.AirportRepository;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
 import com.google.gson.Gson;

@@ -1,9 +1,9 @@
 package com.erijl.flightvisualizer.backend.config;
 
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
-import com.erijl.flightvisualizer.backend.dto.FlightScheduleResponse;
-import com.erijl.flightvisualizer.backend.model.*;
-import com.erijl.flightvisualizer.backend.repository.*;
+import com.erijl.flightvisualizer.backend.model.dto.FlightScheduleResponse;
+import com.erijl.flightvisualizer.backend.model.entities.*;
+import com.erijl.flightvisualizer.backend.model.repository.*;
 import com.erijl.flightvisualizer.backend.service.AircraftService;
 import com.erijl.flightvisualizer.backend.service.AirlineService;
 import com.erijl.flightvisualizer.backend.service.AirportService;
@@ -15,7 +15,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
@@ -63,7 +62,7 @@ public class CronScheduler {
         this.flightScheduleLegRepository = flightScheduleLegRepository;
     }
 
-    @Scheduled(fixedRate = 1000 * 60 * 60)
+    //@Scheduled(fixedRate = 1000 * 60 * 60)
     public void fetchTodaysFlightSchedule() {
         String currentLocalDateString = LocalDate.now(ZoneId.of("UTC")).toString();
         FlightScheduleCronRun possibleCronRuns = this.flightScheduleCronRunRepository.
@@ -107,7 +106,7 @@ public class CronScheduler {
             System.out.println(response.getStatusCode());
         }
 
-        if (aggregatedFlights != null || !aggregatedFlights.isEmpty()) {
+        if (aggregatedFlights != null && !aggregatedFlights.isEmpty()) {
             this.insertFlightScheduleResponse(aggregatedFlights, cronRun);
         }
     }
@@ -142,17 +141,16 @@ public class CronScheduler {
                     )
             );
 
-            flightScheduleResponse.getDataElementResponses().forEach(flightScheduleDataElement -> {
-                flightScheduleDataElements.add(
-                        new FlightScheduleDataElement(
-                                flightSchedule,
-                                flightScheduleDataElement.getStartLegSequenceNumber(),
-                                flightScheduleDataElement.getEndLegSequenceNumber(),
-                                flightScheduleDataElement.getId(),
-                                flightScheduleDataElement.getValue()
-                        )
-                );
-            });
+            flightScheduleResponse.getDataElementResponses().forEach(flightScheduleDataElement ->
+                    flightScheduleDataElements.add(
+                            new FlightScheduleDataElement(
+                                    flightSchedule,
+                                    flightScheduleDataElement.getStartLegSequenceNumber(),
+                                    flightScheduleDataElement.getEndLegSequenceNumber(),
+                                    flightScheduleDataElement.getId(),
+                                    flightScheduleDataElement.getValue()
+                            )
+                    ));
 
             flightScheduleResponse.getLegResponses().forEach(flightScheduleLeg -> {
                 String origin = flightScheduleLeg.getOrigin();
