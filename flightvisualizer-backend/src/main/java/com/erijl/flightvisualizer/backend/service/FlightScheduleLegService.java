@@ -1,7 +1,7 @@
 package com.erijl.flightvisualizer.backend.service;
 
-import com.erijl.flightvisualizer.backend.model.dto.FlightScheduleLegDto;
-import com.erijl.flightvisualizer.backend.model.dto.FlightScheduleLegWithDistance;
+import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto;
+import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistance;
 import com.erijl.flightvisualizer.backend.model.enums.LocationType;
 import com.erijl.flightvisualizer.backend.model.repository.FlightScheduleLegRepository;
 import org.springframework.stereotype.Service;

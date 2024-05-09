@@ -1,6 +1,6 @@
 package com.erijl.flightvisualizer.backend.service;
 
-import com.erijl.flightvisualizer.backend.model.dto.AirportResponse;
+import com.erijl.flightvisualizer.backend.model.api.AirportResponse;
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
 import com.erijl.flightvisualizer.backend.model.entities.Airport;
 import com.erijl.flightvisualizer.backend.model.repository.AirportRepository;

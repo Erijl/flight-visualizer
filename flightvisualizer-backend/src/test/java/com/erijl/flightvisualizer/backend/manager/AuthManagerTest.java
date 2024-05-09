@@ -1,6 +1,6 @@
 package com.erijl.flightvisualizer.backend.manager;
 
-import com.erijl.flightvisualizer.backend.model.dto.AccessToken;
+import com.erijl.flightvisualizer.backend.model.api.AccessToken;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

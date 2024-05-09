@@ -1,7 +1,7 @@
 package com.erijl.flightvisualizer.backend.controller;
 
-import com.erijl.flightvisualizer.backend.model.dto.FlightScheduleLegDto;
-import com.erijl.flightvisualizer.backend.model.dto.FlightScheduleLegWithDistance;
+import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto;
+import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistance;
 import com.erijl.flightvisualizer.backend.service.FlightScheduleLegService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;

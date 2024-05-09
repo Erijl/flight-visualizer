@@ -1,4 +1,4 @@
-package com.erijl.flightvisualizer.backend.model.dto;
+package com.erijl.flightvisualizer.backend.model.dtos;
 
 import lombok.Getter;
 import lombok.Setter;

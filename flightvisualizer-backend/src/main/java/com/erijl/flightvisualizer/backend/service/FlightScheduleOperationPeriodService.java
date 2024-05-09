@@ -1,6 +1,6 @@
 package com.erijl.flightvisualizer.backend.service;
 
-import com.erijl.flightvisualizer.backend.model.dto.FlightDateFrequencyDto;
+import com.erijl.flightvisualizer.backend.model.dtos.FlightDateFrequencyDto;
 import com.erijl.flightvisualizer.backend.model.repository.FlightScheduleOperationPeriodRepository;
 import org.springframework.stereotype.Service;
 

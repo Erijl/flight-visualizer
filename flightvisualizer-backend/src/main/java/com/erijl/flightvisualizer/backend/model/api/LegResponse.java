@@ -1,4 +1,4 @@
-package com.erijl.flightvisualizer.backend.model.dto;
+package com.erijl.flightvisualizer.backend.model.api;
 
 
 import com.google.gson.annotations.SerializedName;
