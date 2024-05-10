@@ -15,9 +15,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -62,7 +64,7 @@ public class CronScheduler {
         this.flightScheduleLegRepository = flightScheduleLegRepository;
     }
 
-    //@Scheduled(fixedRate = 1000 * 60 * 60)
+    @Scheduled(fixedRate = 1000 * 60 * 60)
     public void fetchTodaysFlightSchedule() {
         String currentLocalDateString = LocalDate.now(ZoneId.of("UTC")).toString();
         FlightScheduleCronRun possibleCronRuns = this.flightScheduleCronRunRepository.
@@ -163,6 +165,8 @@ public class CronScheduler {
                 Airline aircraftOwnerAirline = (aircraftOwner == null || aircraftOwner.isEmpty()) ? null : this.airlineService.getAirlineById(aircraftOwner);
                 Aircraft aircraft = (aircraftType == null || aircraftType.isEmpty()) ? null : this.aircraftService.getAircraftById(aircraftType);
 
+                BigDecimal[] drawableCoordinates = this.calculateDrawableCoordinates(originAirport, destinationAirport);
+
                 flightScheduleLegs.add(
                         new FlightScheduleLeg(
                                 flightSchedule,
@@ -184,7 +188,11 @@ public class CronScheduler {
                                 flightScheduleLeg.getAircraftArrivalTimeDateDiffUTC(),
                                 flightScheduleLeg.getAircraftArrivalTimeLT(),
                                 flightScheduleLeg.getAircraftArrivalTimeDateDiffLT(),
-                                flightScheduleLeg.getAircraftArrivalTimeVariation()
+                                flightScheduleLeg.getAircraftArrivalTimeVariation(),
+                                CustomTimeUtil.calculateDurationInMinutes(flightScheduleLeg),
+                                this.calculateDistanceBetweenAirports(originAirport, destinationAirport),
+                                drawableCoordinates[0],
+                                drawableCoordinates[1]
                         )
                 );
             });
@@ -231,4 +239,50 @@ public class CronScheduler {
         iataAircraftCodes.forEach(this.aircraftService::ensureAircraftExists);
         iataAirportCodes.forEach(this.airportService::ensureAirportExists);
     }
+
+    private int calculateDistanceBetweenAirports(Airport originAirport, Airport destinationAirport) {
+
+        if ((originAirport == null || destinationAirport == null)
+                || (originAirport.getLatitude() == null || originAirport.getLongitude() == null)
+                || (destinationAirport.getLatitude() == null || destinationAirport.getLongitude() == null)) {
+            return 0;
+        }
+
+
+        final double earthRadiusInMetres = 6371e3;
+
+        double originLatitudeInRadians = Math.toRadians(originAirport.getLatitude().doubleValue());
+        double destinationLatitudeInRadians = Math.toRadians(destinationAirport.getLatitude().doubleValue());
+        double deltaLatitudeInRadians = Math.toRadians(destinationAirport.getLatitude().doubleValue() - originAirport.getLatitude().doubleValue());
+        double deltaLongitudeInRadians = Math.toRadians(destinationAirport.getLongitude().doubleValue() - originAirport.getLongitude().doubleValue());
+
+        double haversineFormulaPartA = Math.sin(deltaLatitudeInRadians / 2) * Math.sin(deltaLatitudeInRadians / 2) +
+                Math.cos(originLatitudeInRadians) * Math.cos(destinationLatitudeInRadians) *
+                        Math.sin(deltaLongitudeInRadians / 2) * Math.sin(deltaLongitudeInRadians / 2);
+        double haversineFormulaPartC = 2 * Math.atan2(Math.sqrt(haversineFormulaPartA), Math.sqrt(1 - haversineFormulaPartA));
+
+        return ((int) Math.floor(earthRadiusInMetres * haversineFormulaPartC)) / 1000;
+    }
+
+    private BigDecimal[] calculateDrawableCoordinates(Airport originAirport, Airport destinationAirport) {
+        // [0] = origin, [1] = destination
+        BigDecimal[] coordinates = new BigDecimal[2];
+        coordinates[0] = originAirport.getLongitude();
+        coordinates[1] = destinationAirport.getLongitude();
+        if (coordinates[0] == null || coordinates[1] == null) {
+            return new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO};
+        }
+
+        BigDecimal diffLongitude = coordinates[1].subtract(coordinates[0]);
+        if (diffLongitude.compareTo(BigDecimal.valueOf(180)) > 0) {
+            if (diffLongitude.compareTo(BigDecimal.ZERO) > 0) {
+                coordinates[0] = coordinates[0].add(BigDecimal.valueOf(360));
+            } else {
+                coordinates[1] = coordinates[1].add(BigDecimal.valueOf(360));
+            }
+        }
+
+        return coordinates;
+    }
+
 }

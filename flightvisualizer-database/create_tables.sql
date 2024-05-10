@@ -80,6 +80,10 @@ CREATE TABLE flight_schedule_leg
     aircraft_arrival_time_lt              INT,
     aircraft_arrival_time_diff_lt         INT,
     aircraft_arrival_time_variation       INT,
+    duration_minutes                      INT,
+    distance_kilometers                   INT,
+    drawable_origin_longitude             NUMERIC(9, 6),
+    drawable_destination_longitude        NUMERIC(9, 6),
 
     FOREIGN KEY (flight_schedule_id) REFERENCES flight_schedule (flight_schedule_id),
     FOREIGN KEY (origin_airport) REFERENCES airport (iata_airport_code),
@@ -90,11 +94,11 @@ CREATE TABLE flight_schedule_leg
 
 CREATE TABLE flight_schedule_cron_run
 (
-    cron_run_id INT AUTO_INCREMENT PRIMARY KEY,
-    cron_run_date_utc VARCHAR(10) NOT NULL,
-    cron_run_finish TIMESTAMP,
-    aircraft_count INT,
-    airline_count INT,
-    airport_count INT,
+    cron_run_id           INT AUTO_INCREMENT PRIMARY KEY,
+    cron_run_date_utc     VARCHAR(10) NOT NULL,
+    cron_run_finish       TIMESTAMP,
+    aircraft_count        INT,
+    airline_count         INT,
+    airport_count         INT,
     flight_schedule_count INT
 );

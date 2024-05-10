@@ -1,5 +1,7 @@
 package com.erijl.flightvisualizer.backend.util;
 
+import com.erijl.flightvisualizer.backend.model.api.LegResponse;
+import com.erijl.flightvisualizer.backend.model.entities.FlightScheduleLeg;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -11,6 +13,8 @@ import java.util.Locale;
 
 @Component
 public class CustomTimeUtil {
+
+    private static final int MAX_MINUTES_IN_DAY = 1439;
 
     /**
      * Date conversion to the 'ddMMMyy' format used by Lufthansa
@@ -74,5 +78,21 @@ public class CustomTimeUtil {
 
     public java.sql.Date convertDateToSqlDate(Date date) {
         return new java.sql.Date(date.getTime());
+    }
+
+    public static int calculateDurationInMinutes(LegResponse legResponse) {
+        return calculateDurationInMinutes(legResponse.getAircraftDepartureTimeUTC(),
+                legResponse.getAircraftArrivalTimeUTC(),
+                legResponse.getAircraftArrivalTimeDateDiffUTC());
+    }
+
+    public static int calculateDurationInMinutes(FlightScheduleLeg flightScheduleLeg) {
+        return calculateDurationInMinutes(flightScheduleLeg.getAircraftDepartureTimeUtc(),
+                flightScheduleLeg.getAircraftArrivalTimeUtc(),
+                flightScheduleLeg.getAircraftArrivalTimeDateDiffUtc());
+    }
+
+    private static int calculateDurationInMinutes(int a, int b, int d) {
+        return (MAX_MINUTES_IN_DAY * d) + (b - a);
     }
 }

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "flight_schedule_leg")
 
@@ -81,10 +83,31 @@ public class FlightScheduleLeg {
     @Column(name = "aircraft_arrival_time_variation")
     private Integer aircraftArrivalTimeVariation;
 
+    @Column(name = "duration_minutes")
+    private Integer durationMinutes;
+
+    @Column(name = "distance_kilometers")
+    private Integer distanceKilometers;
+
+    @Column(name = "drawable_origin_longitude")
+    private BigDecimal drawableOriginLongitude;
+
+    @Column(name = "drawable_destination_longitude")
+    private BigDecimal drawableDestinationLongitude;
+
     public FlightScheduleLeg() {
     }
 
-    public FlightScheduleLeg(FlightSchedule flightSchedule, Integer legSequenceNumber, Airport originAirport, Airport destinationAirport, String iataServiceTypeCode, Airline aircraftOwnerAirline, Aircraft aircraft, String aircraftConfigurationVersion, String registration, Boolean op, Integer aircraftDepartureTimeUtc, Integer aircraftDepartureTimeDateDiffUtc, Integer aircraftDepartureTimeLt, Integer aircraftDepartureTimeDiffLt, Integer aircraftDepartureTimeVariation, Integer aircraftArrivalTimeUtc, Integer aircraftArrivalTimeDateDiffUtc, Integer aircraftArrivalTimeLt, Integer aircraftArrivalTimeDiffLt, Integer aircraftArrivalTimeVariation) {
+    public FlightScheduleLeg(FlightSchedule flightSchedule, Integer legSequenceNumber, Airport originAirport,
+                             Airport destinationAirport, String iataServiceTypeCode, Airline aircraftOwnerAirline,
+                             Aircraft aircraft, String aircraftConfigurationVersion, String registration, Boolean op,
+                             Integer aircraftDepartureTimeUtc, Integer aircraftDepartureTimeDateDiffUtc,
+                             Integer aircraftDepartureTimeLt, Integer aircraftDepartureTimeDiffLt,
+                             Integer aircraftDepartureTimeVariation, Integer aircraftArrivalTimeUtc,
+                             Integer aircraftArrivalTimeDateDiffUtc, Integer aircraftArrivalTimeLt,
+                             Integer aircraftArrivalTimeDiffLt, Integer aircraftArrivalTimeVariation,
+                             Integer durationMinutes, Integer distanceKilometers, BigDecimal drawableOriginLongitude,
+                             BigDecimal drawableDestinationLongitude) {
         this.flightSchedule = flightSchedule;
         this.legSequenceNumber = legSequenceNumber;
         this.originAirport = originAirport;
@@ -105,5 +128,9 @@ public class FlightScheduleLeg {
         this.aircraftArrivalTimeLt = aircraftArrivalTimeLt;
         this.aircraftArrivalTimeDiffLt = aircraftArrivalTimeDiffLt;
         this.aircraftArrivalTimeVariation = aircraftArrivalTimeVariation;
+        this.durationMinutes = durationMinutes;
+        this.distanceKilometers = distanceKilometers;
+        this.drawableOriginLongitude = drawableOriginLongitude;
+        this.drawableDestinationLongitude = drawableDestinationLongitude;
     }
 }
