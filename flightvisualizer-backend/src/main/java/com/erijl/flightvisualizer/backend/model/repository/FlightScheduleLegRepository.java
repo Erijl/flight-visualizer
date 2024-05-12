@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.sql.Date;
+import java.util.List;
+
 
 public interface FlightScheduleLegRepository extends CrudRepository<FlightScheduleLeg, Integer> {
 
@@ -22,4 +24,13 @@ public interface FlightScheduleLegRepository extends CrudRepository<FlightSchedu
             "JOIN FlightScheduleOperationPeriod flop ON fs.operationPeriod = flop " +
             "WHERE flop.startDateUtc = :date AND flop.endDateUtc = :date")
     Iterable<FlightScheduleLegDto> findAllWithoutAssociationsBySingleDate(Date date);
+
+    @Query(value = """
+                select new com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto(fsl.originAirport, fsl.destinationAirport) from FlightScheduleLeg fsl
+                              join FlightSchedule fs on fsl.flightSchedule = fs
+                              join FlightScheduleOperationPeriod flop on fs.operationPeriod = flop
+                              where fsl.originAirport is not null and fsl.destinationAirport is not null
+            group by fsl.originAirport, fsl.destinationAirport
+                """)
+    List<FlightScheduleLegDto> findDistinctFlightScheduleLegsByStartAndEndDate();
 }

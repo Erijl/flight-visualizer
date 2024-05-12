@@ -74,6 +74,7 @@ export class DataStoreService {
     this.getAirports();
     this.getFlightDateFrequencies();
     this.getFlightScheduleLegRoutes();
+    this.getDistinctFlightScheduleLegsForRendering();
   }
 
   // GETTERS
@@ -201,6 +202,8 @@ export class DataStoreService {
     this._timeFilter.next(timeFilter);
 
     this.getFlightScheduleLegRoutes();
+
+    this.getDistinctFlightScheduleLegsForRendering();
   }
 
   setGeneralFilter(generalFilter: GeneralFilter): void {
@@ -231,6 +234,13 @@ export class DataStoreService {
     this.dataService.getFlightScheduleLegRoutes(this.getTimeFilter().dateRange).subscribe(flightScheduleLegs => {
       this.allFlightScheduleRouteDtos = flightScheduleLegs;
       this.reRenderRoutes();
+    });
+  }
+
+  private getDistinctFlightScheduleLegsForRendering(): void {
+    this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter().dateRange).subscribe(legRenders => {
+      console.log(legRenders.length)
+      console.log("distinct")
     });
   }
 

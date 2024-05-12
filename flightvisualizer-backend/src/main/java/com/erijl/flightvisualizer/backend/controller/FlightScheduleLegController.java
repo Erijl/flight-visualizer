@@ -3,6 +3,7 @@ package com.erijl.flightvisualizer.backend.controller;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistance;
 import com.erijl.flightvisualizer.backend.service.FlightScheduleLegService;
+import com.erijl.flightvisualizer.protos.objects.LegRender;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,5 +28,10 @@ public class FlightScheduleLegController {
     @RequestMapping("/flightScheduleLeg/distance")
     public List<FlightScheduleLegWithDistance> getFlightScheduleLegsWithDistance(@RequestParam(value = "startDate") String startDate, @RequestParam(value = "endDate") String endDate) {
         return flightScheduleLegService.getFlightScheduleLegsWithDistance(startDate, endDate);
+    }
+
+    @RequestMapping(value="/flightScheduleLeg/distinct", produces = "application/x-protobuf")
+    public List<LegRender> getDistinctFlightScheduleLegsForRendering() {
+        return flightScheduleLegService.getDistinctFlightScheduleLegsForRendering();
     }
 }

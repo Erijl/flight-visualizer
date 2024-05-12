@@ -4,6 +4,10 @@ import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistance;
 import com.erijl.flightvisualizer.backend.model.enums.LocationType;
 import com.erijl.flightvisualizer.backend.model.repository.FlightScheduleLegRepository;
+import com.erijl.flightvisualizer.backend.util.MathUtil;
+import com.erijl.flightvisualizer.protos.objects.Coordinate;
+import com.erijl.flightvisualizer.protos.objects.CoordinateRender;
+import com.erijl.flightvisualizer.protos.objects.LegRender;
 import org.springframework.stereotype.Service;
 import com.erijl.flightvisualizer.backend.model.entities.Airport;
 
@@ -45,7 +49,7 @@ public class FlightScheduleLegService {
                 flightScheduleLegWithDistances.add(
                         new FlightScheduleLegWithDistance(
                                 flightScheduleLegDto,
-                                this.calculateDistanceBetweenAirports(flightScheduleLegDto.getOriginAirport(), flightScheduleLegDto.getDestinationAirport())
+                                MathUtil.calculateDistanceBetweenAirports(flightScheduleLegDto.getOriginAirport(), flightScheduleLegDto.getDestinationAirport())
                         )
                 );
             }
@@ -53,27 +57,24 @@ public class FlightScheduleLegService {
         return flightScheduleLegWithDistances;
     }
 
-    private int calculateDistanceBetweenAirports(Airport originAirport, Airport destinationAirport) {
+    public List<LegRender> getDistinctFlightScheduleLegsForRendering() {
+        List<FlightScheduleLegDto> legs =  flightScheduleLegRepository.findDistinctFlightScheduleLegsByStartAndEndDate();
+        List<LegRender> legRenders = new ArrayList<>();
+        for (FlightScheduleLegDto leg : legs) {
+            Airport originAirport = leg.getOriginAirport();
+            Airport destinationAirport = leg.getDestinationAirport();
 
-        if((originAirport == null || destinationAirport == null)
-                || (originAirport.getLatitude() == null || originAirport.getLongitude() == null)
-                || (destinationAirport.getLatitude() == null || destinationAirport.getLongitude() == null)) {
-            return 0;
+            var render = LegRender.newBuilder()
+                    .setOriginAirportIataCode(originAirport.getIataAirportCode())
+                    .setDestinationAirportIataCode(destinationAirport.getIataAirportCode())
+                    .setCoordinates(
+                            CoordinateRender.newBuilder()
+                                    .addCoordinates(0, Coordinate.newBuilder().setLatitude(originAirport.getLatitude().doubleValue()).setLongitude(originAirport.getLongitude().doubleValue()))
+                                    .addCoordinates(1, Coordinate.newBuilder().setLatitude(destinationAirport.getLatitude().doubleValue()).setLongitude(destinationAirport.getLongitude().doubleValue()))
+                                            .build()
+                    ).build();
+            legRenders.add(render);
         }
-
-
-        final double earthRadiusInMetres = 6371e3;
-
-        double originLatitudeInRadians = Math.toRadians(originAirport.getLatitude().doubleValue());
-        double destinationLatitudeInRadians = Math.toRadians(destinationAirport.getLatitude().doubleValue());
-        double deltaLatitudeInRadians = Math.toRadians(destinationAirport.getLatitude().doubleValue() - originAirport.getLatitude().doubleValue());
-        double deltaLongitudeInRadians = Math.toRadians(destinationAirport.getLongitude().doubleValue() - originAirport.getLongitude().doubleValue());
-
-        double haversineFormulaPartA = Math.sin(deltaLatitudeInRadians/2) * Math.sin(deltaLatitudeInRadians/2) +
-                Math.cos(originLatitudeInRadians) * Math.cos(destinationLatitudeInRadians) *
-                        Math.sin(deltaLongitudeInRadians/2) * Math.sin(deltaLongitudeInRadians/2);
-        double haversineFormulaPartC = 2 * Math.atan2(Math.sqrt(haversineFormulaPartA), Math.sqrt(1-haversineFormulaPartA));
-
-        return ((int) Math.floor(earthRadiusInMetres * haversineFormulaPartC))/1000;
+        return legRenders;
     }
 }

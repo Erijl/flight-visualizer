@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {catchError, Observable, of, tap} from "rxjs";
+import {catchError, map, Observable, of, tap} from "rxjs";
 import {
   Airport,
   FlightDateFrequencyDto,
@@ -7,8 +7,9 @@ import {
   FlightScheduleRouteDto,
   DateRange
 } from "../dto/airport";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
+import {LegRender} from "../../protos/objects";
 
 @Injectable({
   providedIn: 'root'
@@ -48,6 +49,30 @@ export class DataService {
         tap(_ => this.log('fetched getFlightScheduleById')),
         catchError(this.handleError<FlightSchedule>('getFlightScheduleById', new FlightSchedule()))
       );
+  }
+
+  getDistinctFlightScheduleLegsForRendering(dateRange: DateRange): Observable<LegRender[]> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/x-protobuf',
+      'Accept': 'application/x-protobuf'
+    });
+    return this.http.get(this.apiEndpoint + 'flightScheduleLeg/distinct', { headers, responseType: 'text' }).pipe(
+      map(response => {
+        let legRenders: LegRender[] = [];
+        const base64Strings = response.split("==");
+        base64Strings.forEach(base64String => {
+          const binaryString = atob(base64String);
+          const len = binaryString.length;
+          const bytes = new Uint8Array(len);
+          for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+          }
+          const legRender = LegRender.decode(bytes);
+          legRenders.push(legRender);
+        });
+        return legRenders;
+      })
+    );
   }
 
 

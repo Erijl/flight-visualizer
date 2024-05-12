@@ -30,4 +30,9 @@ public class FlightScheduleLegDto {
         this.aircraftArrivalTimeUtc = aircraftArrivalTimeUtc;
         this.aircraftArrivalTimeDateDiffUtc = aircraftArrivalTimeDateDiffUtc;
     }
+
+    public FlightScheduleLegDto(Airport originAirport, Airport destinationAirport) {
+        this.originAirport = originAirport;
+        this.destinationAirport = destinationAirport;
+    }
 }
