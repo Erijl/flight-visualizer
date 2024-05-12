@@ -185,7 +185,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   replaceCurrentlyRenderedRoutes(newRoutes: FlightScheduleRouteDto[]): void {
-    let routesGeoJson = this.geoService.convertFlightScheduleRouteDtosToGeoJson(newRoutes);
+    let routesGeoJson = this.geoService.convertLegRendersToGeoJson(this.dataStoreService.getLegRenders());
     if(!this.map) return;
 
     if(this.map.getSource(SourceType.ROUTESOURCE)) {

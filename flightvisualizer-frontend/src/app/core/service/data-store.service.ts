@@ -14,6 +14,7 @@ import {BehaviorSubject} from "rxjs";
 import {FilterService} from "./filter.service";
 import {AirportDisplayType, DetailSelectionType, RouteDisplayType} from "../enum";
 import {RouteFilter} from "../../protos/filters";
+import {LegRender} from "../../protos/objects";
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,8 @@ export class DataStoreService {
   allFlightScheduleRouteDtos: FlightScheduleRouteDto[] = [];
   allAirports: Airport[] = [];
   fetchedFlightSchedule: FlightSchedule = new FlightSchedule();
+
+  legRenders: LegRender[] = [];
 
   private _allFlightDateFrequencies: BehaviorSubject<FlightDateFrequencyDto[]> = new BehaviorSubject<FlightDateFrequencyDto[]>([]);
   allFlightDateFrequencies = this._allFlightDateFrequencies.asObservable();
@@ -167,6 +170,10 @@ export class DataStoreService {
       );
   }
 
+  getLegRenders(): LegRender[] {
+    return this.legRenders;
+  }
+
   // SETTERS
 
   setSelectedAirport(airport: Airport): void {
@@ -240,7 +247,10 @@ export class DataStoreService {
   private getDistinctFlightScheduleLegsForRendering(): void {
     this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter().dateRange).subscribe(legRenders => {
       console.log(legRenders.length)
+      console.log(legRenders[0])
+      console.log(legRenders[0].coordinates?.coordinates[0])
       console.log("distinct")
+      this.legRenders = legRenders;
     });
   }
 

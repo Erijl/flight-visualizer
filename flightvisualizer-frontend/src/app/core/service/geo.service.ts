@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import mapboxgl from 'mapbox-gl';
 import {Airport} from "../dto/airport";
+import {LegRender} from "../../protos/objects";
 
 @Injectable({
   providedIn: 'root'
@@ -87,6 +88,27 @@ export class GeoService {
         'properties': {
           'originAirport': flightScheduleRouteDto.originAirport.iataAirportCode,
           'destinationAirport': flightScheduleRouteDto.destinationAirport.iataAirportCode,
+        }
+      });
+    });
+    return airportGeoRoutes;
+  }
+
+  convertLegRendersToGeoJson(legRenders: LegRender[]): any[] {
+    const airportGeoRoutes: any[] = [];
+    legRenders.forEach(legRender => {
+      airportGeoRoutes.push({
+        'type': 'Feature',
+        'geometry': {
+          'type': 'LineString',
+          'coordinates': [
+            [legRender.coordinates?.coordinates[0].longitude, legRender.coordinates?.coordinates[0].latitude],
+            [legRender.coordinates?.coordinates[1].longitude, legRender.coordinates?.coordinates[1].latitude]
+          ]
+        },
+        'properties': {
+          'originAirport': legRender.originAirportIataCode,
+          'destinationAirport': legRender.destinationAirportIataCode,
         }
       });
     });
