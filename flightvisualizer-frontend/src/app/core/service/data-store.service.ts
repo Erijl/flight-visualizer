@@ -246,10 +246,6 @@ export class DataStoreService {
 
   private getDistinctFlightScheduleLegsForRendering(): void {
     this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter().dateRange).subscribe(legRenders => {
-      console.log(legRenders.length)
-      console.log(legRenders[0])
-      console.log(legRenders[0].coordinates?.coordinates[0])
-      console.log("distinct")
       this.legRenders = legRenders;
     });
   }

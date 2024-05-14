@@ -6,7 +6,6 @@ import com.erijl.flightvisualizer.backend.model.enums.LocationType;
 import com.erijl.flightvisualizer.backend.model.repository.FlightScheduleLegRepository;
 import com.erijl.flightvisualizer.backend.util.MathUtil;
 import com.erijl.flightvisualizer.protos.objects.Coordinate;
-import com.erijl.flightvisualizer.protos.objects.CoordinateRender;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
 import org.springframework.stereotype.Service;
 import com.erijl.flightvisualizer.backend.model.entities.Airport;
@@ -67,12 +66,8 @@ public class FlightScheduleLegService {
             var render = LegRender.newBuilder()
                     .setOriginAirportIataCode(originAirport.getIataAirportCode())
                     .setDestinationAirportIataCode(destinationAirport.getIataAirportCode())
-                    .setCoordinates(
-                            CoordinateRender.newBuilder()
-                                    .addCoordinates(0, Coordinate.newBuilder().setLatitude(originAirport.getLatitude().doubleValue()).setLongitude(originAirport.getLongitude().doubleValue()))
-                                    .addCoordinates(1, Coordinate.newBuilder().setLatitude(destinationAirport.getLatitude().doubleValue()).setLongitude(destinationAirport.getLongitude().doubleValue()))
-                                            .build()
-                    ).build();
+                    .addCoordinates(0, Coordinate.newBuilder().setLatitude(originAirport.getLatitude().doubleValue()).setLongitude(originAirport.getLongitude().doubleValue()))
+                    .addCoordinates(1, Coordinate.newBuilder().setLatitude(destinationAirport.getLatitude().doubleValue()).setLongitude(destinationAirport.getLongitude().doubleValue())).build();
             legRenders.add(render);
         }
         return legRenders;

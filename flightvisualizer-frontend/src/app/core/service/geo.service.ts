@@ -102,8 +102,8 @@ export class GeoService {
         'geometry': {
           'type': 'LineString',
           'coordinates': [
-            [legRender.coordinates?.coordinates[0].longitude, legRender.coordinates?.coordinates[0].latitude],
-            [legRender.coordinates?.coordinates[1].longitude, legRender.coordinates?.coordinates[1].latitude]
+            [legRender.coordinates[0].longitude, legRender.coordinates[0].latitude],
+            [legRender.coordinates[1].longitude, legRender.coordinates[1].latitude]
           ]
         },
         'properties': {

@@ -11,14 +11,14 @@ option java_outer_classname = "Object";
 
 
 // Classes
+message LegRenders {
+  repeated LegRender legs = 1;
+}
+
 message LegRender {
   string originAirportIataCode = 1;
   string destinationAirportIataCode = 2;
-  CoordinateRender coordinates = 3;
-}
-
-message CoordinateRender {
-  repeated Coordinate coordinates = 1;
+  repeated Coordinate coordinates = 3;
 }
 
 message Coordinate {
