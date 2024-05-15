@@ -9,8 +9,5 @@ import org.springframework.web.client.RestTemplate;
 @EnableScheduling
 public class SpringConfig {
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
+
 }

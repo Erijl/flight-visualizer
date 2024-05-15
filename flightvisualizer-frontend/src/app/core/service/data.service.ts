@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {catchError, map, mergeMap, Observable, of, tap} from "rxjs";
+import {catchError, filter, map, mergeMap, Observable, of, tap} from "rxjs";
 import {
   Airport,
   FlightDateFrequencyDto,
@@ -7,9 +7,11 @@ import {
   FlightScheduleRouteDto,
   DateRange
 } from "../dto/airport";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {LegRender, LegRenders} from "../../protos/objects";
+import {RouteFilter} from "../../protos/filters";
+import {RouteFilterType} from "../../protos/enums";
 
 @Injectable({
   providedIn: 'root'
@@ -52,13 +54,26 @@ export class DataService {
   }
 
   getDistinctFlightScheduleLegsForRendering(dateRange: DateRange): Observable<LegRender[]> {
-    const headers = new HttpHeaders({ 'Accept': 'application/x-protobuf' });
-    return this.http.get(this.apiEndpoint + 'flightScheduleLeg/distinct', {
-      headers,
+    const routeFilter: RouteFilter = {
+      routeFilterType: RouteFilterType.DISTANCE,
+      start: 10,
+      end: 1200
+    };
+    const routeFilterEncoded = RouteFilter.encode(routeFilter).finish();
+    const blob = new Blob([routeFilterEncoded], { type: 'application/x-protobuf' });
+
+    const req = new HttpRequest('POST', this.apiEndpoint + 'flightScheduleLeg/distinct', blob, {
+      headers: new HttpHeaders({ 'Accept': 'application/x-protobuf' }),
+      reportProgress: true, // Optionally report upload progress
       responseType: 'arraybuffer'
-    }).pipe(
-      map(arrayBuffer => {
-        const legRendersMessage = LegRenders.decode(new Uint8Array(arrayBuffer));
+    });
+
+    return this.http.request(req).pipe(
+      filter(event => event.type === HttpEventType.Response), // Filter for the response event
+      map((event) => {
+        console.log('event', event);
+        // @ts-ignore
+        const legRendersMessage = LegRenders.decode(new Uint8Array(event.body));
         return legRendersMessage.legs;
       })
     );

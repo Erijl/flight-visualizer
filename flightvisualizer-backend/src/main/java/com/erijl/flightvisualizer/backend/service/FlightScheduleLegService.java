@@ -5,6 +5,7 @@ import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistan
 import com.erijl.flightvisualizer.backend.model.enums.LocationType;
 import com.erijl.flightvisualizer.backend.model.repository.FlightScheduleLegRepository;
 import com.erijl.flightvisualizer.backend.util.MathUtil;
+import com.erijl.flightvisualizer.protos.filter.RouteFilter;
 import com.erijl.flightvisualizer.protos.objects.Coordinate;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
 import org.springframework.stereotype.Service;
@@ -56,7 +57,7 @@ public class FlightScheduleLegService {
         return flightScheduleLegWithDistances;
     }
 
-    public List<LegRender> getDistinctFlightScheduleLegsForRendering() {
+    public List<LegRender> getDistinctFlightScheduleLegsForRendering(RouteFilter routeFilter) {
         List<FlightScheduleLegDto> legs =  flightScheduleLegRepository.findDistinctFlightScheduleLegsByStartAndEndDate();
         List<LegRender> legRenders = new ArrayList<>();
         for (FlightScheduleLegDto leg : legs) {
