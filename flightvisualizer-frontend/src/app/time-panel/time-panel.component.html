@@ -9,9 +9,9 @@
     <mat-form-field>
       <mat-label>Enter date range or date</mat-label>
       <mat-date-range-input [dateFilter]="dateFilter" [rangePicker]="rangePicker" [(ngModel)]="timeFilter.dateRange">
-        <input [(ngModel)]="timeFilter.dateRange.start" (ngModelChange)="onDateRangeChange()" matStartDate
+        <input [(ngModel)]="timeFilter.dateRange!.start" (ngModelChange)="onDateRangeChange()" matStartDate
                placeholder="Start date">
-        <input [(ngModel)]="timeFilter.dateRange.end" (ngModelChange)="onDateRangeChange()" matEndDate
+        <input [(ngModel)]="timeFilter.dateRange!.end" (ngModelChange)="onDateRangeChange()" matEndDate
                placeholder="End date">
       </mat-date-range-input>
       <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
@@ -26,31 +26,31 @@
       max="1439"
       step="1"
       (change)="onTimeRangeChange()">
-      <input [ngModel]="timeFilter.timeRange.start" (ngModelChange)="timeFilter.timeRange.start = $event"
+      <input [ngModel]="timeFilter.timeRange?.start" (ngModelChange)="timeFilter.timeRange!.start = $event"
              matSliderStartThumb>
-      <input [ngModel]="timeFilter.timeRange.end" (ngModelChange)="timeFilter.timeRange.end = $event" matSliderEndThumb>
+      <input [ngModel]="timeFilter.timeRange?.end" (ngModelChange)="timeFilter.timeRange!.end = $event" matSliderEndThumb>
     </mat-slider>
     <div class="values-container">
-      <div *ngIf="!timeFilter.timeRange.inverted">
+      <div *ngIf="!timeFilter.timeRange?.inverted">
         UTC:
-        <span>{{ timeFilter.timeRange.start | intToTimeofday }}</span>
+        <span>{{ timeFilter.timeRange?.start | intToTimeofday }}</span>
         -
-        <span>{{ timeFilter.timeRange.end | intToTimeofday }}</span>
+        <span>{{ timeFilter.timeRange?.end | intToTimeofday }}</span>
       </div>
 
-      <div *ngIf="timeFilter.timeRange.inverted">
+      <div *ngIf="timeFilter.timeRange?.inverted">
         UTC:
         <span>{{ minTime | intToTimeofday }}</span>
         -
-        <span>{{ timeFilter.timeRange.start | intToTimeofday }}</span>
+        <span>{{ timeFilter.timeRange?.start | intToTimeofday }}</span>
         and
 
-        <span>{{ timeFilter.timeRange.end | intToTimeofday }}</span>
+        <span>{{ timeFilter.timeRange?.end | intToTimeofday }}</span>
         -
         <span>{{ maxTime | intToTimeofday }}</span>
       </div>
 
-      <div *ngIf="panelOpenState">slider: ({{ timeFilter.timeRange.inverted ? 'exlcuding' : 'including' }})</div>
+      <div *ngIf="panelOpenState">slider: ({{ timeFilter.timeRange?.inverted ? 'exlcuding' : 'including' }})</div>
     </div>
   </div>
 
@@ -74,7 +74,7 @@
     </mat-slide-toggle>
     <br>
     <br>
-    <mat-slide-toggle [(ngModel)]="timeFilter.timeRange.inverted" (change)="onTimeRangeInvertChange()">
+    <mat-slide-toggle [disabled]="!timeFilter.timeRange" [(ngModel)]="timeFilter.timeRange!.inverted" (change)="onTimeRangeInvertChange()">
       Invert Time Range selection
     </mat-slide-toggle>
     <br>

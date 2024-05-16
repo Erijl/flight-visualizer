@@ -19,11 +19,11 @@ export enum RouteDisplayType {
 //  //possibly add AIRPORTROUTECOUNT(?) in the future
 //}
 
-export enum AircraftTimeFilterType {
-  ARRIVALANDDEPARTURE = "Arrival and Departure in period",
-  DEPARTURE = "Departure in period",
-  ARRIVAL = "Arrival in period",
-}
+//export enum AircraftTimeFilterType {
+//  ARRIVALANDDEPARTURE = "Arrival and Departure in period",
+//  DEPARTURE = "Departure in period",
+//  ARRIVAL = "Arrival in period",
+//}
 
 export enum DetailSelectionType {
   AIRPORT = "airport",

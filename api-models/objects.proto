@@ -8,7 +8,8 @@ option java_package = "com.erijl.flightvisualizer.protos.objects";
 option java_outer_classname = "Object";
 
 // Imports
-
+import "google/protobuf/timestamp.proto";
+import "enums.proto";
 
 // Classes
 message LegRenders {
@@ -24,4 +25,23 @@ message LegRender {
 message Coordinate {
   double latitude = 1;
   double longitude = 2;
+}
+
+message DateRange {
+  google.protobuf.Timestamp start = 1;
+  google.protobuf.Timestamp end = 2;
+}
+
+message TimeRange {
+  int32 start = 1;
+  int32 end = 2;
+  bool inverted = 3;
+}
+
+message TimeFilter {
+  DateRange dateRange = 1;
+  TimeRange timeRange = 2;
+  enums.AircraftTimeFilterType aircraftDepOrArrInTimeRange = 3;
+  bool includeDifferentDayDepartures = 4;
+  bool includeDifferentDayArrivals = 5;
 }

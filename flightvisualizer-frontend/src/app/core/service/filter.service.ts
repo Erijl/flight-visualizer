@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
-import {Airport, FlightScheduleRouteDto, TimeFilter} from "../dto/airport";
-import {AircraftTimeFilterType} from "../enum";
+import {Airport, FlightScheduleRouteDto} from "../dto/airport";
 import {RouteFilter} from "../../protos/filters";
-import {RouteFilterType} from "../../protos/enums";
+import {AircraftTimeFilterType, RouteFilterType} from "../../protos/enums";
+import {TimeFilter} from "../../protos/objects";
 
 @Injectable({
   providedIn: 'root'
@@ -70,6 +70,7 @@ export class FilterService {
   }
 
   isRouteInTimeRange(route: FlightScheduleRouteDto, timeFilter: TimeFilter, minTime: number, maxTime: number): boolean {
+    if(!timeFilter || !timeFilter.timeRange) return false;
     if (timeFilter.timeRange.inverted) {
       return minTime <= route.aircraftArrivalTimeUtc && route.aircraftArrivalTimeUtc <= timeFilter.timeRange.start &&
         timeFilter.timeRange.end <= route.aircraftDepartureTimeUtc && route.aircraftDepartureTimeUtc <= maxTime;
@@ -80,6 +81,7 @@ export class FilterService {
   }
 
   isArrivalInTimeRange(route: FlightScheduleRouteDto, timeFilter: TimeFilter, minTime: number): boolean {
+    if(!timeFilter || !timeFilter.timeRange) return false;
     if (timeFilter.timeRange.inverted) {
       return minTime <= route.aircraftArrivalTimeUtc && route.aircraftArrivalTimeUtc <= timeFilter.timeRange.start;
     } else {
@@ -88,6 +90,7 @@ export class FilterService {
   }
 
   isDepartureInTimeRange(route: FlightScheduleRouteDto, timeFilter: TimeFilter, maxTime: number): boolean {
+    if(!timeFilter || !timeFilter.timeRange) return false;
     if (timeFilter.timeRange.inverted) {
       return timeFilter.timeRange.end <= route.aircraftDepartureTimeUtc && route.aircraftDepartureTimeUtc <= maxTime;
     } else {

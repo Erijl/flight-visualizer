@@ -1,10 +1,11 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
-import {DateRange, DefaultTimeFilter, TimeFilter, TimeRange} from "../core/dto/airport";
+import {DefaultTimeFilter} from "../core/dto/airport";
 import {state, style, trigger} from "@angular/animations";
 import {Subscription} from "rxjs";
-import {AircraftTimeFilterType, RouteDisplayType} from "../core/enum";
+import {TimeFilter} from "../protos/objects";
+import {AircraftTimeFilterType} from "../protos/enums";
 
 @Component({
   selector: 'app-time-panel',

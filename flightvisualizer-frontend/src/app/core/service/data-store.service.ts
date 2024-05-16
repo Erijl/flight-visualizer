@@ -1,20 +1,18 @@
 import {Injectable} from '@angular/core';
 import {
   Airport,
-  DateRange, DefaultGeneralFilter, DefaultRouteFilter, DefaultTimeFilter,
+  DefaultGeneralFilter, DefaultRouteFilter, DefaultTimeFilter,
   FlightDateFrequencyDto,
   FlightSchedule,
   FlightScheduleRouteDto,
-  GeneralFilter,
-  TimeFilter,
-  TimeRange
+  GeneralFilter
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {FilterService} from "./filter.service";
 import {AirportDisplayType, DetailSelectionType, RouteDisplayType} from "../enum";
 import {RouteFilter} from "../../protos/filters";
-import {LegRender} from "../../protos/objects";
+import {LegRender, TimeFilter} from "../../protos/objects";
 
 @Injectable({
   providedIn: 'root'
@@ -238,6 +236,7 @@ export class DataStoreService {
   }
 
   private getFlightScheduleLegRoutes(): void {
+    // @ts-ignore
     this.dataService.getFlightScheduleLegRoutes(this.getTimeFilter().dateRange).subscribe(flightScheduleLegs => {
       this.allFlightScheduleRouteDtos = flightScheduleLegs;
       this.reRenderRoutes();
@@ -245,6 +244,7 @@ export class DataStoreService {
   }
 
   private getDistinctFlightScheduleLegsForRendering(): void {
+    // @ts-ignore
     this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter().dateRange).subscribe(legRenders => {
       this.legRenders = legRenders;
     });
@@ -328,11 +328,13 @@ export class DataStoreService {
     const flightDateFrequencies = this._allFlightDateFrequencies.getValue();
     let timeFilter = DefaultTimeFilter;
 
+    if(!timeFilter || !timeFilter.dateRange) return;
+
     if (!flightDateFrequencies || flightDateFrequencies.length == 0) {
       //TODO oh boy...
     }
 
-    timeFilter.dateRange.start = flightDateFrequencies.reverse().find(flightDateFrequency => flightDateFrequency.count > 0 && flightDateFrequency.startDateUtc)?.startDateUtc ?? null;
+    timeFilter.dateRange.start = flightDateFrequencies.reverse().find(flightDateFrequency => flightDateFrequency.count > 0 && flightDateFrequency.startDateUtc)?.startDateUtc ?? undefined;
     if(timeFilter.dateRange.start) timeFilter.dateRange.start = new Date(timeFilter.dateRange.start);
 
     this.setTimeFilter(timeFilter);

@@ -15,3 +15,9 @@ enum RouteFilterType {
   DURATION = 0;
   DISTANCE = 1;
 }
+
+enum AircraftTimeFilterType {
+  ARRIVALANDDEPARTURE = 0;
+  DEPARTURE = 1;
+  ARRIVAL = 2;
+}

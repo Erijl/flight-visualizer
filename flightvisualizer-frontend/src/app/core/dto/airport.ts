@@ -1,6 +1,7 @@
-import {AircraftTimeFilterType, AirportDisplayType, RouteDisplayType} from "../enum";
+import {AirportDisplayType, RouteDisplayType} from "../enum";
 import {RouteFilter} from "../../protos/filters";
-import {RouteFilterType} from "../../protos/enums";
+import {AircraftTimeFilterType, RouteFilterType} from "../../protos/enums";
+import {DateRange, TimeFilter, TimeRange} from "../../protos/objects";
 
 export class Airport {
   iataAirportCode: string;
@@ -87,43 +88,43 @@ export class FlightDateFrequencyDto {
   }
 }
 
-export class DateRange {
-  start: Date | null;
-  end: Date | null;
+//export class DateRange {
+//  start: Date | null;
+//  end: Date | null;
+//
+//  constructor(start: Date | null, end: Date | null) {
+//    this.start = start;
+//    this.end = end;
+//  }
+//}
 
-  constructor(start: Date | null, end: Date | null) {
-    this.start = start;
-    this.end = end;
-  }
-}
-
-export class TimeRange {
-  start: number;
-  end: number;
-  inverted: boolean = false;
-
-  constructor(start: number, end: number, inverted: boolean = false) {
-    this.start = start;
-    this.end = end;
-    this.inverted = inverted;
-  }
-}
-
-export class TimeFilter {
-  dateRange: DateRange;
-  timeRange: TimeRange;
-  aircraftDepOrArrInTimeRange: AircraftTimeFilterType;
-  includeDifferentDayDepartures: boolean;
-  includeDifferentDayArrivals: boolean;
-
-  constructor(dateRange: DateRange, timeRange: TimeRange, includeDifferentDayDepartures = false, includeDifferentDayArrivals = false, aircraftTimeFilter: AircraftTimeFilterType = AircraftTimeFilterType.ARRIVALANDDEPARTURE) {
-    this.dateRange = dateRange;
-    this.timeRange = timeRange;
-    this.aircraftDepOrArrInTimeRange = aircraftTimeFilter;
-    this.includeDifferentDayDepartures = includeDifferentDayDepartures;
-    this.includeDifferentDayArrivals = includeDifferentDayArrivals;
-  }
-}
+//export class TimeRange {
+//  start: number;
+//  end: number;
+//  inverted: boolean = false;
+//
+//  constructor(start: number, end: number, inverted: boolean = false) {
+//    this.start = start;
+//    this.end = end;
+//    this.inverted = inverted;
+//  }
+//}
+//
+//export class TimeFilter {
+//  dateRange: DateRange;
+//  timeRange: TimeRange;
+//  aircraftDepOrArrInTimeRange: AircraftTimeFilterType;
+//  includeDifferentDayDepartures: boolean;
+//  includeDifferentDayArrivals: boolean;
+//
+//  constructor(dateRange: DateRange, timeRange: TimeRange, includeDifferentDayDepartures = false, includeDifferentDayArrivals = false, aircraftTimeFilter: AircraftTimeFilterType = AircraftTimeFilterType.ARRIVALANDDEPARTURE) {
+//    this.dateRange = dateRange;
+//    this.timeRange = timeRange;
+//    this.aircraftDepOrArrInTimeRange = aircraftTimeFilter;
+//    this.includeDifferentDayDepartures = includeDifferentDayDepartures;
+//    this.includeDifferentDayArrivals = includeDifferentDayArrivals;
+//  }
+//}
 
 export class GeneralFilter {
   airportDisplayType: AirportDisplayType;
@@ -147,7 +148,7 @@ export class GeneralFilter {
 //  }
 //}
 
-export const DefaultTimeFilter = new TimeFilter(new DateRange(new Date(), null), new TimeRange(0, 1439), true, true, AircraftTimeFilterType.ARRIVALANDDEPARTURE);
+export const DefaultTimeFilter = TimeFilter.create({dateRange: DateRange.create({start: new Date(), end: undefined}), timeRange: TimeRange.create({start: 0, end: 1439}), aircraftDepOrArrInTimeRange: AircraftTimeFilterType.ARRIVALANDDEPARTURE, includeDifferentDayDepartures: true, includeDifferentDayArrivals: true});
 
 export const DefaultGeneralFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
 

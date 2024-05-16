@@ -4,12 +4,11 @@ import {
   Airport,
   FlightDateFrequencyDto,
   FlightSchedule,
-  FlightScheduleRouteDto,
-  DateRange
+  FlightScheduleRouteDto
 } from "../dto/airport";
 import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {LegRender, LegRenders} from "../../protos/objects";
+import {DateRange, LegRender, LegRenders} from "../../protos/objects";
 import {RouteFilter} from "../../protos/filters";
 import {RouteFilterType} from "../../protos/enums";
 
