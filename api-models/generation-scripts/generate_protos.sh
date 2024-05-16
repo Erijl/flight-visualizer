@@ -37,7 +37,7 @@ fi
 
 # Generate TypeScript definitions
 START_TIME=$(date +%s%N)
-protoc -I="$PROTO_DIR" --plugin=protoc-gen-ts_proto=$PROTOC_GEN_TS_PATH --ts_proto_out=$TS_OUTPUT_DIR "$PROTO_DIR/*.proto"
+protoc -I="$PROTO_DIR" --plugin=protoc-gen-ts_proto=$PROTOC_GEN_TS_PATH --ts_proto_out=$TS_OUTPUT_DIR "$PROTO_DIR/*.proto" --ts_proto_opt=esModuleInterop=true --ts_proto_opt=importSuffix=.js
 END_TIME=$(date +%s%N)
 
 # Calculate execution time in seconds and milliseconds
