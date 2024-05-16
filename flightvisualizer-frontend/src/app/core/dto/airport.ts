@@ -1,7 +1,6 @@
-import {AirportDisplayType, RouteDisplayType} from "../enum";
 import {RouteFilter} from "../../protos/filters";
-import {AircraftTimeFilterType, RouteFilterType} from "../../protos/enums";
-import {DateRange, TimeFilter, TimeRange} from "../../protos/objects";
+import {AircraftTimeFilterType, AirportDisplayType, RouteDisplayType, RouteFilterType} from "../../protos/enums";
+import {DateRange, GeneralFilter, TimeFilter, TimeRange} from "../../protos/objects";
 
 export class Airport {
   iataAirportCode: string;
@@ -126,15 +125,15 @@ export class FlightDateFrequencyDto {
 //  }
 //}
 
-export class GeneralFilter {
-  airportDisplayType: AirportDisplayType;
-  routeDisplayType: RouteDisplayType;
-  //TODO add custom routeFilterType object with value
-    constructor(airportDisplayType: AirportDisplayType, routeDisplayType: RouteDisplayType) {
-        this.airportDisplayType = airportDisplayType;
-        this.routeDisplayType = routeDisplayType;
-    }
-}
+//export class GeneralFilter {
+//  airportDisplayType: AirportDisplayType;
+//  routeDisplayType: RouteDisplayType;
+//  //TODO add custom routeFilterType object with value
+//    constructor(airportDisplayType: AirportDisplayType, routeDisplayType: RouteDisplayType) {
+//        this.airportDisplayType = airportDisplayType;
+//        this.routeDisplayType = routeDisplayType;
+//    }
+//}
 
 //export class RouteFilter {
 //  routeFilterType: RouteFilterType;
@@ -150,6 +149,6 @@ export class GeneralFilter {
 
 export const DefaultTimeFilter = TimeFilter.create({dateRange: DateRange.create({start: new Date(), end: undefined}), timeRange: TimeRange.create({start: 0, end: 1439}), aircraftDepOrArrInTimeRange: AircraftTimeFilterType.ARRIVALANDDEPARTURE, includeDifferentDayDepartures: true, includeDifferentDayArrivals: true});
 
-export const DefaultGeneralFilter = new GeneralFilter(AirportDisplayType.ALL, RouteDisplayType.ALL);
+export const DefaultGeneralFilter = GeneralFilter.create({airportDisplayType: AirportDisplayType.AIRPORTDISPLAYTYPE_ALL, routeDisplayType: RouteDisplayType.ROUTEDISPLAYTYPE_ALL});
 
 export const DefaultRouteFilter = RouteFilter.create({start: 0, end: 100, routeFilterType: RouteFilterType.DISTANCE});

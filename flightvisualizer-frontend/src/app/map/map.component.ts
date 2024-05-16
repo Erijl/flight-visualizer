@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import mapboxgl from 'mapbox-gl';
-import {Airport, DefaultGeneralFilter, FlightScheduleRouteDto, GeneralFilter} from "../core/dto/airport";
+import {Airport, DefaultGeneralFilter, FlightScheduleRouteDto} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
 import {
-  AirportDisplayType, CursorStyles,
+  CursorStyles,
   DetailSelectionType,
   LayerType,
   MapEventType,
@@ -14,6 +14,7 @@ import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
 import {environment} from "../../environments/environment";
+import {GeneralFilter} from "../protos/objects";
 
 @Component({
   selector: 'app-map',
@@ -240,6 +241,4 @@ export class MapComponent implements OnInit, OnDestroy {
     this.generalFilterSubscription.unsubscribe();
     this.detailSelectionTypeSubscription.unsubscribe();
   }
-
-  protected readonly AirportDisplayType = AirportDisplayType;
 }

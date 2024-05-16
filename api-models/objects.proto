@@ -45,3 +45,8 @@ message TimeFilter {
   bool includeDifferentDayDepartures = 4;
   bool includeDifferentDayArrivals = 5;
 }
+
+message GeneralFilter {
+  enums.AirportDisplayType airportDisplayType = 1;
+  enums.RouteDisplayType routeDisplayType = 2;
+}

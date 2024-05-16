@@ -4,15 +4,15 @@ import {
   DefaultGeneralFilter, DefaultRouteFilter, DefaultTimeFilter,
   FlightDateFrequencyDto,
   FlightSchedule,
-  FlightScheduleRouteDto,
-  GeneralFilter
+  FlightScheduleRouteDto
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {FilterService} from "./filter.service";
-import {AirportDisplayType, DetailSelectionType, RouteDisplayType} from "../enum";
+import {DetailSelectionType} from "../enum";
 import {RouteFilter} from "../../protos/filters";
-import {LegRender, TimeFilter} from "../../protos/objects";
+import {GeneralFilter, LegRender, TimeFilter} from "../../protos/objects";
+import {AirportDisplayType, RouteDisplayType} from "../../protos/enums";
 
 @Injectable({
   providedIn: 'root'
@@ -177,7 +177,7 @@ export class DataStoreService {
   setSelectedAirport(airport: Airport): void {
     this._selectedAirport.next(airport);
 
-    if (this.getGeneralFilter().routeDisplayType == RouteDisplayType.SPECIFICAIRPORT) {
+    if (this.getGeneralFilter().routeDisplayType == RouteDisplayType.ROUTEDISPLAYTYPE_SPECIFICAIRPORT) {
       this.updateRenderedRoutes();
     }
   }
@@ -276,13 +276,13 @@ export class DataStoreService {
   private updateRenderedAirports() {
     switch (this.getGeneralFilter().airportDisplayType) {
       default:
-      case AirportDisplayType.ALL:
+      case AirportDisplayType.AIRPORTDISPLAYTYPE_ALL:
         this.setCurrentlyDisplayedAirports(this.getAllAirports());
         break;
-      case AirportDisplayType.WITHROUTES:
+      case AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES:
         this.setCurrentlyDisplayedAirports(this.filterService.getAllAirportsPresentInFlightScheduleRouteDtos(this.getRenderedRoutes()));
         break;
-      case AirportDisplayType.NONE:
+      case AirportDisplayType.AIRPORTDISPLAYTYPE_NONE:
         this.setCurrentlyDisplayedAirports([]);
         break;
     }
@@ -292,19 +292,19 @@ export class DataStoreService {
     let routesToBeDisplayed: FlightScheduleRouteDto[] = this.getAllFlightScheduleRouteDtos();
     switch (this.getGeneralFilter().routeDisplayType) {
       default:
-      case RouteDisplayType.ALL:
+      case RouteDisplayType.ROUTEDISPLAYTYPE_ALL:
         routesToBeDisplayed = this.getAllFlightScheduleRouteDtos();
         break;
-      case RouteDisplayType.SPECIFICAIRPORT:
+      case RouteDisplayType.ROUTEDISPLAYTYPE_SPECIFICAIRPORT:
         routesToBeDisplayed = this.getFlightScheduleRoutesForSelectedAirport();
         break;
-      case RouteDisplayType.ONLYWITHINSAMECOUNTRY:
+      case RouteDisplayType.ROUTEDISPLAYTYPE_ONLYWITHINSAMECOUNTRY:
         routesToBeDisplayed = this.filterService.getFLightScheduleRouteDtosWithinSameCountry(this.getAllFlightScheduleRouteDtos());
         break;
-      case RouteDisplayType.WITHINSAMEREGION:
+      case RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMEREGION:
         routesToBeDisplayed = this.filterService.getFLightScheduleRouteDtosWithinSameRegion((this.getAllFlightScheduleRouteDtos()));
         break;
-      case RouteDisplayType.WITHINSAMETIMEZONE:
+      case RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMETIMEZONE:
         routesToBeDisplayed = this.filterService.getFLightScheduleRouteDtosWithinSameTimezone(this.getAllFlightScheduleRouteDtos());
         break;
     }
@@ -319,7 +319,7 @@ export class DataStoreService {
       this.setSelectedRoute(new FlightScheduleRouteDto());
     }
 
-    if (this.getGeneralFilter().airportDisplayType == AirportDisplayType.WITHROUTES) {
+    if (this.getGeneralFilter().airportDisplayType == AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES) {
       this.reRenderAirports();
     }
   }
