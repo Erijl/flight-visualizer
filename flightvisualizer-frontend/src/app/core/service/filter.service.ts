@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
-import {Airport, FlightScheduleRouteDto} from "../dto/airport";
-import {RouteFilter, TimeFilter} from "../../protos/filters";
+import {FlightScheduleRouteDto} from "../dto/airport";
+import {RouteFilter, SelectedAirportFilter, TimeFilter} from "../../protos/filters";
 import {AircraftTimeFilterType, RouteFilterType} from "../../protos/enums";
+import {AirportRender} from "../../protos/objects";
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class FilterService {
   constructor() {
   }
 
-  getAllAirportsPresentInFlightScheduleRouteDtos(allFlightScheduleRouteDtos: FlightScheduleRouteDto[]): Airport[] {
+  getAllAirportsPresentInFlightScheduleRouteDtos(allFlightScheduleRouteDtos: FlightScheduleRouteDto[]): AirportRender[] {
     const allAirports: any = [];
     allFlightScheduleRouteDtos.forEach((flightScheduleRouteDto: FlightScheduleRouteDto) => {
       allAirports.push(flightScheduleRouteDto.originAirport);
@@ -20,13 +21,13 @@ export class FilterService {
     return allAirports;
   }
 
-  getFlightScheduleRouteDtosByAirport(allFlightScheduleRouteDtos: FlightScheduleRouteDto[], airport: Airport, incomingRoutes: boolean, outgoingRoutes: boolean): FlightScheduleRouteDto[] {
+  getFlightScheduleRouteDtosByAirport(allFlightScheduleRouteDtos: FlightScheduleRouteDto[], selectedAirportFilter: SelectedAirportFilter, incomingRoutes: boolean, outgoingRoutes: boolean): FlightScheduleRouteDto[] {
     const allFlightScheduleRouteDtosByAirport: any = [];
     allFlightScheduleRouteDtos.forEach((flightScheduleRouteDto: FlightScheduleRouteDto) => {
 
-      if (incomingRoutes && flightScheduleRouteDto.destinationAirport.iataAirportCode == airport.iataAirportCode) {
+      if (incomingRoutes && flightScheduleRouteDto.destinationAirport.iataAirportCode == selectedAirportFilter.iataCode) {
         allFlightScheduleRouteDtosByAirport.push(flightScheduleRouteDto);
-      } else if (outgoingRoutes && flightScheduleRouteDto.originAirport.iataAirportCode == airport.iataAirportCode) {
+      } else if (outgoingRoutes && flightScheduleRouteDto.originAirport.iataAirportCode == selectedAirportFilter.iataCode) {
         allFlightScheduleRouteDtosByAirport.push(flightScheduleRouteDto);
       }
     });

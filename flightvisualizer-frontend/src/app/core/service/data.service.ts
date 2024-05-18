@@ -1,15 +1,20 @@
 import { Injectable } from '@angular/core';
-import {catchError, filter, map, mergeMap, Observable, of, tap} from "rxjs";
+import {catchError, filter, map, Observable, of, tap} from "rxjs";
 import {
-  Airport,
   FlightDateFrequencyDto,
   FlightSchedule,
   FlightScheduleRouteDto
 } from "../dto/airport";
 import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {DateRange, LegRender, LegRenders} from "../../protos/objects";
-import {CombinedFilterRequest, GeneralFilter, RouteFilter, TimeFilter} from "../../protos/filters";
+import {AirportRenders, DateRange, LegRender, LegRenders} from "../../protos/objects";
+import {
+  CombinedFilterRequest,
+  GeneralFilter,
+  RouteFilter,
+  SelectedAirportFilter,
+  TimeFilter
+} from "../../protos/filters";
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +25,16 @@ export class DataService {
   constructor(private http: HttpClient) { }
 
   getAirports() {
-    return this.http.get<Airport[]>(this.apiEndpoint + 'airports')
-        .pipe(
-            tap(_ => this.log('fetched Airports')),
-            catchError(this.handleError<Airport[]>('getAirports', []))
-        );
+    const headers = new HttpHeaders({ 'Accept': 'application/x-protobuf' });
+    return this.http.get(this.apiEndpoint + 'airports', {
+      headers,
+      responseType: 'arraybuffer'
+    }).pipe(
+      map(arrayBuffer => {
+        const airportRendersMessage = AirportRenders.decode(new Uint8Array(arrayBuffer));
+        return airportRendersMessage.airports;
+      })
+    );
   }
 
   getFlightScheduleLegRoutes(dateRange: DateRange) {
@@ -51,13 +61,13 @@ export class DataService {
       );
   }
 
-  getDistinctFlightScheduleLegsForRendering(timeFilter: TimeFilter, generalFilter: GeneralFilter, routeFilter: RouteFilter): Observable<LegRender[]> {
-    const combinedFilter = CombinedFilterRequest.create({timeFilter: timeFilter, generalFilter: generalFilter, routeFilter: routeFilter});
+  getDistinctFlightScheduleLegsForRendering(timeFilter: TimeFilter, generalFilter: GeneralFilter, routeFilter: RouteFilter, selectedAirportFilter: SelectedAirportFilter): Observable<LegRender[]> {
+    const combinedFilter = CombinedFilterRequest.create({timeFilter: timeFilter, generalFilter: generalFilter, routeFilter: routeFilter, selectedAirportFilter: selectedAirportFilter});
     const blob = new Blob([CombinedFilterRequest.encode(combinedFilter).finish()], { type: 'application/x-protobuf' });
 
     const req = new HttpRequest('POST', this.apiEndpoint + 'flightScheduleLeg/distinct', blob, {
       headers: new HttpHeaders({ 'Accept': 'application/x-protobuf' }),
-      reportProgress: true, // Optionally report upload progress
+      reportProgress: true,
       responseType: 'arraybuffer'
     });
 

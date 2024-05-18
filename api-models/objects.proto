@@ -37,3 +37,13 @@ message TimeRange {
   int32 end = 2;
   bool inverted = 3;
 }
+
+message AirportRenders {
+  repeated AirportRender airports = 1;
+}
+
+message AirportRender {
+  string iataCode = 1;
+  Coordinate coordinate = 2;
+}
+

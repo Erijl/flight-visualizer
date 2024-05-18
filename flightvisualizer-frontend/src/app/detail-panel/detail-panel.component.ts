@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DetailSelectionType} from "../core/enum";
 import {Subscription} from "rxjs";
 import {DataStoreService} from "../core/service/data-store.service";
-import {Airport, FlightScheduleRouteDto} from "../core/dto/airport";
+import {AirportRender} from "../protos/objects";
 
 @Component({
   selector: 'app-detail-panel',
@@ -27,8 +27,8 @@ export class DetailPanelComponent implements OnInit, OnDestroy{
       this.selectionType = type;
     });
 
-    this.selectedAirpotSubscription = this.dataStoreService.selectedAirport.subscribe((airport: Airport) => {
-      if (airport.iataAirportCode != '') {
+    this.selectedAirpotSubscription = this.dataStoreService.selectedAirportFilter.subscribe((selectedAirportFilter) => {
+      if (selectedAirportFilter.iataCode != '') {
         this.expanded = true;
       }
     });

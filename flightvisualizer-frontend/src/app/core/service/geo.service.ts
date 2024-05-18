@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import mapboxgl from 'mapbox-gl';
-import {Airport} from "../dto/airport";
-import {LegRender} from "../../protos/objects";
+import {AirportRender, LegRender} from "../../protos/objects";
+import {SelectedAirportFilter} from "../../protos/filters";
 
 @Injectable({
   providedIn: 'root'
@@ -22,8 +22,8 @@ export class GeoService {
     });
   }
 
-  highlightAirportOnMap(map: mapboxgl.Map, sourceId: string, layerId: string, airport: Airport): void {
-    this.addFeatureCollectionSourceToMap(map, sourceId, this.convertAirportsToGeoJson([airport]));
+  highlightAirportOnMap(map: mapboxgl.Map, sourceId: string, layerId: string, airport: AirportRender): void {
+    this.addFeatureCollectionSourceToMap(map, sourceId, this.convertAirportRendersToGeoJson([airport]));
     this.addLayerTypeCircleToMap(map, layerId, sourceId, 10, '#ff0000');
   }
 
@@ -59,17 +59,17 @@ export class GeoService {
     });
   }
 
-  convertAirportsToGeoJson(airports: Airport[]): any[] {
+  convertAirportRendersToGeoJson(airports: AirportRender[]): any[] {
     const airportGeoFeatures: any[] = [];
     airports.forEach(airport => {
       airportGeoFeatures.push({
         'type': 'Feature',
         'geometry': {
           'type': 'Point',
-          'coordinates': [airport.longitude, airport.latitude]
+          'coordinates': [airport.coordinate?.longitude, airport.coordinate?.latitude]
         },
         'properties': {
-          'iataAirportCode': airport.iataAirportCode,
+          'iataAirportCode': airport.iataCode,
         }
       });
     });
@@ -83,7 +83,10 @@ export class GeoService {
         'type': 'Feature',
         'geometry': {
           'type': 'LineString',
-          'coordinates': this.calculateOptimalLinePath(flightScheduleRouteDto.originAirport, flightScheduleRouteDto.destinationAirport)
+          'coordinates': [
+            [flightScheduleRouteDto.originAirport.longitude, flightScheduleRouteDto.originAirport.latitude],
+            [flightScheduleRouteDto.destinationAirport.longitude, flightScheduleRouteDto.destinationAirport.latitude]
+          ]
         },
         'properties': {
           'originAirport': flightScheduleRouteDto.originAirport.iataAirportCode,
@@ -115,25 +118,6 @@ export class GeoService {
     return airportGeoRoutes;
   }
 
-  calculateOptimalLinePath(origin: Airport, destination: Airport): number[][] {
-    let originCopy: Airport = JSON.parse(JSON.stringify(origin));
-    let destinationCopy: Airport = JSON.parse(JSON.stringify(destination));
-
-    let diffLongitude = (destinationCopy.longitude - originCopy.longitude);
-    if(Math.abs(diffLongitude) > 180) {
-      if(diffLongitude > 0) {
-        originCopy.longitude += 360;
-      } else {
-        destinationCopy.longitude += 360;
-      }
-    }
-
-    return [
-      [originCopy.longitude, originCopy.latitude],
-      [destinationCopy.longitude, destinationCopy.latitude]
-    ]
-  }
-
   removeLayerFromMap(map: mapboxgl.Map, layerId: string): void {
     if(!map) return;
     if(map.getLayer(layerId)) {
@@ -154,15 +138,5 @@ export class GeoService {
       'type': 'FeatureCollection',
       'features': features
     });
-  }
-
-  generateRouteDistanceArray(flightScheduleRouteDtos: any[]): number[] {
-    const routeDistances: number[] = [];
-    flightScheduleRouteDtos.forEach(flightScheduleRouteDto => {
-      routeDistances.push(flightScheduleRouteDto.kilometerDistance);
-    });
-    routeDistances.sort((a, b) => a - b);
-
-    return routeDistances;
   }
 }

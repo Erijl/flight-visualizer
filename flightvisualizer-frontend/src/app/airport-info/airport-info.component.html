@@ -1,8 +1,8 @@
-<div [hidden]="selectedAirport.iataAirportCode == ''">
-
+<div [hidden]="selectedAirportFilter.iataCode == ''">
+<!--//TODO write a custom component for the airport card
   <mat-card class="airport-card">
     <mat-card-header>
-      <mat-card-title>{{ selectedAirport.iataAirportCode }} Airport</mat-card-title>
+      <mat-card-title>{{ selectedAirport.iataCode }} Airport</mat-card-title>
       <mat-card-subtitle>{{ selectedAirport.airportName }} - {{ selectedAirport.timezoneId ? selectedAirport.timezoneId.split('/')[0] : '?' }}</mat-card-subtitle>
     </mat-card-header>
 
@@ -38,7 +38,7 @@
         </div>
       </div>
     </mat-card-content>
-  </mat-card>
+  </mat-card>-->
 
   <br>
   <h2>Flight Routes</h2>
@@ -79,7 +79,7 @@
 
 </div>
 
-<div [hidden]="selectedAirport.iataAirportCode != ''" class="error-message">
+<div [hidden]="selectedAirportFilter.iataCode != ''" class="error-message">
   <p>No Airport Selected</p>
   <p>Please select an airport from the map</p>
 </div>

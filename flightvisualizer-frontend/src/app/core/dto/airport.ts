@@ -1,4 +1,4 @@
-import {GeneralFilter, RouteFilter, TimeFilter} from "../../protos/filters";
+import {GeneralFilter, RouteFilter, SelectedAirportFilter, TimeFilter} from "../../protos/filters";
 import {AircraftTimeFilterType, AirportDisplayType, RouteDisplayType, RouteFilterType} from "../../protos/enums";
 import {DateRange, TimeRange} from "../../protos/objects";
 
@@ -152,3 +152,5 @@ export const DefaultTimeFilter = TimeFilter.create({dateRange: DateRange.create(
 export const DefaultGeneralFilter = GeneralFilter.create({airportDisplayType: AirportDisplayType.AIRPORTDISPLAYTYPE_ALL, routeDisplayType: RouteDisplayType.ROUTEDISPLAYTYPE_ALL});
 
 export const DefaultRouteFilter = RouteFilter.create({start: 0, end: 100, routeFilterType: RouteFilterType.DISTANCE});
+
+export const DefaultSelectedAirportFilter = SelectedAirportFilter.create({iataCode: '', includingArrivals: true, includingDepartures: true});

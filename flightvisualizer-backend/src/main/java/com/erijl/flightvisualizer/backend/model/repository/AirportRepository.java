@@ -14,6 +14,7 @@ public interface AirportRepository extends CrudRepository<Airport, String> {
                    a.longitude as 'longitude',
                    a.latitude as 'latitude'
                    from airport a
+                   where a.location_type = 'AIRPORT'
             """, nativeQuery = true)
     List<AirportRenderDataProjection> findAllAirportRenders();
 }

@@ -1,10 +1,12 @@
-import {AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Airport, FlightScheduleRouteDto} from "../core/dto/airport";
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {FlightScheduleRouteDto} from "../core/dto/airport";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
+import {AirportRender} from "../protos/objects";
+import {SelectedAirportFilter} from "../protos/filters";
 
 @Component({
   selector: 'app-airport-info',
@@ -19,7 +21,7 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   // UI data
   displayedColumns: string[] = ['origin', 'destination', 'kilometerDistance'];
   dataSource = new MatTableDataSource<FlightScheduleRouteDto>([]);
-  selectedAirport: Airport = new Airport();
+  selectedAirportFilter: SelectedAirportFilter = SelectedAirportFilter.create();
 
   // UI state
   specificAirportRoutesOutgoing: boolean = true;
@@ -34,8 +36,8 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.selectedAirportSubscription = this.dataStoreService.selectedAirport.subscribe(airport => {
-      this.selectedAirport = airport;
+    this.selectedAirportSubscription = this.dataStoreService.selectedAirportFilter.subscribe(selectedAirportFilter => {
+      this.selectedAirportFilter = selectedAirportFilter;
       this.updateTable();
     });
 
