@@ -1,6 +1,6 @@
-import {RouteFilter} from "../../protos/filters";
+import {GeneralFilter, RouteFilter, TimeFilter} from "../../protos/filters";
 import {AircraftTimeFilterType, AirportDisplayType, RouteDisplayType, RouteFilterType} from "../../protos/enums";
-import {DateRange, GeneralFilter, TimeFilter, TimeRange} from "../../protos/objects";
+import {DateRange, TimeRange} from "../../protos/objects";
 
 export class Airport {
   iataAirportCode: string;

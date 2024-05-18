@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Airport, FlightScheduleRouteDto} from "../dto/airport";
-import {RouteFilter} from "../../protos/filters";
+import {RouteFilter, TimeFilter} from "../../protos/filters";
 import {AircraftTimeFilterType, RouteFilterType} from "../../protos/enums";
-import {TimeFilter} from "../../protos/objects";
 
 @Injectable({
   providedIn: 'root'

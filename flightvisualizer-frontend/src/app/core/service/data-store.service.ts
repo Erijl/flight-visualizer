@@ -10,8 +10,8 @@ import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {FilterService} from "./filter.service";
 import {DetailSelectionType} from "../enum";
-import {RouteFilter} from "../../protos/filters";
-import {GeneralFilter, LegRender, TimeFilter} from "../../protos/objects";
+import {GeneralFilter, RouteFilter, TimeFilter} from "../../protos/filters";
+import {LegRender} from "../../protos/objects";
 import {AirportDisplayType, RouteDisplayType} from "../../protos/enums";
 
 @Injectable({
@@ -244,7 +244,7 @@ export class DataStoreService {
 
   private getDistinctFlightScheduleLegsForRendering(): void {
     // @ts-ignore
-    this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter()).subscribe(legRenders => {
+    this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter(), this.getGeneralFilter(), this.getRouteFilter()).subscribe(legRenders => {
       this.legRenders = legRenders;
     });
   }

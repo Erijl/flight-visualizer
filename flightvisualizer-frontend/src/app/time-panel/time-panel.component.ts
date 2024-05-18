@@ -4,8 +4,8 @@ import {DataStoreService} from "../core/service/data-store.service";
 import {DefaultTimeFilter} from "../core/dto/airport";
 import {state, style, trigger} from "@angular/animations";
 import {Subscription} from "rxjs";
-import {TimeFilter} from "../protos/objects";
 import {AircraftTimeFilterType} from "../protos/enums";
+import {TimeFilter} from "../protos/filters";
 
 @Component({
   selector: 'app-time-panel',

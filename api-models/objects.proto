@@ -37,16 +37,3 @@ message TimeRange {
   int32 end = 2;
   bool inverted = 3;
 }
-
-message TimeFilter {
-  DateRange dateRange = 1;
-  TimeRange timeRange = 2;
-  enums.AircraftTimeFilterType aircraftDepOrArrInTimeRange = 3;
-  bool includeDifferentDayDepartures = 4;
-  bool includeDifferentDayArrivals = 5;
-}
-
-message GeneralFilter {
-  enums.AirportDisplayType airportDisplayType = 1;
-  enums.RouteDisplayType routeDisplayType = 2;
-}

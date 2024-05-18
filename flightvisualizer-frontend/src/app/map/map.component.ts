@@ -14,7 +14,7 @@ import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
 import {environment} from "../../environments/environment";
-import {GeneralFilter} from "../protos/objects";
+import {GeneralFilter} from "../protos/filters";
 
 @Component({
   selector: 'app-map',

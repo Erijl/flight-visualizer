@@ -8,9 +8,8 @@ import {
 } from "../dto/airport";
 import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {DateRange, LegRender, LegRenders, TimeFilter} from "../../protos/objects";
-import {RouteFilter} from "../../protos/filters";
-import {RouteFilterType} from "../../protos/enums";
+import {DateRange, LegRender, LegRenders} from "../../protos/objects";
+import {CombinedFilterRequest, GeneralFilter, RouteFilter, TimeFilter} from "../../protos/filters";
 
 @Injectable({
   providedIn: 'root'
@@ -52,9 +51,9 @@ export class DataService {
       );
   }
 
-  getDistinctFlightScheduleLegsForRendering(timeFilter: TimeFilter): Observable<LegRender[]> {
-    const encodedTimeFilter = TimeFilter.encode(timeFilter).finish();
-    const blob = new Blob([encodedTimeFilter], { type: 'application/x-protobuf' });
+  getDistinctFlightScheduleLegsForRendering(timeFilter: TimeFilter, generalFilter: GeneralFilter, routeFilter: RouteFilter): Observable<LegRender[]> {
+    const combinedFilter = CombinedFilterRequest.create({timeFilter: timeFilter, generalFilter: generalFilter, routeFilter: routeFilter});
+    const blob = new Blob([CombinedFilterRequest.encode(combinedFilter).finish()], { type: 'application/x-protobuf' });
 
     const req = new HttpRequest('POST', this.apiEndpoint + 'flightScheduleLeg/distinct', blob, {
       headers: new HttpHeaders({ 'Accept': 'application/x-protobuf' }),
