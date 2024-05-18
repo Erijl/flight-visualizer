@@ -38,7 +38,7 @@ public class TimeFilterValidator {
     }
 
     private static void validateDateRange(DateRange dateRange) {
-        if (!dateRange.hasEnd() || !dateRange.hasStart()) {
+        if (!dateRange.hasStart() && !dateRange.hasEnd()) {
             throw new IllegalArgumentException("Neither start or end is initialized in DateRange");
         }
 
@@ -46,7 +46,7 @@ public class TimeFilterValidator {
             throw new IllegalArgumentException("Neither start or end is set in DateRange");
         }
 
-        if (dateRange.getStart().getSeconds() > dateRange.getEnd().getSeconds()) {
+        if (dateRange.getStart().getSeconds() > dateRange.getEnd().getSeconds() && dateRange.getEnd().getSeconds() != 0) {
             throw new IllegalArgumentException("Start date is after end date");
         }
     }

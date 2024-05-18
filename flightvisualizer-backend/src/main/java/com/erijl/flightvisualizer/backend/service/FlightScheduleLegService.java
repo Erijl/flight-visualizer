@@ -94,6 +94,8 @@ public class FlightScheduleLegService {
             var render = LegRender.newBuilder()
                     .setOriginAirportIataCode(legData.getOriginAirportIataCode())
                     .setDestinationAirportIataCode(legData.getDestinationAirportIataCode())
+                    .setDurationMinutes(legData.getDurationMinutes())
+                    .setDistanceKilometers(legData.getDistanceKilometers())
                     .addCoordinates(0, Coordinate.newBuilder().setLatitude(legData.getOriginLatitude()).setLongitude(legData.getOriginLongitude()))
                     .addCoordinates(1, Coordinate.newBuilder().setLatitude(legData.getDestinationLatitude()).setLongitude(legData.getDestinationLongitude())).build();
             legRenders.add(render);
@@ -149,9 +151,9 @@ public class FlightScheduleLegService {
         RouteFilter routeFilter = combinedFilterRequest.getRouteFilter();
         switch (routeFilter.getRouteFilterType()) {
             case RouteFilterType.DISTANCE:
-                legStream.filter(leg -> leg.getDistanceKilometers() >= routeFilter.getStart() && leg.getDistanceKilometers() <= routeFilter.getEnd());
+                legStream = legStream.filter(leg -> leg.getDistanceKilometers() >= routeFilter.getStart() && leg.getDistanceKilometers() <= routeFilter.getEnd());
             case RouteFilterType.DURATION:
-                legStream.filter(leg -> leg.getDurationMinutes() >= routeFilter.getStart() && leg.getDurationMinutes() <= routeFilter.getEnd());
+                legStream = legStream.filter(leg -> leg.getDurationMinutes() >= routeFilter.getStart() && leg.getDurationMinutes() <= routeFilter.getEnd());
         }
 
 

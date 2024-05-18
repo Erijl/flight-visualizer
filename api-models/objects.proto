@@ -19,7 +19,9 @@ message LegRenders {
 message LegRender {
   string originAirportIataCode = 1;
   string destinationAirportIataCode = 2;
-  repeated Coordinate coordinates = 3;
+  int32 durationMinutes = 3;
+  int32 distanceKilometers = 4;
+  repeated Coordinate coordinates = 5;
 }
 
 message Coordinate {
