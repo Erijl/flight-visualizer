@@ -13,11 +13,11 @@ public class FlightScheduleDataElement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "data_element_id")
+    @Column(name = "id")
     private Integer dataElementId;
 
     @ManyToOne
-    @JoinColumn(name = "flight_schedule_id", referencedColumnName = "flight_schedule_id")
+    @JoinColumn(name = "flight_schedule_id", referencedColumnName = "id")
     private FlightSchedule flightSchedule;
 
     @Column(name = "start_leg_sequence_number")

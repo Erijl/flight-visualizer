@@ -13,15 +13,15 @@ public class FlightSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "flight_schedule_id")
+    @Column(name = "id")
     private Integer flightScheduleId;
 
     @ManyToOne
-    @JoinColumn(name = "airline_code", referencedColumnName = "iata_airline_code")
+    @JoinColumn(name = "airline_code", referencedColumnName = "id")
     private Airline airline;
 
     @ManyToOne
-    @JoinColumn(name = "operation_period_id", referencedColumnName = "operation_period_id")
+    @JoinColumn(name = "operation_period_id", referencedColumnName = "id")
     private FlightScheduleOperationPeriod operationPeriod;
 
     @Column(name = "flight_number")

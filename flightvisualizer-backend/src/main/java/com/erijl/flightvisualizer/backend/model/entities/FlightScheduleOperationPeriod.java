@@ -15,7 +15,7 @@ public class FlightScheduleOperationPeriod {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "operation_period_id")
+    @Column(name = "id")
     private Integer operationPeriodId;
 
     @Column(name = "start_date_utc")

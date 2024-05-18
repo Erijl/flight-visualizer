@@ -15,7 +15,7 @@ public class FlightScheduleCronRun {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cron_run_id")
+    @Column(name = "id")
     private Integer cronRunId;
 
     @Column(name = "cron_run_date_utc")

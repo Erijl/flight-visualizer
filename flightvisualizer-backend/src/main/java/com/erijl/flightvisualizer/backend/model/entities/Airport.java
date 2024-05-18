@@ -17,7 +17,7 @@ import java.math.BigDecimal;
 public class Airport {
 
     @Id
-    @Column(name = "iata_airport_code")
+    @Column(name = "id")
     private String iataAirportCode;
 
     @Column(name = "airport_name")

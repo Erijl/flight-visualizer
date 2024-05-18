@@ -15,33 +15,33 @@ public class FlightScheduleLeg {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "leg_id")
+    @Column(name = "id")
     private Integer legId;
 
     @ManyToOne
-    @JoinColumn(name = "flight_schedule_id", referencedColumnName = "flight_schedule_id")
+    @JoinColumn(name = "flight_schedule_id", referencedColumnName = "id")
     private FlightSchedule flightSchedule;
 
     @Column(name = "leg_sequence_number")
     private Integer legSequenceNumber;
 
     @ManyToOne
-    @JoinColumn(name = "origin_airport", referencedColumnName = "iata_airport_code")
+    @JoinColumn(name = "origin_airport", referencedColumnName = "id")
     private Airport originAirport;
 
     @ManyToOne
-    @JoinColumn(name = "destination_airport", referencedColumnName = "iata_airport_code")
+    @JoinColumn(name = "destination_airport", referencedColumnName = "id")
     private Airport destinationAirport;
 
     @Column(name = "iata_service_type_code")
     private String iataServiceTypeCode;
 
     @ManyToOne
-    @JoinColumn(name = "aircraft_owner_airline_code", referencedColumnName = "iata_airline_code")
+    @JoinColumn(name = "aircraft_owner_airline_code", referencedColumnName = "id")
     private Airline aircraftOwnerAirline;
 
     @ManyToOne
-    @JoinColumn(name = "aircraft_code", referencedColumnName = "iata_aircraft_code")
+    @JoinColumn(name = "aircraft_code", referencedColumnName = "id")
     private Aircraft aircraft;
 
     @Column(name = "aircraft_configuration_version")

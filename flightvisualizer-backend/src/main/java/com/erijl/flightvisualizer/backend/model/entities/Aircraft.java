@@ -15,7 +15,7 @@ import lombok.Setter;
 public class Aircraft {
 
     @Id
-    @Column(name = "iata_aircraft_code")
+    @Column(name = "id")
     private String iataAircraftCode;
 
     @Column(name = "aircraft_name")
