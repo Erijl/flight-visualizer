@@ -29,37 +29,32 @@ public interface FlightScheduleLegRepository extends JpaRepository<FlightSchedul
     Iterable<FlightScheduleLegDto> findAllWithoutAssociationsBySingleDate(Date date);
 
     @Query(value = """
-                SELECT
-                    fsl.origin_airport AS 'originAirportIataCode',
-                    fsl.destination_airport AS 'destinationAirportIataCode',
-                    fsl.drawable_origin_longitude AS 'originLongitude',
-                    a_origin.latitude AS 'originLatitude',
-                    fsl.drawable_destination_longitude AS 'destinationLongitude',
-                    a_destination.latitude AS 'destinationLatitude'
+                SELECT fsl.origin_airport                 AS 'originAirportIataCode',
+                       fsl.destination_airport            AS 'destinationAirportIataCode',
+                       fsl.drawable_origin_longitude      AS 'originLongitude',
+                       a_origin.latitude                  AS 'originLatitude',
+                       fsl.drawable_destination_longitude AS 'destinationLongitude',
+                       a_destination.latitude             AS 'destinationLatitude'
                 FROM flight_schedule_leg fsl
-                JOIN flight_schedule fs ON fs.id = fsl.flight_schedule_id
-                JOIN flight_schedule_operation_period flop ON flop.id = fs.operation_period_id
-                JOIN airport a_origin ON a_origin.id = fsl.origin_airport
-                JOIN airport a_destination ON a_destination.id = fsl.destination_airport
-                WHERE
-                    (
-                        -- Case 1: Only startDate
-                        (:startDate IS NOT NULL AND :endDate IS NULL AND flop.start_date_utc = :startDate)
+                         JOIN flight_schedule fs ON fs.id = fsl.flight_schedule_id
+                         JOIN flight_schedule_operation_period flop ON flop.id = fs.operation_period_id
+                         JOIN airport a_origin ON a_origin.id = fsl.origin_airport
+                         JOIN airport a_destination ON a_destination.id = fsl.destination_airport
+                WHERE (
+                    -- Case 1: Only startDate
+                    (:startDate IS NOT NULL AND :endDate IS NULL AND flop.start_date_utc = :startDate)
                         OR
                         -- Case 2: Only endDate
-                        (:startDate IS NULL AND :endDate IS NOT NULL AND flop.end_date_utc = :endDate)
+                    (:startDate IS NULL AND :endDate IS NOT NULL AND flop.end_date_utc = :endDate)
                         OR
                         -- Case 3: Both startDate and endDate
-                        (:startDate IS NOT NULL AND :endDate IS NOT NULL AND flop.start_date_utc >= :startDate AND flop.end_date_utc <= :endDate)
+                    (:startDate IS NOT NULL AND :endDate IS NOT NULL AND flop.start_date_utc >= :startDate AND
+                     flop.end_date_utc <= :endDate)
                     )
-                    AND fsl.aircraft_departure_time_utc >= :startTime
-                    AND fsl.aircraft_departure_time_utc <= :endTime
                 GROUP BY fsl.origin_airport, fsl.destination_airport
             """, nativeQuery = true)
     List<LegRenderDataProjection> findDistinctFlightScheduleLegsByStartAndEndDate(
             @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            @Param("startTime") Integer startTime,
-            @Param("endTime") Integer endTime
+            @Param("endDate") LocalDate endDate
     );
 }

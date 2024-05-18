@@ -1,7 +1,7 @@
 package com.erijl.flightvisualizer.backend.validators;
 
+import com.erijl.flightvisualizer.protos.filter.TimeFilter;
 import com.erijl.flightvisualizer.protos.objects.DateRange;
-import com.erijl.flightvisualizer.protos.objects.TimeFilter;
 import com.erijl.flightvisualizer.protos.objects.TimeRange;
 
 public class TimeFilterValidator {

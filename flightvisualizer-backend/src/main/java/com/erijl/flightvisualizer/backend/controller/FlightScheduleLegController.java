@@ -3,12 +3,11 @@ package com.erijl.flightvisualizer.backend.controller;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistance;
 import com.erijl.flightvisualizer.backend.service.FlightScheduleLegService;
+import com.erijl.flightvisualizer.protos.filter.CombinedFilterRequest;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
 import com.erijl.flightvisualizer.protos.objects.LegRenders;
-import com.erijl.flightvisualizer.protos.objects.TimeFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,9 +34,9 @@ public class FlightScheduleLegController {
     }
 
     @PostMapping(value = "/flightScheduleLeg/distinct", produces = "application/x-protobuf", consumes = "application/x-protobuf")
-    public ResponseEntity<LegRenders> getDistinctFlightScheduleLegsForRendering(@RequestBody TimeFilter timeFilter) {
+    public ResponseEntity<LegRenders> getDistinctFlightScheduleLegsForRendering(@RequestBody CombinedFilterRequest combinedFilterRequest) {
         try {
-            List<LegRender> legRenders = flightScheduleLegService.getDistinctFlightScheduleLegsForRendering(timeFilter);
+            List<LegRender> legRenders = flightScheduleLegService.getDistinctFlightScheduleLegsForRendering(combinedFilterRequest);
             LegRenders response = LegRenders.newBuilder().addAllLegs(legRenders).build();
             return ResponseEntity.ok().body(response);
         } catch (IllegalArgumentException e) {

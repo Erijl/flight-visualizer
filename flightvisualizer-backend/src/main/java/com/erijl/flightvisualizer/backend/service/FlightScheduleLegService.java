@@ -7,12 +7,13 @@ import com.erijl.flightvisualizer.backend.model.projections.LegRenderDataProject
 import com.erijl.flightvisualizer.backend.model.repository.FlightScheduleLegRepository;
 import com.erijl.flightvisualizer.backend.util.CustomTimeUtil;
 import com.erijl.flightvisualizer.backend.util.MathUtil;
+import com.erijl.flightvisualizer.backend.validators.GeneralFilterValidator;
+import com.erijl.flightvisualizer.backend.validators.RouteFilterValidator;
 import com.erijl.flightvisualizer.backend.validators.TimeFilterValidator;
+import com.erijl.flightvisualizer.protos.filter.CombinedFilterRequest;
 import com.erijl.flightvisualizer.protos.objects.Coordinate;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
-import com.erijl.flightvisualizer.protos.objects.TimeFilter;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.Validator;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -32,9 +33,9 @@ public class FlightScheduleLegService {
     public Iterable<FlightScheduleLegDto> getFlightScheduleLegs(String startDate, String endDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        if(!startDate.isEmpty() && !endDate.isEmpty()) {
+        if (!startDate.isEmpty() && !endDate.isEmpty()) {
             return flightScheduleLegRepository.findAllWithoutAssociationsByStartAndEndDate(Date.valueOf(LocalDate.parse(startDate, formatter)), Date.valueOf(LocalDate.parse(endDate, formatter)));
-        } else if(!startDate.isEmpty()) {
+        } else if (!startDate.isEmpty()) {
             return flightScheduleLegRepository.findAllWithoutAssociationsBySingleDate(Date.valueOf(LocalDate.parse(startDate, formatter)));
         } else {
             return flightScheduleLegRepository.findAllWithoutAssociationsBySingleDate(Date.valueOf(LocalDate.parse(endDate, formatter)));
@@ -47,7 +48,7 @@ public class FlightScheduleLegService {
 
         List<FlightScheduleLegWithDistance> flightScheduleLegWithDistances = new ArrayList<>();
         for (FlightScheduleLegDto flightScheduleLegDto : flightScheduleLegDtos) {
-            if(LocationType.AIRPORT.equalsName(flightScheduleLegDto.getOriginAirport().getLocationType()) &&
+            if (LocationType.AIRPORT.equalsName(flightScheduleLegDto.getOriginAirport().getLocationType()) &&
                     LocationType.AIRPORT.equalsName(flightScheduleLegDto.getDestinationAirport().getLocationType())) {
                 flightScheduleLegWithDistances.add(
                         new FlightScheduleLegWithDistance(
@@ -60,13 +61,16 @@ public class FlightScheduleLegService {
         return flightScheduleLegWithDistances;
     }
 
-    public List<LegRender> getDistinctFlightScheduleLegsForRendering(TimeFilter timeFilter) {
-        TimeFilterValidator.validate(timeFilter);
+    public List<LegRender> getDistinctFlightScheduleLegsForRendering(CombinedFilterRequest combinedFilterRequest) {
+        TimeFilterValidator.validate(combinedFilterRequest.getTimeFilter());
+        RouteFilterValidator.validate(combinedFilterRequest.getRouteFilter());
+        GeneralFilterValidator.validate(combinedFilterRequest.getGeneralFilter());
 
         //TODO possible error when selecting too many days (check db performance)
-        LocalDate startDate = CustomTimeUtil.convertProtoTimestampToLocalDate(timeFilter.getDateRange().getStart());
-        LocalDate endDate = CustomTimeUtil.convertProtoTimestampToLocalDate(timeFilter.getDateRange().getEnd());
-        List<LegRenderDataProjection> legs =  flightScheduleLegRepository.findDistinctFlightScheduleLegsByStartAndEndDate(startDate, endDate, timeFilter.getTimeRange().getStart(), timeFilter.getTimeRange().getEnd());
+        LocalDate startDate = CustomTimeUtil.convertProtoTimestampToLocalDate(combinedFilterRequest.getTimeFilter().getDateRange().getStart());
+        LocalDate endDate = CustomTimeUtil.convertProtoTimestampToLocalDate(combinedFilterRequest.getTimeFilter().getDateRange().getEnd());
+        List<LegRenderDataProjection> legs = flightScheduleLegRepository
+                .findDistinctFlightScheduleLegsByStartAndEndDate(startDate, endDate);
 
         List<LegRender> legRenders = new ArrayList<>();
         for (LegRenderDataProjection legData : legs) {

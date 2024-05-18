@@ -1,8 +1,8 @@
 package com.erijl.flightvisualizer.backend.controller;
 
 import com.erijl.flightvisualizer.backend.service.FlightScheduleLegService;
+import com.erijl.flightvisualizer.protos.filter.CombinedFilterRequest;
 import com.erijl.flightvisualizer.protos.objects.*;
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,22 +33,15 @@ public class FlightScheduleLegControllerTest {
 
     @Test
     public void testDistinctFlightScheduleLegsProtobuf() throws Exception {
-        TimeFilter timeFilter = TimeFilter.newBuilder()
-                .setTimeRange(TimeRange.newBuilder()
-                        .setStart(0)
-                        .setEnd(1000))
-                .setDateRange(DateRange.newBuilder()
-                        .setStart(Timestamp.newBuilder().setSeconds(0).setNanos(0))
-                        .setEnd(Timestamp.newBuilder().setSeconds(0).setNanos(0)))
-                .build();
+        CombinedFilterRequest combinedFilter = CombinedFilterRequest.newBuilder().build();
 
         List<LegRender> legRenders = new ArrayList<>();
         LegRenders expectedResponse = LegRenders.newBuilder().addAllLegs(legRenders).build();
-        Mockito.when(flightScheduleLegService.getDistinctFlightScheduleLegsForRendering(timeFilter))
+        Mockito.when(flightScheduleLegService.getDistinctFlightScheduleLegsForRendering(combinedFilter))
                 .thenReturn(legRenders);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/flightScheduleLeg/distinct")
-                        .content(timeFilter.toByteArray()) // Send Protobuf data
+                        .content(combinedFilter.toByteArray()) // Send Protobuf data
                         .contentType("application/x-protobuf")
                         .accept("application/x-protobuf"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
