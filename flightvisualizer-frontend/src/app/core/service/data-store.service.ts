@@ -75,7 +75,6 @@ export class DataStoreService {
     this.getAirports();
     this.getFlightDateFrequencies();
     this.getFlightScheduleLegRoutes();
-    this.getDistinctFlightScheduleLegsForRendering();
   }
 
   // GETTERS
@@ -245,7 +244,7 @@ export class DataStoreService {
 
   private getDistinctFlightScheduleLegsForRendering(): void {
     // @ts-ignore
-    this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter().dateRange).subscribe(legRenders => {
+    this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter()).subscribe(legRenders => {
       this.legRenders = legRenders;
     });
   }

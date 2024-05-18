@@ -8,7 +8,7 @@ import {
 } from "../dto/airport";
 import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {DateRange, LegRender, LegRenders} from "../../protos/objects";
+import {DateRange, LegRender, LegRenders, TimeFilter} from "../../protos/objects";
 import {RouteFilter} from "../../protos/filters";
 import {RouteFilterType} from "../../protos/enums";
 
@@ -52,14 +52,9 @@ export class DataService {
       );
   }
 
-  getDistinctFlightScheduleLegsForRendering(dateRange: DateRange): Observable<LegRender[]> {
-    const routeFilter: RouteFilter = {
-      routeFilterType: RouteFilterType.DISTANCE,
-      start: 10,
-      end: 1200
-    };
-    const routeFilterEncoded = RouteFilter.encode(routeFilter).finish();
-    const blob = new Blob([routeFilterEncoded], { type: 'application/x-protobuf' });
+  getDistinctFlightScheduleLegsForRendering(timeFilter: TimeFilter): Observable<LegRender[]> {
+    const encodedTimeFilter = TimeFilter.encode(timeFilter).finish();
+    const blob = new Blob([encodedTimeFilter], { type: 'application/x-protobuf' });
 
     const req = new HttpRequest('POST', this.apiEndpoint + 'flightScheduleLeg/distinct', blob, {
       headers: new HttpHeaders({ 'Accept': 'application/x-protobuf' }),
