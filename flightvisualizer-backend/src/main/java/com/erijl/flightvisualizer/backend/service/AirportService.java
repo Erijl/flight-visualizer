@@ -3,9 +3,12 @@ package com.erijl.flightvisualizer.backend.service;
 import com.erijl.flightvisualizer.backend.model.api.AirportResponse;
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
 import com.erijl.flightvisualizer.backend.model.entities.Airport;
+import com.erijl.flightvisualizer.backend.model.projections.AirportRenderDataProjection;
 import com.erijl.flightvisualizer.backend.model.repository.AirportRepository;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
+import com.erijl.flightvisualizer.protos.objects.AirportRender;
+import com.erijl.flightvisualizer.protos.objects.Coordinate;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,8 +43,24 @@ public class AirportService {
         this.authManager = authManager;
     }
 
-    public Iterable<Airport> getAllAirports() {
-        return this.airportRepository.findAll();
+    public List<AirportRender> getAllAirports() {
+        List<AirportRenderDataProjection> airportProjections = this.airportRepository.findAllAirportRenders();
+        List<AirportRender> airportRenders = new ArrayList<>();
+
+        for (AirportRenderDataProjection airportProjection : airportProjections) {
+            airportRenders.add(
+                    AirportRender.newBuilder()
+                            .setIataCode(airportProjection.getIataCode())
+                            .setCoordinate(Coordinate.newBuilder()
+                                    .setLongitude(airportProjection.getLongitude())
+                                    .setLatitude(airportProjection.getLatitude())
+                                    .build()
+                            )
+                            .build()
+            );
+        }
+
+        return airportRenders;
     }
 
     @Cacheable(value = "airport", key = "#iataAirportCode", unless = "#result == null")
