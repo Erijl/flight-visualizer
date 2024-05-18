@@ -7,10 +7,12 @@ import com.erijl.flightvisualizer.backend.model.projections.LegRenderDataProject
 import com.erijl.flightvisualizer.backend.model.repository.FlightScheduleLegRepository;
 import com.erijl.flightvisualizer.backend.util.CustomTimeUtil;
 import com.erijl.flightvisualizer.backend.util.MathUtil;
+import com.erijl.flightvisualizer.backend.validators.TimeFilterValidator;
 import com.erijl.flightvisualizer.protos.objects.Coordinate;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
 import com.erijl.flightvisualizer.protos.objects.TimeFilter;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Validator;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -59,6 +61,8 @@ public class FlightScheduleLegService {
     }
 
     public List<LegRender> getDistinctFlightScheduleLegsForRendering(TimeFilter timeFilter) {
+        TimeFilterValidator.validate(timeFilter);
+
         //TODO possible error when selecting too many days (check db performance)
         LocalDate startDate = CustomTimeUtil.convertProtoTimestampToLocalDate(timeFilter.getDateRange().getStart());
         LocalDate endDate = CustomTimeUtil.convertProtoTimestampToLocalDate(timeFilter.getDateRange().getEnd());

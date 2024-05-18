@@ -6,10 +6,14 @@ import com.erijl.flightvisualizer.backend.service.FlightScheduleLegService;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
 import com.erijl.flightvisualizer.protos.objects.LegRenders;
 import com.erijl.flightvisualizer.protos.objects.TimeFilter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 public class FlightScheduleLegController {
 
@@ -31,8 +35,16 @@ public class FlightScheduleLegController {
     }
 
     @PostMapping(value = "/flightScheduleLeg/distinct", produces = "application/x-protobuf", consumes = "application/x-protobuf")
-    public LegRenders getDistinctFlightScheduleLegsForRendering(@RequestBody TimeFilter timeFilter) {
-        List<LegRender> legRenders = flightScheduleLegService.getDistinctFlightScheduleLegsForRendering(timeFilter);
-        return LegRenders.newBuilder().addAllLegs(legRenders).build();
+    public ResponseEntity<LegRenders> getDistinctFlightScheduleLegsForRendering(@RequestBody TimeFilter timeFilter) {
+        try {
+            List<LegRender> legRenders = flightScheduleLegService.getDistinctFlightScheduleLegsForRendering(timeFilter);
+            LegRenders response = LegRenders.newBuilder().addAllLegs(legRenders).build();
+            return ResponseEntity.ok().body(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(LegRenders.getDefaultInstance());
+        } catch (Exception e) {
+            log.error("Error processing request", e);
+            return ResponseEntity.internalServerError().body(LegRenders.getDefaultInstance());
+        }
     }
 }
