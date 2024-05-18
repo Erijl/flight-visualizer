@@ -3,13 +3,14 @@ package com.erijl.flightvisualizer.backend.service;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistance;
 import com.erijl.flightvisualizer.backend.model.enums.LocationType;
+import com.erijl.flightvisualizer.backend.model.projections.LegRenderDataProjection;
 import com.erijl.flightvisualizer.backend.model.repository.FlightScheduleLegRepository;
+import com.erijl.flightvisualizer.backend.util.CustomTimeUtil;
 import com.erijl.flightvisualizer.backend.util.MathUtil;
-import com.erijl.flightvisualizer.protos.filter.RouteFilter;
 import com.erijl.flightvisualizer.protos.objects.Coordinate;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
+import com.erijl.flightvisualizer.protos.objects.TimeFilter;
 import org.springframework.stereotype.Service;
-import com.erijl.flightvisualizer.backend.model.entities.Airport;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -57,18 +58,19 @@ public class FlightScheduleLegService {
         return flightScheduleLegWithDistances;
     }
 
-    public List<LegRender> getDistinctFlightScheduleLegsForRendering(RouteFilter routeFilter) {
-        List<FlightScheduleLegDto> legs =  flightScheduleLegRepository.findDistinctFlightScheduleLegsByStartAndEndDate();
-        List<LegRender> legRenders = new ArrayList<>();
-        for (FlightScheduleLegDto leg : legs) {
-            Airport originAirport = leg.getOriginAirport();
-            Airport destinationAirport = leg.getDestinationAirport();
+    public List<LegRender> getDistinctFlightScheduleLegsForRendering(TimeFilter timeFilter) {
+        //TODO possible error when selecting too many days (check db performance)
+        LocalDate startDate = CustomTimeUtil.convertProtoTimestampToLocalDate(timeFilter.getDateRange().getStart());
+        LocalDate endDate = CustomTimeUtil.convertProtoTimestampToLocalDate(timeFilter.getDateRange().getEnd());
+        List<LegRenderDataProjection> legs =  flightScheduleLegRepository.findDistinctFlightScheduleLegsByStartAndEndDate(startDate, endDate, timeFilter.getTimeRange().getStart(), timeFilter.getTimeRange().getEnd());
 
+        List<LegRender> legRenders = new ArrayList<>();
+        for (LegRenderDataProjection legData : legs) {
             var render = LegRender.newBuilder()
-                    .setOriginAirportIataCode(originAirport.getIataAirportCode())
-                    .setDestinationAirportIataCode(destinationAirport.getIataAirportCode())
-                    .addCoordinates(0, Coordinate.newBuilder().setLatitude(originAirport.getLatitude().doubleValue()).setLongitude(originAirport.getLongitude().doubleValue()))
-                    .addCoordinates(1, Coordinate.newBuilder().setLatitude(destinationAirport.getLatitude().doubleValue()).setLongitude(destinationAirport.getLongitude().doubleValue())).build();
+                    .setOriginAirportIataCode(legData.getOriginAirportIataCode())
+                    .setDestinationAirportIataCode(legData.getDestinationAirportIataCode())
+                    .addCoordinates(0, Coordinate.newBuilder().setLatitude(legData.getOriginLatitude()).setLongitude(legData.getOriginLongitude()))
+                    .addCoordinates(1, Coordinate.newBuilder().setLatitude(legData.getDestinationLatitude()).setLongitude(legData.getDestinationLongitude())).build();
             legRenders.add(render);
         }
         return legRenders;

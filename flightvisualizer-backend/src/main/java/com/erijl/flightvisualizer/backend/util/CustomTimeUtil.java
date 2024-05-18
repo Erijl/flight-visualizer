@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -15,6 +16,7 @@ import java.util.Locale;
 public class CustomTimeUtil {
 
     private static final int MAX_MINUTES_IN_DAY = 1439;
+    private static final ZoneId TIMEZONE = ZoneId.of("UTC");
 
     /**
      * Date conversion to the 'ddMMMyy' format used by Lufthansa
@@ -68,7 +70,7 @@ public class CustomTimeUtil {
 
     public LocalDate convertDateToUtcLocalDate(Date date) {
         return date.toInstant()
-                .atZone(ZoneId.of("UTC"))
+                .atZone(TIMEZONE)
                 .toLocalDate();
     }
 
@@ -94,5 +96,19 @@ public class CustomTimeUtil {
 
     private static int calculateDurationInMinutes(int a, int b, int d) {
         return (MAX_MINUTES_IN_DAY * d) + (b - a);
+    }
+
+    /**
+     * Converts a {@link com.google.protobuf.Timestamp} to a {@link LocalDate} UTC
+     *
+     * @param timestamp {@link com.google.protobuf.Timestamp} to be converted
+     * @return A {@link LocalDate} representing the converted timestamp, or null if the timestamp is null or has no value
+     */
+    public static LocalDate convertProtoTimestampToLocalDate(com.google.protobuf.Timestamp timestamp) {
+        if (timestamp == null || timestamp.getSeconds() == 0 && timestamp.getNanos() == 0) {
+            return null;
+        }
+
+        return Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()).atZone(TIMEZONE).toLocalDate();
     }
 }

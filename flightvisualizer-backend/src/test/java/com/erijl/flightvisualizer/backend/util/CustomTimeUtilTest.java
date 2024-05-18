@@ -2,12 +2,14 @@ package com.erijl.flightvisualizer.backend.util;
 
 import com.erijl.flightvisualizer.backend.model.api.LegResponse;
 import com.erijl.flightvisualizer.backend.model.entities.FlightScheduleLeg;
+import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Test;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class CustomTimeUtilTest {
 
@@ -88,5 +90,25 @@ public class CustomTimeUtilTest {
         flightScheduleLeg.setAircraftArrivalTimeUtc(1000);
 
         assertEquals(10773, CustomTimeUtil.calculateDurationInMinutes(legResponse));
+    }
+
+    @Test
+    void testConvertProtoTimestampToLocalDate() {
+        Timestamp timestamp = Timestamp.newBuilder()
+                .setSeconds(1620000000)
+                .setNanos(0)
+                .build();
+
+        assertEquals("2021-05-03", CustomTimeUtil.convertProtoTimestampToLocalDate(timestamp).toString());
+    }
+
+    @Test
+    void testConvertProtoTimestampToLocalDateWithDefault() {
+        Timestamp timestamp = Timestamp.newBuilder()
+                .setSeconds(0)
+                .setNanos(0)
+                .build();
+
+        assertNull(CustomTimeUtil.convertProtoTimestampToLocalDate(timestamp));
     }
 }
