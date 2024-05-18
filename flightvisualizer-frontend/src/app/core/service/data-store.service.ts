@@ -19,24 +19,19 @@ import {AirportDisplayType, RouteDisplayType} from "../../protos/enums";
 export class DataStoreService {
 
   // 'raw' data
-  allFlightScheduleRouteDtos: FlightScheduleRouteDto[] = [];
+  allLegRenders: LegRender[] = [];
   allAirports: AirportRender[] = [];
   fetchedFlightSchedule: FlightSchedule = new FlightSchedule();
-
-  legRenders: LegRender[] = [];
 
   private _allFlightDateFrequencies: BehaviorSubject<FlightDateFrequencyDto[]> = new BehaviorSubject<FlightDateFrequencyDto[]>([]);
   allFlightDateFrequencies = this._allFlightDateFrequencies.asObservable();
 
 
   // displayed data
-  private _currentlyDisplayedRoutes: BehaviorSubject<FlightScheduleRouteDto[]> = new BehaviorSubject<FlightScheduleRouteDto[]>([]);
-  currentlyDisplayedRoutes: FlightScheduleRouteDto[] = [];
-
   private _currentlyDisplayedAirports: BehaviorSubject<AirportRender[]> = new BehaviorSubject<AirportRender[]>([]);
   currentlyDisplayedAirports = this._currentlyDisplayedAirports.asObservable();
 
-  private _renderedRoutes: BehaviorSubject<FlightScheduleRouteDto[]> = new BehaviorSubject<FlightScheduleRouteDto[]>([]);
+  private _renderedRoutes: BehaviorSubject<LegRender[]> = new BehaviorSubject<LegRender[]>([]);
   renderedRoutes = this._renderedRoutes.asObservable();
 
 
@@ -74,7 +69,6 @@ export class DataStoreService {
   constructor(private dataService: DataService, private filterService: FilterService) {
     this.getAirports();
     this.getFlightDateFrequencies();
-    this.getFlightScheduleLegRoutes();
   }
 
   // GETTERS
@@ -90,22 +84,6 @@ export class DataStoreService {
     return this._selectedRoute.getValue();
   }
 
-  getCurrentlyDisplayedRoutes(): FlightScheduleRouteDto[] {
-    return this._currentlyDisplayedRoutes.getValue();
-  }
-
-  getCurrentlyDisplayedAirports(): AirportRender[] {
-    return this._currentlyDisplayedAirports.getValue();
-  }
-
-  getRenderedRoutes(): FlightScheduleRouteDto[] {
-    return this._renderedRoutes.getValue();
-  }
-
-  getFlightScheduleRoutesForSelectedAirport(): FlightScheduleRouteDto[] {
-    return this.filterService.getFlightScheduleRouteDtosByAirport(this.allFlightScheduleRouteDtos, this.getSelectedAirportFilter(), this.getSelectedAirportRoutesIncoming(), this.getSelectedAirportRoutesOutgoing());
-  }
-
   getSelectedAirportRoutesOutgoing(): boolean {
     return this._selectedAirportRoutesOutgoing.getValue();
   }
@@ -114,8 +92,8 @@ export class DataStoreService {
     return this._selectedAirportRoutesIncoming.getValue();
   }
 
-  getAllFlightScheduleRouteDtos() {
-    return this.allFlightScheduleRouteDtos;
+  getAllLegRenders() {
+    return this.allLegRenders;
   }
 
   getSpecificFlightSchedule(id: number): FlightSchedule {
@@ -124,8 +102,8 @@ export class DataStoreService {
     return this.fetchedFlightSchedule;
   }
 
-  getAllRoutesForFlightSchedule(id: number): FlightScheduleRouteDto[] {
-    return this.allFlightScheduleRouteDtos.filter(route => route.flightScheduleId == id);
+  getAllLegsForSpecificRoute(id: number): LegRender[] {
+    return this.allLegRenders; //TODO overhaul
   }
 
   getTimeFilter(): TimeFilter {
@@ -144,27 +122,19 @@ export class DataStoreService {
     return this._detailSelectionType.getValue();
   }
 
-  getFurthestFlightRoute(): FlightScheduleRouteDto {
-    if(this.allFlightScheduleRouteDtos.length == 0) return new FlightScheduleRouteDto();
-    return this.allFlightScheduleRouteDtos.reduce((a, b) => a.kilometerDistance > b.kilometerDistance ? a : b);
+  getFurthestFlightLeg(): LegRender {
+    if(this.allLegRenders.length == 0) return LegRender.create();
+    return this.allLegRenders.reduce((a, b) => a.distanceKilometers > b.distanceKilometers ? a : b);
   }
 
-  getLongestFlightRoute(): FlightScheduleRouteDto {
-    if(this.allFlightScheduleRouteDtos.length == 0) return new FlightScheduleRouteDto();
-    return this.allFlightScheduleRouteDtos.reduce((a, b) => this.filterService.calculateFlightDurationInMinutes(a) > this.filterService.calculateFlightDurationInMinutes(b) ? a : b);
+  getLongestFlightLeg(): LegRender {
+    if(this.allLegRenders.length == 0) return LegRender.create();
+    return this.allLegRenders.reduce((a, b) => a.durationMinutes > b.durationMinutes ? a : b);
   }
 
-  getCurrentlyDisplayedRoutesForSelectedAirport(): FlightScheduleRouteDto[] {
+  getCurrentlyDisplayedRoutesForSelectedAirport(): LegRender[] {
     const selectedAirportIataCode = this.getSelectedAirportFilter().iataCode;
-    return this.getCurrentlyDisplayedRoutes()
-      .filter(route =>
-        (route.originAirport.iataAirportCode == selectedAirportIataCode || route.destinationAirport.iataAirportCode == selectedAirportIataCode)
-        && ((route.originAirport.iataAirportCode == selectedAirportIataCode && this.getSelectedAirportRoutesOutgoing()) || (route.destinationAirport.iataAirportCode == selectedAirportIataCode && this.getSelectedAirportRoutesIncoming()))
-      );
-  }
-
-  getLegRenders(): LegRender[] {
-    return this.legRenders;
+    return this.allLegRenders; //TODO overhaul
   }
 
   getAirportRenderByIataCode(iataCode: string): AirportRender | undefined {
@@ -185,11 +155,6 @@ export class DataStoreService {
     this._selectedRoute.next(route);
   }
 
-  private setCurrentlyDisplayedRoutes(routes: FlightScheduleRouteDto[]): void {
-    this._currentlyDisplayedRoutes.next(routes);
-    this._renderedRoutes.next(this.filterService.getCleanedFlightScheduleRouteDtos(routes));
-  }
-
   private setCurrentlyDisplayedAirports(airports: AirportRender[]): void {
     this._currentlyDisplayedAirports.next(airports);
   }
@@ -205,9 +170,7 @@ export class DataStoreService {
   setTimeFilter(timeFilter: TimeFilter): void {
     this._timeFilter.next(timeFilter);
 
-    this.getFlightScheduleLegRoutes();
-
-    this.getDistinctFlightScheduleLegsForRendering();
+    this.updateRenderedRoutes();
   }
 
   setGeneralFilter(generalFilter: GeneralFilter): void {
@@ -223,7 +186,7 @@ export class DataStoreService {
 
   setRouteFilter(routeFilter: RouteFilter): void {
     this._routeFilter.next(routeFilter);
-    this.reRenderRoutes();
+    this.updateRenderedRoutes();
   }
 
   // FETCHING DATA
@@ -234,17 +197,10 @@ export class DataStoreService {
     });
   }
 
-  private getFlightScheduleLegRoutes(): void {
-    // @ts-ignore
-    this.dataService.getFlightScheduleLegRoutes(this.getTimeFilter().dateRange).subscribe(flightScheduleLegs => {
-      this.allFlightScheduleRouteDtos = flightScheduleLegs;
-      this.reRenderRoutes();
-    });
-  }
-
   private getDistinctFlightScheduleLegsForRendering(): void {
     this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter(), this.getGeneralFilter(), this.getRouteFilter(), this.getSelectedAirportFilter()).subscribe(legRenders => {
-      this.legRenders = legRenders;
+      this.allLegRenders = legRenders;
+      this._renderedRoutes.next(legRenders);
     });
   }
 
@@ -278,7 +234,7 @@ export class DataStoreService {
         this.setCurrentlyDisplayedAirports(this.getAllAirports());
         break;
       case AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES:
-        this.setCurrentlyDisplayedAirports(this.filterService.getAllAirportsPresentInFlightScheduleRouteDtos(this.getRenderedRoutes()));
+        this.setCurrentlyDisplayedAirports(this.filterService.getAllAirportsPresentInLegRenders(this.getAllLegRenders(), this.getAllAirports()));
         break;
       case AirportDisplayType.AIRPORTDISPLAYTYPE_NONE:
         this.setCurrentlyDisplayedAirports([]);
@@ -287,11 +243,9 @@ export class DataStoreService {
   }
 
   private updateRenderedRoutes() {
-    let routesToBeDisplayed: FlightScheduleRouteDto[] = this.getAllFlightScheduleRouteDtos();
+    this.getDistinctFlightScheduleLegsForRendering();
 
-    this.setCurrentlyDisplayedRoutes(routesToBeDisplayed);
-
-    if (this.getDetailSelectionType() == DetailSelectionType.ROUTE && !routesToBeDisplayed.includes(this.getSelectedRoute())) {
+    if (this.getDetailSelectionType() == DetailSelectionType.ROUTE) { //TODO overhaul && !routesToBeDisplayed.includes(this.getSelectedRoute())
       this.setSelectedRoute(new FlightScheduleRouteDto());
     }
 

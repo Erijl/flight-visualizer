@@ -15,7 +15,7 @@ import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
 import {environment} from "../../environments/environment";
 import {GeneralFilter, SelectedAirportFilter} from "../protos/filters";
-import {AirportRender} from "../protos/objects";
+import {AirportRender, LegRender} from "../protos/objects";
 
 @Component({
   selector: 'app-map',
@@ -138,9 +138,9 @@ export class MapComponent implements OnInit, OnDestroy {
     // @ts-ignore
     const clickedRoute = e.features[0];
     // @ts-ignore
-    this.selectedRoute = this.dataStoreService.getAllFlightScheduleRouteDtos().find(route =>
-      route.originAirport.iataAirportCode === clickedRoute.properties.originAirport &&
-      route.destinationAirport.iataAirportCode === clickedRoute.properties.destinationAirport
+    this.selectedRoute = this.dataStoreService.getAllLegRenders().find(leg =>
+      leg.originAirportIataCode === clickedRoute.properties.originAirport &&
+      leg.destinationAirportIataCode === clickedRoute.properties.destinationAirport
     );
     this.dataStoreService.setSelectedRoute(this.selectedRoute);
   }
@@ -158,7 +158,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
 
     if (this.selectedRoute.originAirport.iataAirportCode != '' && this.selectedRoute.destinationAirport.iataAirportCode != '') {
-      this.geoService.highlightRouteOnMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE, LayerType.ROUTEHIGHLIGHTLAYER, this.selectedRoute);
+      this.geoService.highlightRouteOnMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE, LayerType.ROUTEHIGHLIGHTLAYER, LegRender.create()); //TODO overhaul
     }
   }
 
@@ -188,8 +188,8 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  replaceCurrentlyRenderedRoutes(newRoutes: FlightScheduleRouteDto[]): void {
-    let routesGeoJson = this.geoService.convertLegRendersToGeoJson(this.dataStoreService.getLegRenders());
+  replaceCurrentlyRenderedRoutes(newRoutes: LegRender[]): void {
+    let routesGeoJson = this.geoService.convertLegRendersToGeoJson(newRoutes);
     if(!this.map) return;
 
     if(this.map.getSource(SourceType.ROUTESOURCE)) {

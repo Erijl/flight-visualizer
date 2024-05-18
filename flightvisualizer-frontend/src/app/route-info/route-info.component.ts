@@ -3,6 +3,7 @@ import {Subscription} from "rxjs";
 import {DataStoreService} from "../core/service/data-store.service";
 import {FlightSchedule, FlightScheduleRouteDto} from "../core/dto/airport";
 import {FilterService} from "../core/service/filter.service";
+import {LegRender} from "../protos/objects";
 
 @Component({
   selector: 'app-route-info',
@@ -15,17 +16,17 @@ export class RouteInfoComponent implements OnInit, OnDestroy{
   selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
 
   flightSchedule: FlightSchedule = new FlightSchedule();
-  allRoutesInFLightSchedule: FlightScheduleRouteDto[] = [];
+  allLegRenders: LegRender[] = [];
 
   //(TODO) (show the route its part of)
-  constructor(private dataStoreService: DataStoreService, protected filterService: FilterService) {
+  constructor(private dataStoreService: DataStoreService) {
   }
 
   ngOnInit(): void {
     this.selectedRouteSubscription = this.dataStoreService.selectedRoute.subscribe(route => {
       this.selectedRoute = route;
       this.flightSchedule = this.dataStoreService.getSpecificFlightSchedule(route.flightScheduleId);
-      this.allRoutesInFLightSchedule = this.dataStoreService.getAllRoutesForFlightSchedule(route.flightScheduleId);
+      this.allLegRenders = this.dataStoreService.getAllLegsForSpecificRoute(route.flightScheduleId);
     });
   }
 

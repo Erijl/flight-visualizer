@@ -1,11 +1,10 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {FlightScheduleRouteDto} from "../core/dto/airport";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
-import {AirportRender} from "../protos/objects";
+import {LegRender} from "../protos/objects";
 import {SelectedAirportFilter} from "../protos/filters";
 
 @Component({
@@ -20,7 +19,7 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
 
   // UI data
   displayedColumns: string[] = ['origin', 'destination', 'kilometerDistance'];
-  dataSource = new MatTableDataSource<FlightScheduleRouteDto>([]);
+  dataSource = new MatTableDataSource<LegRender>([]);
   selectedAirportFilter: SelectedAirportFilter = SelectedAirportFilter.create();
 
   // UI state
@@ -62,7 +61,7 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   updateTable(): void {
-    this.dataSource = new MatTableDataSource<FlightScheduleRouteDto>(this.dataStoreService.getCurrentlyDisplayedRoutesForSelectedAirport());
+    this.dataSource = new MatTableDataSource<LegRender>(this.dataStoreService.getAllLegRenders()); //TODO overhaul
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }

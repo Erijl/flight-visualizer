@@ -10,8 +10,8 @@ export class GeoService {
   constructor() {
   }
 
-  highlightRouteOnMap(map: mapboxgl.Map, sourceId: string, layerId: string, route: any): void {
-    this.addFeatureCollectionSourceToMap(map, sourceId, this.convertFlightScheduleRouteDtosToGeoJson([route]));
+  highlightRouteOnMap(map: mapboxgl.Map, sourceId: string, layerId: string, leg: LegRender): void {
+    this.addFeatureCollectionSourceToMap(map, sourceId, this.convertLegRendersToGeoJson([leg]));
     this.addLayerTypeLineToMap(map, layerId, sourceId, {
       'line-cap': 'round',
       'line-join': 'round'
@@ -73,27 +73,6 @@ export class GeoService {
       });
     });
     return airportGeoFeatures;
-  }
-
-  convertFlightScheduleRouteDtosToGeoJson(flightScheduleRouteDtos: any[]): any[] {
-    const airportGeoRoutes: any[] = [];
-    flightScheduleRouteDtos.forEach(flightScheduleRouteDto => {
-      airportGeoRoutes.push({
-        'type': 'Feature',
-        'geometry': {
-          'type': 'LineString',
-          'coordinates': [
-            [flightScheduleRouteDto.originAirport.longitude, flightScheduleRouteDto.originAirport.latitude],
-            [flightScheduleRouteDto.destinationAirport.longitude, flightScheduleRouteDto.destinationAirport.latitude]
-          ]
-        },
-        'properties': {
-          'originAirport': flightScheduleRouteDto.originAirport.iataAirportCode,
-          'destinationAirport': flightScheduleRouteDto.destinationAirport.iataAirportCode,
-        }
-      });
-    });
-    return airportGeoRoutes;
   }
 
   convertLegRendersToGeoJson(legRenders: LegRender[]): any[] {

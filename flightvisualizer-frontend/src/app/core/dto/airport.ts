@@ -151,6 +151,6 @@ export const DefaultTimeFilter = TimeFilter.create({dateRange: DateRange.create(
 
 export const DefaultGeneralFilter = GeneralFilter.create({airportDisplayType: AirportDisplayType.AIRPORTDISPLAYTYPE_ALL, routeDisplayType: RouteDisplayType.ROUTEDISPLAYTYPE_ALL});
 
-export const DefaultRouteFilter = RouteFilter.create({start: 0, end: 100, routeFilterType: RouteFilterType.DISTANCE});
+export const DefaultRouteFilter = RouteFilter.create({start: 0, end: 20000, routeFilterType: RouteFilterType.DISTANCE});
 
 export const DefaultSelectedAirportFilter = SelectedAirportFilter.create({iataCode: '', includingArrivals: true, includingDepartures: true});

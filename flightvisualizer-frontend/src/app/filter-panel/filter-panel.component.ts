@@ -13,6 +13,9 @@ import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../protos/e
 })
 export class FilterPanelComponent implements OnInit, OnDestroy {
 
+  //static values
+  MAX_DISTANCE = 20000;
+
   //Subscriptions
   generalFilterSubscription!: Subscription;
   routeFilterSubscription!: Subscription;
@@ -32,7 +35,8 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   maxSliderValue = 100;
 
 
-  constructor(private dataStoreService: DataStoreService, private filterService: FilterService) { }
+  constructor(private dataStoreService: DataStoreService, private filterService: FilterService) {
+  }
 
   ngOnInit(): void {
     this.generalFilterSubscription = this.dataStoreService.generalFilter.subscribe((generalFilter: GeneralFilter) => {
@@ -44,6 +48,8 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
     });
 
     this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
+      console.log('filterpanel rendered Routes');
+      console.log(this.dataStoreService.getFurthestFlightLeg());
       this.updateSlider();
     });
 
@@ -65,18 +71,19 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
 
   updateSlider() {
     if (this.routeFilter.routeFilterType == RouteFilterType.DISTANCE) {
-      const maxKilometers = this.dataStoreService.getFurthestFlightRoute().kilometerDistance;
-      if(this.maxSliderValue != maxKilometers) {
+      const furthestLeg = this.dataStoreService.getFurthestFlightLeg();
+      const furthesDistance = furthestLeg.distanceKilometers != 0 ? furthestLeg.distanceKilometers : this.MAX_DISTANCE;
+      if (this.maxSliderValue != furthesDistance) {
         this.minSliderValue = 0;
-        this.maxSliderValue = maxKilometers;
+        this.maxSliderValue = furthesDistance;
 
         this.routeFilter.start = 0;
-        this.routeFilter.end = maxKilometers;
+        this.routeFilter.end = furthesDistance;
       }
     } else if (this.routeFilter.routeFilterType == RouteFilterType.DURATION) {
-      const maxDuration = this.filterService.calculateFlightDurationInMinutes(this.dataStoreService.getLongestFlightRoute());
+      const maxDuration = this.dataStoreService.getLongestFlightLeg().durationMinutes;
 
-      if(this.maxSliderValue != maxDuration) {
+      if (this.maxSliderValue != maxDuration) {
 
         this.minSliderValue = 0;
         this.maxSliderValue = maxDuration;
@@ -88,13 +95,22 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   }
 
   onSliderRangeChange(): void {
+    console.log(this.routeFilter);
     this.dataStoreService.setRouteFilter(this.routeFilter);
   }
 
-
   resetFilters(): void {
     this.generalFilter = DefaultGeneralFilter;
-    this.routeFilter = RouteFilter.create({routeFilterType: RouteFilterType.DISTANCE, start: 0, end: this.dataStoreService.getFurthestFlightRoute()?.kilometerDistance ?? 100000});
+    const furthestFlightLeg = this.dataStoreService.getFurthestFlightLeg();
+    if (furthestFlightLeg.distanceKilometers != 0) {
+      this.routeFilter = RouteFilter.create({
+        routeFilterType: RouteFilterType.DISTANCE,
+        start: 0,
+        end: furthestFlightLeg.distanceKilometers
+      });
+    } else {
+      this.routeFilter = DefaultRouteFilter;
+    }
 
     this.dataStoreService.setGeneralFilter(this.generalFilter);
     this.dataStoreService.setRouteFilter(this.routeFilter);
