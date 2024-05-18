@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import mapboxgl from 'mapbox-gl';
 import {AirportRender, LegRender} from "../../protos/objects";
-import {SelectedAirportFilter} from "../../protos/filters";
 
 @Injectable({
   providedIn: 'root'

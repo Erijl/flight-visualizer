@@ -29,12 +29,24 @@ public interface FlightScheduleLegRepository extends JpaRepository<FlightSchedul
     Iterable<FlightScheduleLegDto> findAllWithoutAssociationsBySingleDate(Date date);
 
     @Query(value = """
-                SELECT fsl.origin_airport                 AS 'originAirportIataCode',
-                       fsl.destination_airport            AS 'destinationAirportIataCode',
-                       fsl.drawable_origin_longitude      AS 'originLongitude',
-                       a_origin.latitude                  AS 'originLatitude',
-                       fsl.drawable_destination_longitude AS 'destinationLongitude',
-                       a_destination.latitude             AS 'destinationLatitude'
+                SELECT fsl.origin_airport                               AS 'originAirportIataCode',
+                       fsl.destination_airport                          AS 'destinationAirportIataCode',
+                       fsl.drawable_origin_longitude                    AS 'originLongitude',
+                       a_origin.latitude                                AS 'originLatitude',
+                       fsl.drawable_destination_longitude               AS 'destinationLongitude',
+                       a_destination.latitude                           AS 'destinationLatitude',
+                       a_origin.iso_country_code                        AS 'originIsoCountryCode',
+                       a_destination.iso_country_code                   AS 'destinationIsoCountryCode',
+                       a_origin.timezone_id                             AS 'originTimezoneId',
+                       a_destination.timezone_id                        AS 'destinationTimezoneId',
+                       a_origin.offset_utc                              AS 'originOffsetUtc',
+                       a_destination.offset_utc                         AS 'destinationOffsetUtc',
+                       fsl.aircraft_departure_time_date_diff_utc        AS 'aircraftDepartureTimeDateDiffUtc',
+                       fsl.aircraft_arrival_time_date_diff_utc          AS 'aircraftArrivalTimeDateDiffUtc',
+                       fsl.aircraft_arrival_time_utc                    AS 'aircraftArrivalTimeUtc',
+                       fsl.aircraft_departure_time_utc                  AS 'aircraftDepartureTimeUtc',
+                       fsl.duration_minutes                             AS 'durationMinutes',
+                       fsl.distance_kilometers                          AS 'distanceKilometers',
                 FROM flight_schedule_leg fsl
                          JOIN flight_schedule fs ON fs.id = fsl.flight_schedule_id
                          JOIN flight_schedule_operation_period flop ON flop.id = fs.operation_period_id

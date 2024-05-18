@@ -118,10 +118,6 @@ export class DataStoreService {
     return this.allFlightScheduleRouteDtos;
   }
 
-  getAllFlightScheduleRouteDtosWithTimeFilter() {
-    return this.filterService.getFlightRoutesInTimeFrame(this.allFlightScheduleRouteDtos, this.getTimeFilter());
-  }
-
   getSpecificFlightSchedule(id: number): FlightSchedule {
     if (this.fetchedFlightSchedule?.flightScheduleId == id) return this.fetchedFlightSchedule;
     this.getFlightScheduleById(id);
@@ -292,28 +288,6 @@ export class DataStoreService {
 
   private updateRenderedRoutes() {
     let routesToBeDisplayed: FlightScheduleRouteDto[] = this.getAllFlightScheduleRouteDtos();
-    switch (this.getGeneralFilter().routeDisplayType) {
-      default:
-      case RouteDisplayType.ROUTEDISPLAYTYPE_ALL:
-        routesToBeDisplayed = this.getAllFlightScheduleRouteDtos();
-        break;
-      case RouteDisplayType.ROUTEDISPLAYTYPE_SPECIFICAIRPORT:
-        routesToBeDisplayed = this.getFlightScheduleRoutesForSelectedAirport();
-        break;
-      case RouteDisplayType.ROUTEDISPLAYTYPE_ONLYWITHINSAMECOUNTRY:
-        routesToBeDisplayed = this.filterService.getFLightScheduleRouteDtosWithinSameCountry(this.getAllFlightScheduleRouteDtos());
-        break;
-      case RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMEREGION:
-        routesToBeDisplayed = this.filterService.getFLightScheduleRouteDtosWithinSameRegion((this.getAllFlightScheduleRouteDtos()));
-        break;
-      case RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMETIMEZONE:
-        routesToBeDisplayed = this.filterService.getFLightScheduleRouteDtosWithinSameTimezone(this.getAllFlightScheduleRouteDtos());
-        break;
-    }
-
-    routesToBeDisplayed = this.filterService.getFlightRoutesInTimeFrame(routesToBeDisplayed, this.getTimeFilter());
-
-    routesToBeDisplayed = this.filterService.getFlightScheduleRouteDtosByRouteFilter(routesToBeDisplayed, this.getRouteFilter());
 
     this.setCurrentlyDisplayedRoutes(routesToBeDisplayed);
 

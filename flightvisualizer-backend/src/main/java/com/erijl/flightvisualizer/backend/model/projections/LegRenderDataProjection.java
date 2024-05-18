@@ -7,4 +7,16 @@ public interface LegRenderDataProjection {
     Double getOriginLatitude();
     Double getDestinationLongitude();
     Double getDestinationLatitude();
+    String getOriginIsoCountryCode();
+    String getDestinationIsoCountryCode();
+    String getOriginTimezoneId();
+    String getDestinationTimezoneId();
+    Integer getOriginOffsetUtc();
+    Integer getDestinationOffsetUtc();
+    Integer getAircraftDepartureTimeDateDiffUtc();
+    Integer getAircraftArrivalTimeDateDiffUtc();
+    Integer getAircraftArrivalTimeUtc();
+    Integer getAircraftDepartureTimeUtc();
+    Integer getDurationMinutes();
+    Integer getDistanceKilometers();
 }

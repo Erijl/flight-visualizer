@@ -124,8 +124,7 @@ export class MapComponent implements OnInit, OnDestroy {
   airportLayerClickHandler = (e) => {
     // @ts-ignore
     const clickedAirport = e.features[0];
-    // @ts-ignore
-    const selectedAirport = this.dataStoreService.getAllAirports().find(airport => airport.iataAirportCode === clickedAirport.properties.iataAirportCode);
+    const selectedAirport = this.dataStoreService.getAllAirports().find(airport => airport.iataCode === clickedAirport.properties.iataAirportCode);
     if (selectedAirport && selectedAirport.iataCode != '' && selectedAirport.iataCode != this.selectedAirportFilter.iataCode) {
       this.selectedAirportFilter = DefaultSelectedAirportFilter;
       this.selectedAirportFilter.iataCode = selectedAirport.iataCode;
