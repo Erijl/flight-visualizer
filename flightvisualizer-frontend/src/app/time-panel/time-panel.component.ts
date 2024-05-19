@@ -37,7 +37,7 @@ export class TimePanelComponent implements OnInit, OnDestroy {
 
   //UI Data
   flightDateFrequencies: Set<string> = new Set();
-  timeFilter: TimeFilter = DefaultTimeFilter;
+  timeFilter: TimeFilter = TimeFilter.create(DefaultTimeFilter);
   aircraftTimeFilterTypes = [
     AircraftTimeFilterType.ARRIVALANDDEPARTURE,
     AircraftTimeFilterType.DEPARTURE,
@@ -60,7 +60,6 @@ export class TimePanelComponent implements OnInit, OnDestroy {
 
     this.flightDateFrequenciesSubscription = this.dataStoreService.allFlightDateFrequencies.subscribe(frequencies => {
       this.allowedDates = frequencies.map(frequency => frequency!.date!);
-      console.log(this.allowedDates);
     });
 
     this.timeFilterSubscription = this.dataStoreService.timeFilter.subscribe(timeFilter => {
@@ -94,9 +93,7 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   }
 
   resetFilters(): void {
-    this.timeFilter = DefaultTimeFilter;
-    this.dataStoreService.setTimeFilter(this.timeFilter);
-
+    this.dataStoreService.initTimeFilter();
   }
 
   onTimeRangeChange(): void  {

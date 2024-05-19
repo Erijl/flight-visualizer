@@ -99,4 +99,24 @@ public class MathUtilTest {
         assertEquals(BigDecimal.valueOf(0), coordinatePair.getDestinationLongitude());
         assertEquals(BigDecimal.valueOf(37.618900), destinationAirport.getLatitude());
     }
+
+    @Test
+    public void testCalculateDrawableCoordinatesAcross180thMeridianIAHtoAKL() {
+        Airport originAirport = new Airport(); // IAH - Houston
+        originAirport.setLongitude(BigDecimal.valueOf(-95.341400));
+        originAirport.setLatitude(BigDecimal.valueOf(29.984400));
+
+        Airport destinationAirport = new Airport(); // AKL - Aukland
+        destinationAirport.setLongitude(BigDecimal.valueOf(174.791700));
+        destinationAirport.setLatitude(BigDecimal.valueOf(-37.009700));
+
+        CoordinatePair coordinatePairIAHtoAKL = MathUtil.calculateDrawableCoordinates(originAirport, destinationAirport);
+        CoordinatePair coordinatePairAKLtoIAH = MathUtil.calculateDrawableCoordinates(destinationAirport, originAirport);
+
+        assertEquals(BigDecimal.valueOf(264.658600), coordinatePairIAHtoAKL.getOriginLongitude());
+        assertEquals(BigDecimal.valueOf(174.791700), coordinatePairIAHtoAKL.getDestinationLongitude());
+
+        assertEquals(BigDecimal.valueOf(174.791700), coordinatePairAKLtoIAH.getOriginLongitude());
+        assertEquals(BigDecimal.valueOf(264.658600), coordinatePairAKLtoIAH.getDestinationLongitude());
+    }
 }

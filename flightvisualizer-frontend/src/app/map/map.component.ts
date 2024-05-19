@@ -35,7 +35,7 @@ export class MapComponent implements OnInit, OnDestroy {
   detailSelectionTypeSubscription!: Subscription;
 
   // UI data
-  generalFilter: GeneralFilter = DefaultGeneralFilter;
+  generalFilter: GeneralFilter = GeneralFilter.create(DefaultGeneralFilter);
 
   // UI state
   selectedAirportFilter: SelectedAirportFilter = SelectedAirportFilter.create();
@@ -124,7 +124,7 @@ export class MapComponent implements OnInit, OnDestroy {
     const clickedAirport = e.features[0];
     const selectedAirport = this.dataStoreService.getAllAirports().find(airport => airport.iataCode === clickedAirport.properties.iataAirportCode);
     if (selectedAirport && selectedAirport.iataCode != '' && selectedAirport.iataCode != this.selectedAirportFilter.iataCode) {
-      this.selectedAirportFilter = DefaultSelectedAirportFilter;
+      this.selectedAirportFilter = SelectedAirportFilter.create(DefaultSelectedAirportFilter);
       this.selectedAirportFilter.iataCode = selectedAirport.iataCode;
 
       this.dataStoreService.setSelectedAirportFilter(this.selectedAirportFilter);

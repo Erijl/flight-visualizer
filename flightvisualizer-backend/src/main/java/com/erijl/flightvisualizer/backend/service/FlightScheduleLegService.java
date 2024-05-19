@@ -83,20 +83,17 @@ public class FlightScheduleLegService {
 
         SandboxModeResponseObject.Builder responseBuilder = SandboxModeResponseObject.newBuilder();
 
+        LegRenderDataProjection furthestLeg = legs.stream().max(Comparator.comparing(LegRenderDataProjection::getDistanceKilometers)).orElse(null);
+        LegRenderDataProjection longestLeg = legs.stream().max(Comparator.comparing(LegRenderDataProjection::getDurationMinutes)).orElse(null);
+
         Stream<LegRenderDataProjection> legStream = legs.stream();
 
         legStream = FilterUtil.applyGeneralFilter(combinedFilterRequest.getGeneralFilter(), combinedFilterRequest.getSelectedAirportFilter(), legStream);
         legStream = FilterUtil.applyTimeFilter(combinedFilterRequest.getTimeFilter(), legStream);
+        legStream = FilterUtil.applyRouteFilter(combinedFilterRequest.getRouteFilter(), legStream);
+        legs = legStream.collect(Collectors.toCollection(ArrayList::new));
 
-        List<LegRenderDataProjection> preMatureFilterLegs = legStream.collect(Collectors.toCollection(ArrayList::new));
-        // Get the furthest and longest leg before applying route filter!
-        LegRenderDataProjection furthestLeg = preMatureFilterLegs.stream().max(Comparator.comparing(LegRenderDataProjection::getDistanceKilometers)).orElse(null);
-        LegRenderDataProjection longestLeg = preMatureFilterLegs.stream().max(Comparator.comparing(LegRenderDataProjection::getDurationMinutes)).orElse(null);
-
-        //legStream = FilterUtil.applyRouteFilter(combinedFilterRequest.getRouteFilter(), preMatureFilterLegs.stream());
-        //legs = legStream.collect(Collectors.toCollection(ArrayList::new));
-
-        List<LegRender> legRenders = LegRenderBuilder.buildLegRenderList(preMatureFilterLegs);
+        List<LegRender> legRenders = LegRenderBuilder.buildLegRenderList(legs);
         List<AirportRender> airportRenders = this.airportService.getAllAirportsWithFilter(combinedFilterRequest.getGeneralFilter(), legRenders);
 
         responseBuilder.addAllLegRenders(legRenders);

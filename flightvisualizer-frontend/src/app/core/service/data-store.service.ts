@@ -37,16 +37,16 @@ export class DataStoreService {
 
 
   // filter
-  private _timeFilter: BehaviorSubject<TimeFilter> = new BehaviorSubject<TimeFilter>(DefaultTimeFilter);
+  private _timeFilter: BehaviorSubject<TimeFilter> = new BehaviorSubject<TimeFilter>(TimeFilter.create(DefaultTimeFilter));
   timeFilter = this._timeFilter.asObservable();
 
-  private _generalFilter: BehaviorSubject<GeneralFilter> = new BehaviorSubject<GeneralFilter>(DefaultGeneralFilter);
+  private _generalFilter: BehaviorSubject<GeneralFilter> = new BehaviorSubject<GeneralFilter>(GeneralFilter.create(DefaultGeneralFilter));
   generalFilter = this._generalFilter.asObservable();
 
-  private _routeFilter: BehaviorSubject<RouteFilter> = new BehaviorSubject<RouteFilter>(DefaultRouteFilter);
+  private _routeFilter: BehaviorSubject<RouteFilter> = new BehaviorSubject<RouteFilter>(RouteFilter.create(DefaultRouteFilter));
   routeFilter = this._routeFilter.asObservable();
 
-  private _selectedAirportFilter: BehaviorSubject<SelectedAirportFilter> = new BehaviorSubject<SelectedAirportFilter>(DefaultSelectedAirportFilter);
+  private _selectedAirportFilter: BehaviorSubject<SelectedAirportFilter> = new BehaviorSubject<SelectedAirportFilter>(SelectedAirportFilter.create(DefaultSelectedAirportFilter));
   selectedAirportFilter = this._selectedAirportFilter.asObservable();
 
   private _detailSelectionType: BehaviorSubject<DetailSelectionType> = new BehaviorSubject<DetailSelectionType>(DetailSelectionType.AIRPORT);
@@ -110,7 +110,7 @@ export class DataStoreService {
   }
 
   getFurthestFlightLeg(): LegRender {
-    return this.longestFlightLeg
+    return this.furthestFLightLeg;
   }
 
   getLongestFlightLeg(): LegRender {
@@ -224,7 +224,7 @@ export class DataStoreService {
 
   initTimeFilter() {
     const flightDateFrequencies = this._allFlightDateFrequencies.getValue();
-    let timeFilter = DefaultTimeFilter;
+    let timeFilter = TimeFilter.create(DefaultTimeFilter);
 
     if(!timeFilter || !timeFilter.dateRange) return;
 

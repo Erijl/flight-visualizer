@@ -92,11 +92,15 @@ public class FilterUtil {
      * @return filtered {@link Stream} of {@link LegRenderDataProjection}
      */
     public static Stream<LegRenderDataProjection> applyRouteFilter(RouteFilter routeFilter, Stream<LegRenderDataProjection> legStream) {
-        switch (routeFilter.getRouteFilterType()) { //TODO absolutly broken smh
+        switch (routeFilter.getRouteFilterType()) {
             case RouteFilterType.DISTANCE:
                 legStream = legStream.filter(leg -> isLegIntRouteFilterRange(leg, routeFilter, LegRenderDataProjection::getDistanceKilometers));
+                break;
             case RouteFilterType.DURATION:
                 legStream = legStream.filter(leg -> isLegIntRouteFilterRange(leg, routeFilter, LegRenderDataProjection::getDurationMinutes));
+                break;
+            default:
+                break;
         }
 
         return legStream;
@@ -120,7 +124,7 @@ public class FilterUtil {
 
     private static boolean isInTimeRange(LegRenderDataProjection leg, TimeRange timeRange, Function<LegRenderDataProjection, Integer> timeExtractor) {
         if(timeRange.getInverted()) {
-            return MIN_MINUTES_IN_DAY <= timeExtractor.apply(leg) && timeExtractor.apply(leg) <= timeRange.getStart() &&
+            return MIN_MINUTES_IN_DAY <= timeExtractor.apply(leg) && timeExtractor.apply(leg) <= timeRange.getStart() ||
                     timeRange.getEnd() <= timeExtractor.apply(leg) && timeExtractor.apply(leg) <= MAX_MINUTES_IN_DAY;
         } else {
             return timeRange.getStart() <= timeExtractor.apply(leg) && timeExtractor.apply(leg) <= timeRange.getEnd();

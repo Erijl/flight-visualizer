@@ -41,8 +41,8 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   ];
 
   //Filter
-  generalFilter: GeneralFilter = DefaultGeneralFilter;
-  routeFilter: RouteFilter = DefaultRouteFilter;
+  generalFilter: GeneralFilter = GeneralFilter.create(DefaultGeneralFilter);
+  routeFilter: RouteFilter = RouteFilter.create(DefaultRouteFilter);
 
   //UI state
   minSliderValue = 0;
@@ -111,7 +111,7 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   }
 
   resetFilters(): void {
-    this.generalFilter = DefaultGeneralFilter;
+    this.generalFilter = GeneralFilter.create(DefaultGeneralFilter);
     const furthestFlightLeg = this.dataStoreService.getFurthestFlightLeg();
     if (furthestFlightLeg.distanceKilometers != 0) {
       this.routeFilter = RouteFilter.create({
@@ -120,7 +120,7 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
         end: furthestFlightLeg.distanceKilometers
       });
     } else {
-      this.routeFilter = DefaultRouteFilter;
+      this.routeFilter = RouteFilter.create(DefaultRouteFilter);
     }
 
     this.dataStoreService.setGeneralFilter(this.generalFilter);

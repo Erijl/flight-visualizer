@@ -7,6 +7,7 @@ import com.erijl.flightvisualizer.protos.dtos.SandboxModeResponseObject;
 import com.erijl.flightvisualizer.protos.filter.CombinedFilterRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +36,11 @@ public class FlightScheduleLegController {
     @PostMapping(value = "/flightScheduleLeg/distinct", produces = "application/x-protobuf", consumes = "application/x-protobuf")
     public ResponseEntity<SandboxModeResponseObject> getDistinctFlightScheduleLegsForRendering(@RequestBody CombinedFilterRequest combinedFilterRequest) {
         try {
+            StopWatch stopWatch = new StopWatch();
+            stopWatch.start();
             SandboxModeResponseObject response = flightScheduleLegService.getDistinctFlightScheduleLegsForRendering(combinedFilterRequest);
+            stopWatch.stop();
+            log.info("Time taken to process request: " + stopWatch.getTotalTimeMillis() + "ms");
             return ResponseEntity.ok().body(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(SandboxModeResponseObject.getDefaultInstance());
