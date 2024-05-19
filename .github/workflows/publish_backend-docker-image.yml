@@ -24,7 +24,7 @@ jobs:
 
       - name: Generate Java from Protobuf
         run: |
-          mvn -B dependency:get -Dartifact=com.google.protobuf:protobuf-java:3.23.0
+          mvn -B dependency:get -Dartifact=com.google.protobuf:protobuf-java:4.26.1
           protoc -I=./api-models --java_out=./flightvisualizer-backend/src/main/java ./api-models/*.proto
 
       - name: Docker Login
