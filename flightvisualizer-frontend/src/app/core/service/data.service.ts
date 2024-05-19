@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {catchError, filter, map, Observable, of, tap} from "rxjs";
-import {FlightSchedule} from "../dto/airport";
 import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {AirportDetails, AirportRender, AirportRenders, FlightDateFrequencies} from "../../protos/objects";
@@ -45,14 +44,6 @@ export class DataService {
         return flightDateFrequencies.frequencies;
       })
     );
-  }
-
-  getFlightScheduleById(id: number) {
-    return this.http.get<FlightSchedule>(this.apiEndpoint + 'flightschedule?id=' + id)
-      .pipe(
-        tap(_ => this.log('fetched getFlightScheduleById')),
-        catchError(this.handleError<FlightSchedule>('getFlightScheduleById', new FlightSchedule()))
-      );
   }
 
   getDistinctFlightScheduleLegsForRendering(timeFilter: TimeFilter, generalFilter: GeneralFilter, routeFilter: RouteFilter, selectedAirportFilter: SelectedAirportFilter): Observable<SandboxModeResponseObject> {

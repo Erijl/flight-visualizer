@@ -1,8 +1,6 @@
 import {Injectable} from '@angular/core';
 import {
-  DefaultGeneralFilter, DefaultRouteFilter, DefaultSelectedAirportFilter, DefaultTimeFilter,
-  FlightSchedule,
-  FlightScheduleRouteDto
+  DefaultGeneralFilter, DefaultRouteFilter, DefaultSelectedAirportFilter, DefaultTimeFilter
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
@@ -19,7 +17,6 @@ export class DataStoreService {
   // 'raw' data
   allLegRenders: LegRender[] = [];
   allAirports: AirportRender[] = [];
-  fetchedFlightSchedule: FlightSchedule = new FlightSchedule();
 
   furthestFLightLeg: LegRender = LegRender.create();
   longestFlightLeg: LegRender = LegRender.create();
@@ -54,7 +51,7 @@ export class DataStoreService {
 
 
   // selected data
-  private _selectedRoute: BehaviorSubject<FlightScheduleRouteDto> = new BehaviorSubject<FlightScheduleRouteDto>(new FlightScheduleRouteDto());
+  private _selectedRoute: BehaviorSubject<LegRender> = new BehaviorSubject<LegRender>(LegRender.create());
   selectedRoute = this._selectedRoute.asObservable();
 
   // details
@@ -75,18 +72,12 @@ export class DataStoreService {
     return this._selectedAirportFilter.getValue();
   }
 
-  getSelectedRoute(): FlightScheduleRouteDto {
+  getSelectedRoute(): LegRender {
     return this._selectedRoute.getValue();
   }
 
   getAllLegRenders() {
     return this.allLegRenders;
-  }
-
-  getSpecificFlightSchedule(id: number): FlightSchedule {
-    if (this.fetchedFlightSchedule?.flightScheduleId == id) return this.fetchedFlightSchedule;
-    this.getFlightScheduleById(id);
-    return this.fetchedFlightSchedule;
   }
 
   getAllLegsForSpecificRoute(id: number): LegRender[] {
@@ -146,7 +137,7 @@ export class DataStoreService {
     }
   }
 
-  setSelectedRoute(route: FlightScheduleRouteDto): void {
+  setSelectedRoute(route: LegRender): void {
     this._selectedRoute.next(route);
   }
 
@@ -202,12 +193,6 @@ export class DataStoreService {
     });
   }
 
-  private getFlightScheduleById(id: number): void {
-    this.dataService.getFlightScheduleById(id).subscribe(flightSchedule => {
-      this.fetchedFlightSchedule = flightSchedule;
-    });
-  }
-
   // RENDERING
 
   reRenderRoutes() {
@@ -218,7 +203,7 @@ export class DataStoreService {
     this.getDistinctFlightScheduleLegsForRendering();
 
     if (this.getDetailSelectionType() == DetailSelectionType.ROUTE) { //TODO overhaul && !routesToBeDisplayed.includes(this.getSelectedRoute())
-      this.setSelectedRoute(new FlightScheduleRouteDto());
+      this.setSelectedRoute(LegRender.create());
     }
   }
 

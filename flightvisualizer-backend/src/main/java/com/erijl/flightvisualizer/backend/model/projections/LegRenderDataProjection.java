@@ -19,4 +19,6 @@ public interface LegRenderDataProjection {
     Integer getAircraftDepartureTimeUtc();
     Integer getDurationMinutes();
     Integer getDistanceKilometers();
+    String getOriginAirportName();
+    String getDestinationAirportName();
 }

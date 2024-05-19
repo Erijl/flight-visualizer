@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import mapboxgl from 'mapbox-gl';
-import {DefaultGeneralFilter, DefaultSelectedAirportFilter, FlightScheduleRouteDto} from "../core/dto/airport";
+import {DefaultGeneralFilter, DefaultSelectedAirportFilter} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
 import {
@@ -39,7 +39,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   // UI state
   selectedAirportFilter: SelectedAirportFilter = SelectedAirportFilter.create();
-  selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
+  selectedRoute: LegRender = LegRender.create();
   selectionType: DetailSelectionType = DetailSelectionType.AIRPORT;
 
   constructor(private geoService: GeoService, private dataStoreService: DataStoreService) {
@@ -99,7 +99,7 @@ export class MapComponent implements OnInit, OnDestroy {
           this.selectedAirportFilter = SelectedAirportFilter.create();
           this.dataStoreService.setSelectedAirportFilter(this.selectedAirportFilter);
         } else if (this.selectionType === DetailSelectionType.ROUTE) {
-          this.selectedRoute = new FlightScheduleRouteDto();
+          this.selectedRoute = LegRender.create();
           this.dataStoreService.setSelectedRoute(this.selectedRoute);
         }
       }
@@ -108,7 +108,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   onSelectionTypeChange(): void {
     if (this.selectionType === DetailSelectionType.AIRPORT) {
-      this.dataStoreService.setSelectedRoute(new FlightScheduleRouteDto());
+      this.dataStoreService.setSelectedRoute(LegRender.create());
 
       this.enableAirportLayerSelection();
     } else if (this.selectionType === DetailSelectionType.ROUTE) {
@@ -133,14 +133,16 @@ export class MapComponent implements OnInit, OnDestroy {
 
   // @ts-ignore
   routeLayerClickHandler = (e) => {
-    // @ts-ignore
     const clickedRoute = e.features[0];
-    // @ts-ignore
-    this.selectedRoute = this.dataStoreService.getAllLegRenders().find(leg =>
+    const clickedLeg = this.dataStoreService.getAllLegRenders().find(leg =>
       leg.originAirportIataCode === clickedRoute.properties.originAirport &&
       leg.destinationAirportIataCode === clickedRoute.properties.destinationAirport
     );
-    this.dataStoreService.setSelectedRoute(this.selectedRoute);
+
+    if(clickedLeg) {
+      this.selectedRoute = clickedLeg;
+      this.dataStoreService.setSelectedRoute(this.selectedRoute);
+    }
   }
 
   layerMouseEnterHandler = () => {
@@ -155,8 +157,8 @@ export class MapComponent implements OnInit, OnDestroy {
     this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
     this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
 
-    if (this.selectedRoute.originAirport.iataAirportCode != '' && this.selectedRoute.destinationAirport.iataAirportCode != '') {
-      this.geoService.highlightRouteOnMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE, LayerType.ROUTEHIGHLIGHTLAYER, LegRender.create()); //TODO overhaul
+    if (this.selectedRoute.originAirportIataCode != '' && this.selectedRoute.destinationAirportIataCode != '') {
+      this.geoService.highlightRouteOnMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE, LayerType.ROUTEHIGHLIGHTLAYER, this.selectedRoute); //TODO overhaul
     }
   }
 

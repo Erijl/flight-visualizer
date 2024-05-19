@@ -28,6 +28,13 @@ public class LegRenderBuilder {
                         Coordinate.newBuilder()
                                 .setLatitude(legRenderDataProjection.getDestinationLatitude())
                                 .setLongitude(legRenderDataProjection.getDestinationLongitude())
+                )
+                .setDetails(LegRender.Details.newBuilder()
+                        .setOriginAirportName(legRenderDataProjection.getOriginAirportName())
+                        .setDestinationAirportName(legRenderDataProjection.getDestinationAirportName())
+                        .setDepartureTimeUtc(legRenderDataProjection.getAircraftDepartureTimeUtc())
+                        .setArrivalTimeUtc(legRenderDataProjection.getAircraftArrivalTimeUtc())
+                        .build()
                 ).build();
 
     }

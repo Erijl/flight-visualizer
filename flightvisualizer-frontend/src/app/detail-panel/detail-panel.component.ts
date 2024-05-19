@@ -34,7 +34,7 @@ export class DetailPanelComponent implements OnInit, OnDestroy{
     });
 
     this.selectedRouteSubscription =  this.dataStoreService.selectedRoute.subscribe(route => {
-      if (route.legId != -1) {
+      if (route.originAirportIataCode != '') {
         this.expanded = true;
       }
     });

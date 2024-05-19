@@ -19,6 +19,14 @@ message LegRender {
   int32 durationMinutes = 3;
   int32 distanceKilometers = 4;
   repeated Coordinate coordinates = 5;
+  Details details = 6;
+
+  message Details {
+    string originAirportName = 1;
+    string destinationAirportName = 2;
+    int32 departureTimeUtc = 3;
+    int32 arrivalTimeUtc = 4;
+  }
 }
 
 message Coordinate {

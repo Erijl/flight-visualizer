@@ -46,7 +46,9 @@ public interface FlightScheduleLegRepository extends JpaRepository<FlightSchedul
                        fsl.aircraft_arrival_time_utc                    AS 'aircraftArrivalTimeUtc',
                        fsl.aircraft_departure_time_utc                  AS 'aircraftDepartureTimeUtc',
                        fsl.duration_minutes                             AS 'durationMinutes',
-                       fsl.distance_kilometers                          AS 'distanceKilometers'
+                       fsl.distance_kilometers                          AS 'distanceKilometers',
+                       a_origin.airport_name                            AS 'originAirportName',
+                       a_destination.airport_name                       AS 'destinationAirportName'
                 FROM flight_schedule_leg fsl
                          JOIN flight_schedule fs ON fs.id = fsl.flight_schedule_id
                          JOIN flight_schedule_operation_period flop ON flop.id = fs.operation_period_id

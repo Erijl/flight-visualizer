@@ -1,57 +1,46 @@
-<mat-card *ngIf="selectedRoute.legId != -1" class="route-card">
+<mat-card *ngIf="selectedRoute.originAirportIataCode != ''" class="route-card">
 
   <mat-card-header>
-    <mat-card-title>{{ selectedRoute.originAirport.iataAirportCode }} to {{ selectedRoute.destinationAirport.iataAirportCode }}</mat-card-title>
+    <mat-card-title>{{ selectedRoute.originAirportIataCode }} to {{ selectedRoute.destinationAirportIataCode }}</mat-card-title>
   </mat-card-header>
 
   <mat-card-content class="route-card-content">
     <div class="route-subtitle flex-container">
-      <span class="route-origin">{{ selectedRoute.originAirport.airportName }}</span>
+      <span class="route-origin">{{ selectedRoute.details?.originAirportName }}</span>
       <mat-icon class="route-icon">airplanemode_on</mat-icon>
-      <span class="route-destination">{{ selectedRoute.destinationAirport.airportName }}</span>
+      <span class="route-destination">{{ selectedRoute.details?.destinationAirportName }}</span>
     </div>
 
     <div class="info-row">
       <div class="info-pair">
         <span class="info-title">Departure:</span>
-        <span class="info-value">{{selectedRoute.originAirport.iataAirportCode}}</span>
+        <span class="info-value">{{ selectedRoute.originAirportIataCode }}</span>
       </div>
       <div class="info-pair">
         <span class="info-title">Arrival:</span>
-        <span class="info-value">{{selectedRoute.destinationAirport.iataAirportCode}}</span>
+        <span class="info-value">{{ selectedRoute.destinationAirportIataCode }}</span>
       </div>
     </div>
 
     <div class="info-row">
       <div class="info-pair">
         <span class="info-title">Departure Time:</span>
-        <span class="info-value">{{ selectedRoute.aircraftDepartureTimeUtc | intToTimeofday }}</span>
+        <span class="info-value">{{ selectedRoute.details?.departureTimeUtc | intToTimeofday }}</span>
       </div>
       <div class="info-pair">
         <span class="info-title">Arrival Time:</span>
-        <span class="info-value">{{ selectedRoute.aircraftArrivalTimeUtc | intToTimeofday }}</span>
-      </div>
-    </div>
-
-    <div class="info-row">
-      <div class="info-pair">
-        <span class="info-title">Departure Date:</span>
-        <span class="info-value">+{{selectedRoute.aircraftDepartureTimeDateDiffUtc}}</span>
-      </div>
-      <div class="info-pair">
-        <span class="info-title">Arrival Date:</span>
-        <span class="info-value">+{{selectedRoute.aircraftArrivalTimeDateDiffUtc}}</span>
+        <span class="info-value">{{ selectedRoute.details?.arrivalTimeUtc | intToTimeofday }}</span>
       </div>
     </div>
 
     <div class="info-row">
       <div class="info-pair">
         <span class="info-title">Est. Distance:</span>
-        <span class="info-value">{{selectedRoute.kilometerDistance}}Km</span>
+        <span class="info-value">{{selectedRoute.distanceKilometers}}Km</span>
       </div>
       <div class="info-pair">
         <span class="info-title">Duration:</span>
-        <!--<span class="info-value">{{ selectedRoute | intToTimeofday }}h</span> //TODO overhaul-->
+        <span class="info-value">{{ selectedRoute.durationMinutes | intToTimeofday }}h</span>
       </div>
     </div>
   </mat-card-content>
@@ -59,7 +48,7 @@
 </mat-card>
 
 
-<div *ngIf="selectedRoute.legId == -1" class="error-message">
+<div *ngIf="selectedRoute.originAirportIataCode == ''" class="error-message">
   <p>No Route Selected</p>
   <p>Please select an airport from the map</p>
 </div>

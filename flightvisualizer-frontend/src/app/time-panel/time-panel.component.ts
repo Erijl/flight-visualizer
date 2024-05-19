@@ -61,7 +61,6 @@ export class TimePanelComponent implements OnInit, OnDestroy {
     this.flightDateFrequenciesSubscription = this.dataStoreService.allFlightDateFrequencies.subscribe(frequencies => {
       const offset = new Date().getTimezoneOffset();
       this.allowedDates = frequencies.map(frequency => frequency!.date!);
-      console.log(this.allowedDates)
     });
 
     this.timeFilterSubscription = this.dataStoreService.timeFilter.subscribe(timeFilter => {
