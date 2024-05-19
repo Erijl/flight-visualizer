@@ -48,8 +48,6 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
     });
 
     this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
-      console.log('filterpanel rendered Routes');
-      console.log(this.dataStoreService.getFurthestFlightLeg());
       this.updateSlider();
     });
 
@@ -95,7 +93,6 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   }
 
   onSliderRangeChange(): void {
-    console.log(this.routeFilter);
     this.dataStoreService.setRouteFilter(this.routeFilter);
   }
 

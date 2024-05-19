@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -21,10 +22,10 @@ public class AirportController {
     }
 
     @GetMapping("/airports")
-    public ResponseEntity<AirportRenders> airports() {
+    public ResponseEntity<AirportRenders> airports() { //TODO remove if not needed in other modes
         try {
-            List<AirportRender> airportRenders = this.airportService.getAllAirports();
-            AirportRenders response = AirportRenders.newBuilder().addAllAirports(airportRenders).build();
+            //List<AirportRender> airportRenders = this.airportService.getAllAirports();
+            AirportRenders response = AirportRenders.newBuilder().addAllAirports(new ArrayList<>()).build();
             return ResponseEntity.ok().body(response);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(AirportRenders.getDefaultInstance());

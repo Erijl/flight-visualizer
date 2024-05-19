@@ -62,7 +62,6 @@ export class DataStoreService {
 
 
   constructor(private dataService: DataService, private filterService: FilterService) {
-    this.getAirports();
     this.getFlightDateFrequencies();
   }
 
@@ -140,9 +139,6 @@ export class DataStoreService {
     this._selectedRoute.next(route);
   }
 
-  private setCurrentlyDisplayedAirports(airports: AirportRender[]): void {
-    this._currentlyDisplayedAirports.next(airports);
-  }
   setTimeFilter(timeFilter: TimeFilter): void {
     this._timeFilter.next(timeFilter);
 
@@ -152,7 +148,6 @@ export class DataStoreService {
   setGeneralFilter(generalFilter: GeneralFilter): void {
     this._generalFilter.next(generalFilter);
 
-    this.updateRenderedAirports();
     this.updateRenderedRoutes();
   }
 
@@ -167,18 +162,22 @@ export class DataStoreService {
 
   // FETCHING DATA
   private getAirports(): void {
-    this.dataService.getAirports().subscribe(airports => {
-      this.allAirports = airports;
-      this.reRenderAirports();
-    });
+    //this.dataService.getAirports().subscribe(airports => {
+    //  this.allAirports = airports;
+    //  this.reRenderAirports();
+    //});
   }
 
   private getDistinctFlightScheduleLegsForRendering(): void {
     this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter(), this.getGeneralFilter(), this.getRouteFilter(), this.getSelectedAirportFilter()).subscribe(sandboxModeResponseObject => {
       this.furthestFLightLeg = sandboxModeResponseObject.furthestFlightLeg ?? LegRender.create()
       this.longestFlightLeg = sandboxModeResponseObject.longestFlightLeg ?? LegRender.create();
+
+      this.allAirports = sandboxModeResponseObject.airportRenders;
       this.allLegRenders = sandboxModeResponseObject.legRenders;
+
       this._renderedRoutes.next(sandboxModeResponseObject.legRenders);
+      this._currentlyDisplayedAirports.next(sandboxModeResponseObject.airportRenders);
     });
   }
 
@@ -197,27 +196,8 @@ export class DataStoreService {
 
   // RENDERING
 
-  reRenderAirports() {
-    this.updateRenderedAirports();
-  }
-
   reRenderRoutes() {
     this.updateRenderedRoutes();
-  }
-
-  private updateRenderedAirports() {
-    switch (this.getGeneralFilter().airportDisplayType) {
-      default:
-      case AirportDisplayType.AIRPORTDISPLAYTYPE_ALL:
-        this.setCurrentlyDisplayedAirports(this.getAllAirports());
-        break;
-      case AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES:
-        this.setCurrentlyDisplayedAirports(this.filterService.getAllAirportsPresentInLegRenders(this.getAllLegRenders(), this.getAllAirports()));
-        break;
-      case AirportDisplayType.AIRPORTDISPLAYTYPE_NONE:
-        this.setCurrentlyDisplayedAirports([]);
-        break;
-    }
   }
 
   private updateRenderedRoutes() {
@@ -225,10 +205,6 @@ export class DataStoreService {
 
     if (this.getDetailSelectionType() == DetailSelectionType.ROUTE) { //TODO overhaul && !routesToBeDisplayed.includes(this.getSelectedRoute())
       this.setSelectedRoute(new FlightScheduleRouteDto());
-    }
-
-    if (this.getGeneralFilter().airportDisplayType == AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES) {
-      this.reRenderAirports();
     }
   }
 

@@ -12,6 +12,8 @@ import com.erijl.flightvisualizer.backend.util.MathUtil;
 import com.erijl.flightvisualizer.backend.validators.*;
 import com.erijl.flightvisualizer.protos.dtos.SandboxModeResponseObject;
 import com.erijl.flightvisualizer.protos.filter.CombinedFilterRequest;
+import com.erijl.flightvisualizer.protos.objects.AirportRender;
+import com.erijl.flightvisualizer.protos.objects.LegRender;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -27,9 +29,11 @@ import java.util.stream.Stream;
 public class FlightScheduleLegService {
 
     private final FlightScheduleLegRepository flightScheduleLegRepository;
+    private final AirportService airportService;
 
-    public FlightScheduleLegService(FlightScheduleLegRepository flightScheduleLegRepository) {
+    public FlightScheduleLegService(FlightScheduleLegRepository flightScheduleLegRepository, AirportService airportService) {
         this.flightScheduleLegRepository = flightScheduleLegRepository;
+        this.airportService = airportService;
     }
 
     public Iterable<FlightScheduleLegDto> getFlightScheduleLegs(String startDate, String endDate) {
@@ -92,8 +96,11 @@ public class FlightScheduleLegService {
         legStream = FilterUtil.applyRouteFilter(combinedFilterRequest.getRouteFilter(), preMatureFilterLegs.stream());
         legs = legStream.collect(Collectors.toCollection(ArrayList::new));
 
+        List<LegRender> legRenders = LegRenderBuilder.buildLegRenders(legs);
+        List<AirportRender> airportRenders = this.airportService.getAllAirportsWithFilter(combinedFilterRequest.getGeneralFilter(), legRenders);
 
-        responseBuilder.addAllLegRenders(LegRenderBuilder.buildLegRenders(legs));
+        responseBuilder.addAllLegRenders(legRenders);
+        responseBuilder.addAllAirportRenders(airportRenders);
 
         if(furthestLeg != null) {
             responseBuilder.setFurthestFlightLeg(LegRenderBuilder.buildLegRender(furthestLeg));

@@ -87,7 +87,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.map.on('load', () => {
       this.dataStoreService.reRenderRoutes();
-      this.dataStoreService.reRenderAirports();
 
       this.map.resize();
     });

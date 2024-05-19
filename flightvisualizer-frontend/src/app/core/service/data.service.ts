@@ -73,9 +73,8 @@ export class DataService {
     });
 
     return this.http.request(req).pipe(
-      filter(event => event.type === HttpEventType.Response), // Filter for the response event
+      filter(event => event.type === HttpEventType.Response),
       map((event) => {
-        console.log('event', event);
         // @ts-ignore
         return SandboxModeResponseObject.decode(new Uint8Array(event.body));
       })

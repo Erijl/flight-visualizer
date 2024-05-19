@@ -1,5 +1,6 @@
 package com.erijl.flightvisualizer.backend.service;
 
+import com.erijl.flightvisualizer.backend.builder.AirportRenderBuilder;
 import com.erijl.flightvisualizer.backend.model.api.AirportResponse;
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
 import com.erijl.flightvisualizer.backend.model.entities.Airport;
@@ -7,8 +8,11 @@ import com.erijl.flightvisualizer.backend.model.projections.AirportRenderDataPro
 import com.erijl.flightvisualizer.backend.model.repository.AirportRepository;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
+import com.erijl.flightvisualizer.protos.enums.AirportDisplayType;
+import com.erijl.flightvisualizer.protos.filter.GeneralFilter;
 import com.erijl.flightvisualizer.protos.objects.AirportRender;
 import com.erijl.flightvisualizer.protos.objects.Coordinate;
+import com.erijl.flightvisualizer.protos.objects.LegRender;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,8 +24,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AirportService {
@@ -43,24 +49,26 @@ public class AirportService {
         this.authManager = authManager;
     }
 
-    public List<AirportRender> getAllAirports() {
-        List<AirportRenderDataProjection> airportProjections = this.airportRepository.findAllAirportRenders();
-        List<AirportRender> airportRenders = new ArrayList<>();
+    public List<AirportRender> getAllAirportsWithFilter(GeneralFilter generalFilter, List<LegRender> legRenders) {
 
-        for (AirportRenderDataProjection airportProjection : airportProjections) {
-            airportRenders.add(
-                    AirportRender.newBuilder()
-                            .setIataCode(airportProjection.getIataCode())
-                            .setCoordinate(Coordinate.newBuilder()
-                                    .setLongitude(airportProjection.getLongitude())
-                                    .setLatitude(airportProjection.getLatitude())
-                                    .build()
-                            )
-                            .build()
-            );
+        if(generalFilter.getAirportDisplayType() == AirportDisplayType.AIRPORTDISPLAYTYPE_NONE) {
+            return new ArrayList<>();
         }
 
-        return airportRenders;
+        List<AirportRenderDataProjection> airportProjections = this.airportRepository.findAllAirportRenders();
+
+        if(generalFilter.getAirportDisplayType() == AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES) {
+            HashSet<String> airportCodes = new HashSet<>();
+            for (LegRender legRender : legRenders) {
+                airportCodes.add(legRender.getOriginAirportIataCode());
+                airportCodes.add(legRender.getDestinationAirportIataCode());
+            }
+            airportProjections = airportProjections.stream()
+                    .filter(airportProjection -> airportCodes.contains(airportProjection.getIataCode()))
+                    .collect(Collectors.toCollection(ArrayList::new));
+        }
+
+        return AirportRenderBuilder.buildAirportRenders(airportProjections);
     }
 
     @Cacheable(value = "airport", key = "#iataAirportCode", unless = "#result == null")
