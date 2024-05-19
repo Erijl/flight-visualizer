@@ -1,5 +1,6 @@
 package com.erijl.flightvisualizer.backend.service;
 
+import com.erijl.flightvisualizer.backend.builder.LegRenderBuilder;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistance;
 import com.erijl.flightvisualizer.backend.model.enums.LocationType;
@@ -8,25 +9,16 @@ import com.erijl.flightvisualizer.backend.model.repository.FlightScheduleLegRepo
 import com.erijl.flightvisualizer.backend.util.CustomTimeUtil;
 import com.erijl.flightvisualizer.backend.util.FilterUtil;
 import com.erijl.flightvisualizer.backend.util.MathUtil;
-import com.erijl.flightvisualizer.backend.validators.GeneralFilterValidator;
-import com.erijl.flightvisualizer.backend.validators.RouteFilterValidator;
-import com.erijl.flightvisualizer.backend.validators.SelectedAirportFilterValidator;
-import com.erijl.flightvisualizer.backend.validators.TimeFilterValidator;
-import com.erijl.flightvisualizer.protos.enums.AircraftTimeFilterType;
-import com.erijl.flightvisualizer.protos.enums.RouteDisplayType;
-import com.erijl.flightvisualizer.protos.enums.RouteFilterType;
+import com.erijl.flightvisualizer.backend.validators.*;
+import com.erijl.flightvisualizer.protos.dtos.SandboxModeResponseObject;
 import com.erijl.flightvisualizer.protos.filter.CombinedFilterRequest;
-import com.erijl.flightvisualizer.protos.filter.RouteFilter;
-import com.erijl.flightvisualizer.protos.filter.TimeFilter;
-import com.erijl.flightvisualizer.protos.objects.Coordinate;
-import com.erijl.flightvisualizer.protos.objects.LegRender;
-import com.erijl.flightvisualizer.protos.objects.TimeRange;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -71,11 +63,8 @@ public class FlightScheduleLegService {
         return flightScheduleLegWithDistances;
     }
 
-    public List<LegRender> getDistinctFlightScheduleLegsForRendering(CombinedFilterRequest combinedFilterRequest) {
-        TimeFilterValidator.validate(combinedFilterRequest.getTimeFilter());
-        RouteFilterValidator.validate(combinedFilterRequest.getRouteFilter());
-        GeneralFilterValidator.validate(combinedFilterRequest.getGeneralFilter());
-        SelectedAirportFilterValidator.validate(combinedFilterRequest.getSelectedAirportFilter());
+    public SandboxModeResponseObject getDistinctFlightScheduleLegsForRendering(CombinedFilterRequest combinedFilterRequest) {
+        CombinedFilterRequestValidator.validate(combinedFilterRequest);
 
         //TODO possible error when selecting too many days (check db performance)
         LocalDate startDate = CustomTimeUtil.convertProtoTimestampToLocalDate(combinedFilterRequest.getTimeFilter().getDateRange().getStart());
@@ -83,32 +72,32 @@ public class FlightScheduleLegService {
         List<LegRenderDataProjection> legs = flightScheduleLegRepository
                 .findDistinctFlightScheduleLegsByStartAndEndDate(startDate, endDate);
 
-        legs = applyFilter(legs, combinedFilterRequest);
-
-        List<LegRender> legRenders = new ArrayList<>();
-        for (LegRenderDataProjection legData : legs) {
-            var render = LegRender.newBuilder()
-                    .setOriginAirportIataCode(legData.getOriginAirportIataCode())
-                    .setDestinationAirportIataCode(legData.getDestinationAirportIataCode())
-                    .setDurationMinutes(legData.getDurationMinutes())
-                    .setDistanceKilometers(legData.getDistanceKilometers())
-                    .addCoordinates(0, Coordinate.newBuilder().setLatitude(legData.getOriginLatitude()).setLongitude(legData.getOriginLongitude()))
-                    .addCoordinates(1, Coordinate.newBuilder().setLatitude(legData.getDestinationLatitude()).setLongitude(legData.getDestinationLongitude())).build();
-            legRenders.add(render);
-        }
-        return legRenders;
+        return applyFilterAndBuild(legs, combinedFilterRequest);
     }
 
-    private List<LegRenderDataProjection> applyFilter(List<LegRenderDataProjection> legs, CombinedFilterRequest combinedFilterRequest) {
+    private SandboxModeResponseObject applyFilterAndBuild(List<LegRenderDataProjection> legs, CombinedFilterRequest combinedFilterRequest) {
+
+        SandboxModeResponseObject.Builder responseBuilder = SandboxModeResponseObject.newBuilder();
+
         Stream<LegRenderDataProjection> legStream = legs.stream();
 
         legStream = FilterUtil.applyGeneralFilter(combinedFilterRequest.getGeneralFilter(), combinedFilterRequest.getSelectedAirportFilter(), legStream);
-
         legStream = FilterUtil.applyTimeFilter(combinedFilterRequest.getTimeFilter(), legStream);
 
-        legStream = FilterUtil.applyRouteFilter(combinedFilterRequest.getRouteFilter(), legStream);
+        List<LegRenderDataProjection> preMatureFilterLegs = legStream.collect(Collectors.toCollection(ArrayList::new));
+        // Get the furthest and longest leg before applying route filter!
+        LegRenderDataProjection furthestLeg = preMatureFilterLegs.stream().max(Comparator.comparing(LegRenderDataProjection::getDistanceKilometers)).orElse(null);
+        LegRenderDataProjection longestLeg = preMatureFilterLegs.stream().max(Comparator.comparing(LegRenderDataProjection::getDurationMinutes)).orElse(null);
 
-        return legStream.collect(Collectors.toCollection(ArrayList::new));
+        legStream = FilterUtil.applyRouteFilter(combinedFilterRequest.getRouteFilter(), preMatureFilterLegs.stream());
+        legs = legStream.collect(Collectors.toCollection(ArrayList::new));
+
+
+        responseBuilder.addAllLegRenders(LegRenderBuilder.buildLegRenders(legs))
+                .setFurthestFlightLeg(furthestLeg == null ? null : LegRenderBuilder.buildLegRender(furthestLeg))
+                .setLongestFlightLeg(longestLeg == null ? null : LegRenderBuilder.buildLegRender(longestLeg));
+
+        return responseBuilder.build();
     }
 
 

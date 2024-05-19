@@ -12,9 +12,6 @@ import "google/protobuf/timestamp.proto";
 import "enums.proto";
 
 // Classes
-message LegRenders {
-  repeated LegRender legs = 1;
-}
 
 message LegRender {
   string originAirportIataCode = 1;

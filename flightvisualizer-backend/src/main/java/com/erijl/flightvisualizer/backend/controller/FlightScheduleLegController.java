@@ -3,9 +3,8 @@ package com.erijl.flightvisualizer.backend.controller;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistance;
 import com.erijl.flightvisualizer.backend.service.FlightScheduleLegService;
+import com.erijl.flightvisualizer.protos.dtos.SandboxModeResponseObject;
 import com.erijl.flightvisualizer.protos.filter.CombinedFilterRequest;
-import com.erijl.flightvisualizer.protos.objects.LegRender;
-import com.erijl.flightvisualizer.protos.objects.LegRenders;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,16 +33,15 @@ public class FlightScheduleLegController {
     }
 
     @PostMapping(value = "/flightScheduleLeg/distinct", produces = "application/x-protobuf", consumes = "application/x-protobuf")
-    public ResponseEntity<LegRenders> getDistinctFlightScheduleLegsForRendering(@RequestBody CombinedFilterRequest combinedFilterRequest) {
+    public ResponseEntity<SandboxModeResponseObject> getDistinctFlightScheduleLegsForRendering(@RequestBody CombinedFilterRequest combinedFilterRequest) {
         try {
-            List<LegRender> legRenders = flightScheduleLegService.getDistinctFlightScheduleLegsForRendering(combinedFilterRequest);
-            LegRenders response = LegRenders.newBuilder().addAllLegs(legRenders).build();
+            SandboxModeResponseObject response = flightScheduleLegService.getDistinctFlightScheduleLegsForRendering(combinedFilterRequest);
             return ResponseEntity.ok().body(response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(LegRenders.getDefaultInstance());
+            return ResponseEntity.badRequest().body(SandboxModeResponseObject.getDefaultInstance());
         } catch (Exception e) {
             log.error("Error processing request", e);
-            return ResponseEntity.internalServerError().body(LegRenders.getDefaultInstance());
+            return ResponseEntity.internalServerError().body(SandboxModeResponseObject.getDefaultInstance());
         }
     }
 }

@@ -92,14 +92,18 @@ public class FilterUtil {
      * @return filtered {@link Stream} of {@link LegRenderDataProjection}
      */
     public static Stream<LegRenderDataProjection> applyRouteFilter(RouteFilter routeFilter, Stream<LegRenderDataProjection> legStream) {
-        switch (routeFilter.getRouteFilterType()) {
+        switch (routeFilter.getRouteFilterType()) { //TODO absolutly broken smh
             case RouteFilterType.DISTANCE:
-                legStream = legStream.filter(leg -> leg.getDistanceKilometers() >= routeFilter.getStart() && leg.getDistanceKilometers() <= routeFilter.getEnd());
+                legStream = legStream.filter(leg -> isLegIntRouteFilterRange(leg, routeFilter, LegRenderDataProjection::getDistanceKilometers));
             case RouteFilterType.DURATION:
-                legStream = legStream.filter(leg -> leg.getDurationMinutes() >= routeFilter.getStart() && leg.getDurationMinutes() <= routeFilter.getEnd());
+                legStream = legStream.filter(leg -> isLegIntRouteFilterRange(leg, routeFilter, LegRenderDataProjection::getDurationMinutes));
         }
 
         return legStream;
+    }
+
+    private static boolean isLegIntRouteFilterRange(LegRenderDataProjection leg, RouteFilter routeFilter, Function<LegRenderDataProjection, Integer> filterValueExtractor) {
+        return routeFilter.getStart() <= filterValueExtractor.apply(leg) && filterValueExtractor.apply(leg) <= routeFilter.getEnd();
     }
 
     private static boolean isLegInTimeRange(LegRenderDataProjection leg, TimeFilter timeFilter) {

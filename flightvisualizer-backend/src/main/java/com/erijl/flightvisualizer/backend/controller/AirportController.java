@@ -1,15 +1,11 @@
 package com.erijl.flightvisualizer.backend.controller;
 
-import com.erijl.flightvisualizer.backend.model.entities.Airport;
 import com.erijl.flightvisualizer.backend.service.AirportService;
 import com.erijl.flightvisualizer.protos.objects.AirportRender;
 import com.erijl.flightvisualizer.protos.objects.AirportRenders;
-import com.erijl.flightvisualizer.protos.objects.LegRender;
-import com.erijl.flightvisualizer.protos.objects.LegRenders;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;

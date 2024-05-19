@@ -7,7 +7,7 @@ import {
 } from "../dto/airport";
 import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {AirportRenders, DateRange, LegRender, LegRenders} from "../../protos/objects";
+import {AirportRenders, DateRange} from "../../protos/objects";
 import {
   CombinedFilterRequest,
   GeneralFilter,
@@ -15,6 +15,7 @@ import {
   SelectedAirportFilter,
   TimeFilter
 } from "../../protos/filters";
+import {SandboxModeResponseObject} from "../../protos/dtos";
 
 @Injectable({
   providedIn: 'root'
@@ -61,7 +62,7 @@ export class DataService {
       );
   }
 
-  getDistinctFlightScheduleLegsForRendering(timeFilter: TimeFilter, generalFilter: GeneralFilter, routeFilter: RouteFilter, selectedAirportFilter: SelectedAirportFilter): Observable<LegRender[]> {
+  getDistinctFlightScheduleLegsForRendering(timeFilter: TimeFilter, generalFilter: GeneralFilter, routeFilter: RouteFilter, selectedAirportFilter: SelectedAirportFilter): Observable<SandboxModeResponseObject> {
     const combinedFilter = CombinedFilterRequest.create({timeFilter: timeFilter, generalFilter: generalFilter, routeFilter: routeFilter, selectedAirportFilter: selectedAirportFilter});
     const blob = new Blob([CombinedFilterRequest.encode(combinedFilter).finish()], { type: 'application/x-protobuf' });
 
@@ -76,8 +77,7 @@ export class DataService {
       map((event) => {
         console.log('event', event);
         // @ts-ignore
-        const legRendersMessage = LegRenders.decode(new Uint8Array(event.body));
-        return legRendersMessage.legs;
+        return SandboxModeResponseObject.decode(new Uint8Array(event.body));
       })
     );
   }

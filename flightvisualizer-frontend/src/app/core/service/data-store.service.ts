@@ -12,6 +12,7 @@ import {DetailSelectionType} from "../enum";
 import {GeneralFilter, RouteFilter, SelectedAirportFilter, TimeFilter} from "../../protos/filters";
 import {AirportRender, LegRender} from "../../protos/objects";
 import {AirportDisplayType, RouteDisplayType} from "../../protos/enums";
+import {SandboxModeResponseObject} from "../../protos/dtos";
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,9 @@ export class DataStoreService {
   allLegRenders: LegRender[] = [];
   allAirports: AirportRender[] = [];
   fetchedFlightSchedule: FlightSchedule = new FlightSchedule();
+
+  furthestFLightLeg: LegRender = LegRender.create();
+  longestFlightLeg: LegRender = LegRender.create();
 
   private _allFlightDateFrequencies: BehaviorSubject<FlightDateFrequencyDto[]> = new BehaviorSubject<FlightDateFrequencyDto[]>([]);
   allFlightDateFrequencies = this._allFlightDateFrequencies.asObservable();
@@ -53,7 +57,6 @@ export class DataStoreService {
 
 
   // selected data
-
   private _selectedRoute: BehaviorSubject<FlightScheduleRouteDto> = new BehaviorSubject<FlightScheduleRouteDto>(new FlightScheduleRouteDto());
   selectedRoute = this._selectedRoute.asObservable();
 
@@ -123,13 +126,11 @@ export class DataStoreService {
   }
 
   getFurthestFlightLeg(): LegRender {
-    if(this.allLegRenders.length == 0) return LegRender.create();
-    return this.allLegRenders.reduce((a, b) => a.distanceKilometers > b.distanceKilometers ? a : b);
+    return this.longestFlightLeg
   }
 
   getLongestFlightLeg(): LegRender {
-    if(this.allLegRenders.length == 0) return LegRender.create();
-    return this.allLegRenders.reduce((a, b) => a.durationMinutes > b.durationMinutes ? a : b);
+    return this.longestFlightLeg;
   }
 
   getCurrentlyDisplayedRoutesForSelectedAirport(): LegRender[] {
@@ -198,9 +199,11 @@ export class DataStoreService {
   }
 
   private getDistinctFlightScheduleLegsForRendering(): void {
-    this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter(), this.getGeneralFilter(), this.getRouteFilter(), this.getSelectedAirportFilter()).subscribe(legRenders => {
-      this.allLegRenders = legRenders;
-      this._renderedRoutes.next(legRenders);
+    this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter(), this.getGeneralFilter(), this.getRouteFilter(), this.getSelectedAirportFilter()).subscribe(sandboxModeResponseObject => {
+      this.furthestFLightLeg = sandboxModeResponseObject.furthestFlightLeg ?? LegRender.create()
+      this.longestFlightLeg = sandboxModeResponseObject.longestFlightLeg ?? LegRender.create();
+      this.allLegRenders = sandboxModeResponseObject.legRenders;
+      this._renderedRoutes.next(sandboxModeResponseObject.legRenders);
     });
   }
 
