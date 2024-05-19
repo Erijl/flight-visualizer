@@ -6,6 +6,7 @@ import {state, style, trigger} from "@angular/animations";
 import {Subscription} from "rxjs";
 import {AircraftTimeFilterType} from "../protos/enums";
 import {TimeFilter} from "../protos/filters";
+import {AircraftTimeFilterTypeLabels} from "../core/enum";
 
 @Component({
   selector: 'app-time-panel',
@@ -38,7 +39,11 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   //UI Data
   flightDateFrequencies: Set<string> = new Set();
   timeFilter: TimeFilter = DefaultTimeFilter;
-  aircraftTimeFilterTypes = Object.values(AircraftTimeFilterType);
+  aircraftTimeFilterTypes = [
+    AircraftTimeFilterType.ARRIVALANDDEPARTURE,
+    AircraftTimeFilterType.DEPARTURE,
+    AircraftTimeFilterType.ARRIVAL
+  ];
   aircraftTimeFilterType: AircraftTimeFilterType = AircraftTimeFilterType.ARRIVALANDDEPARTURE;
 
 
@@ -109,4 +114,6 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.flightDateFrequenciesSubscription.unsubscribe();
   }
+
+  protected readonly AircraftTimeFilterTypeLabels = AircraftTimeFilterTypeLabels;
 }

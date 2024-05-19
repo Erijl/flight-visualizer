@@ -81,7 +81,7 @@
     <br>
     <div class="sub-sub-header">Arrival / Departure Filter</div>
     <select [(ngModel)]="aircraftTimeFilterType" (change)="onAircraftTimeFilterTypeChange()" class="inverted-select">
-      <option *ngFor="let type of aircraftTimeFilterTypes" [value]="type">{{ type }}</option>
+      <option *ngFor="let type of aircraftTimeFilterTypes" [value]="type">{{ AircraftTimeFilterTypeLabels[type] }}</option>
     </select>
     <br>
 

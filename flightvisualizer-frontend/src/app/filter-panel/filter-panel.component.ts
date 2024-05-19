@@ -5,6 +5,7 @@ import {DefaultGeneralFilter, DefaultRouteFilter} from "../core/dto/airport";
 import {FilterService} from "../core/service/filter.service";
 import {GeneralFilter, RouteFilter} from "../protos/filters";
 import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../protos/enums";
+import {AirportDisplayTypeLabels, RouteDisplayTypeLabels, RouteFilterTypeLabels} from "../core/enum";
 
 @Component({
   selector: 'app-filter-panel',
@@ -22,9 +23,23 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   currentlyRenderedRoutesSubscription!: Subscription;
 
   // UI data
-  airportDisplayTypes = Object.values(AirportDisplayType);
-  routeDisplayTypes = Object.values(RouteDisplayType);
-  routeFilterTypes = Object.values(RouteFilterType);
+  airportDisplayTypes = [
+    AirportDisplayType.AIRPORTDISPLAYTYPE_ALL,
+    AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES,
+    AirportDisplayType.AIRPORTDISPLAYTYPE_NONE
+  ]
+  routeDisplayTypes = [
+    RouteDisplayType.ROUTEDISPLAYTYPE_ALL,
+    RouteDisplayType.ROUTEDISPLAYTYPE_SPECIFICAIRPORT,
+    RouteDisplayType.ROUTEDISPLAYTYPE_ONLYWITHINSAMECOUNTRY,
+    RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMEREGION,
+    RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMETIMEZONE
+  ];
+
+  routeFilterTypes = [
+    RouteFilterType.DURATION,
+    RouteFilterType.DISTANCE
+  ];
 
   //Filter
   generalFilter: GeneralFilter = DefaultGeneralFilter;
@@ -120,4 +135,7 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   }
 
   protected readonly RouteFilterType = RouteFilterType;
+  protected readonly RouteDisplayTypeLabels = RouteDisplayTypeLabels;
+  protected readonly RouteFilterTypeLabels = RouteFilterTypeLabels;
+  protected readonly AirportDisplayTypeLabels = AirportDisplayTypeLabels;
 }
