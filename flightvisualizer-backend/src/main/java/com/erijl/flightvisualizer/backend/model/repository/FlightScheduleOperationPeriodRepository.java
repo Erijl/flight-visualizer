@@ -1,12 +1,22 @@
 package com.erijl.flightvisualizer.backend.model.repository;
 
-import com.erijl.flightvisualizer.backend.model.dtos.FlightDateFrequencyDto;
 import com.erijl.flightvisualizer.backend.model.entities.FlightScheduleOperationPeriod;
+import com.erijl.flightvisualizer.backend.model.projections.FlightDateFrequencyProjection;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
+
 public interface FlightScheduleOperationPeriodRepository extends CrudRepository<FlightScheduleOperationPeriod, Integer> {
 
-    @Query("SELECT new com.erijl.flightvisualizer.backend.model.dtos.FlightDateFrequencyDto(f.startDateUtc, COUNT(f)) FROM FlightScheduleOperationPeriod f GROUP BY f.startDateUtc ORDER BY f.startDateUtc ASC")
-    Iterable<FlightDateFrequencyDto> getFlightDateFrequency();
+    @Query(value = """
+            select
+                fsop.start_date_utc as 'startDateUtc',
+                fsop.start_date_utc as 'tempDate',
+                count(fsop.start_date_utc) as 'flightCount'
+            from flight_schedule_operation_period fsop
+            group by fsop.start_date_utc
+            order by fsop.start_date_utc desc
+                """, nativeQuery = true)
+    List<FlightDateFrequencyProjection> getFlightDateFrequency();
 }

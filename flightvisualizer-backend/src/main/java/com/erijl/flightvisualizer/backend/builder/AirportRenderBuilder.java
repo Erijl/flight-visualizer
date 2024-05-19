@@ -23,7 +23,7 @@ public class AirportRenderBuilder {
                 ).build();
     }
 
-    public static List<AirportRender> buildAirportRenders(List<AirportRenderDataProjection> airportProjections) {
+    public static List<AirportRender> buildAirportRenderList(List<AirportRenderDataProjection> airportProjections) {
         return airportProjections.stream()
                 .map(AirportRenderBuilder::buildAirportRender)
                 .collect(Collectors.toCollection(ArrayList::new));

@@ -1,18 +1,15 @@
 import {Injectable} from '@angular/core';
 import {
   DefaultGeneralFilter, DefaultRouteFilter, DefaultSelectedAirportFilter, DefaultTimeFilter,
-  FlightDateFrequencyDto,
   FlightSchedule,
   FlightScheduleRouteDto
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
-import {FilterService} from "./filter.service";
 import {DetailSelectionType} from "../enum";
 import {GeneralFilter, RouteFilter, SelectedAirportFilter, TimeFilter} from "../../protos/filters";
-import {AirportRender, LegRender} from "../../protos/objects";
-import {AirportDisplayType, RouteDisplayType} from "../../protos/enums";
-import {SandboxModeResponseObject} from "../../protos/dtos";
+import {AirportRender, FlightDateFrequency, LegRender} from "../../protos/objects";
+import {RouteDisplayType} from "../../protos/enums";
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +24,7 @@ export class DataStoreService {
   furthestFLightLeg: LegRender = LegRender.create();
   longestFlightLeg: LegRender = LegRender.create();
 
-  private _allFlightDateFrequencies: BehaviorSubject<FlightDateFrequencyDto[]> = new BehaviorSubject<FlightDateFrequencyDto[]>([]);
+  private _allFlightDateFrequencies: BehaviorSubject<FlightDateFrequency[]> = new BehaviorSubject<FlightDateFrequency[]>([]);
   allFlightDateFrequencies = this._allFlightDateFrequencies.asObservable();
 
 
@@ -61,7 +58,7 @@ export class DataStoreService {
   selectedRoute = this._selectedRoute.asObservable();
 
 
-  constructor(private dataService: DataService, private filterService: FilterService) {
+  constructor(private dataService: DataService) {
     this.getFlightDateFrequencies();
   }
 
@@ -129,6 +126,7 @@ export class DataStoreService {
 
   setSelectedAirportFilter(selectedAirportFilter: SelectedAirportFilter): void {
     this._selectedAirportFilter.next(selectedAirportFilter);
+    console.log("Selected airport filter: ", selectedAirportFilter);
 
     if (this.getGeneralFilter().routeDisplayType == RouteDisplayType.ROUTEDISPLAYTYPE_SPECIFICAIRPORT) {
       this.updateRenderedRoutes();
@@ -161,13 +159,6 @@ export class DataStoreService {
   }
 
   // FETCHING DATA
-  private getAirports(): void {
-    //this.dataService.getAirports().subscribe(airports => {
-    //  this.allAirports = airports;
-    //  this.reRenderAirports();
-    //});
-  }
-
   private getDistinctFlightScheduleLegsForRendering(): void {
     this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter(), this.getGeneralFilter(), this.getRouteFilter(), this.getSelectedAirportFilter()).subscribe(sandboxModeResponseObject => {
       this.furthestFLightLeg = sandboxModeResponseObject.furthestFlightLeg ?? LegRender.create()
@@ -218,7 +209,7 @@ export class DataStoreService {
       //TODO oh boy...
     }
 
-    timeFilter.dateRange.start = flightDateFrequencies.reverse().find(flightDateFrequency => flightDateFrequency.count > 0 && flightDateFrequency.startDateUtc)?.startDateUtc ?? undefined;
+    timeFilter.dateRange.start = flightDateFrequencies[0].date;
     if(timeFilter.dateRange.start) timeFilter.dateRange.start = new Date(timeFilter.dateRange.start);
 
     this.setTimeFilter(timeFilter);

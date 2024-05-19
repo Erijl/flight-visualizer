@@ -11,7 +11,6 @@ import com.erijl.flightvisualizer.backend.util.UrlBuilder;
 import com.erijl.flightvisualizer.protos.enums.AirportDisplayType;
 import com.erijl.flightvisualizer.protos.filter.GeneralFilter;
 import com.erijl.flightvisualizer.protos.objects.AirportRender;
-import com.erijl.flightvisualizer.protos.objects.Coordinate;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -68,7 +67,7 @@ public class AirportService {
                     .collect(Collectors.toCollection(ArrayList::new));
         }
 
-        return AirportRenderBuilder.buildAirportRenders(airportProjections);
+        return AirportRenderBuilder.buildAirportRenderList(airportProjections);
     }
 
     @Cacheable(value = "airport", key = "#iataAirportCode", unless = "#result == null")

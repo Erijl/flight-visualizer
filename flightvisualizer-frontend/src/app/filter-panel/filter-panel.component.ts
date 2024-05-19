@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
 import {DefaultGeneralFilter, DefaultRouteFilter} from "../core/dto/airport";
-import {FilterService} from "../core/service/filter.service";
 import {GeneralFilter, RouteFilter} from "../protos/filters";
 import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../protos/enums";
 import {AirportDisplayTypeLabels, RouteDisplayTypeLabels, RouteFilterTypeLabels} from "../core/enum";
@@ -50,7 +49,7 @@ export class FilterPanelComponent implements OnInit, OnDestroy {
   maxSliderValue = 100;
 
 
-  constructor(private dataStoreService: DataStoreService, private filterService: FilterService) {
+  constructor(private dataStoreService: DataStoreService) {
   }
 
   ngOnInit(): void {

@@ -96,7 +96,7 @@ public class FlightScheduleLegService {
         legStream = FilterUtil.applyRouteFilter(combinedFilterRequest.getRouteFilter(), preMatureFilterLegs.stream());
         legs = legStream.collect(Collectors.toCollection(ArrayList::new));
 
-        List<LegRender> legRenders = LegRenderBuilder.buildLegRenders(legs);
+        List<LegRender> legRenders = LegRenderBuilder.buildLegRenderList(legs);
         List<AirportRender> airportRenders = this.airportService.getAllAirportsWithFilter(combinedFilterRequest.getGeneralFilter(), legRenders);
 
         responseBuilder.addAllLegRenders(legRenders);

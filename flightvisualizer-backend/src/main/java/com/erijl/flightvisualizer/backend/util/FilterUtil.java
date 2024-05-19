@@ -45,7 +45,7 @@ public class FilterUtil {
                 legStream = legStream.filter(leg -> leg.getOriginIsoCountryCode().equals(leg.getDestinationIsoCountryCode()));
                 break;
             case RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMEREGION:
-                legStream = legStream.filter(leg -> leg.getOriginTimezoneId().split(TIMEZONE_SEPARATOR)[TIMEZONE_REGION_INDEX].equals(leg.getDestinationTimezoneId().split(TIMEZONE_SEPARATOR)[TIMEZONE_REGION_INDEX]));
+                legStream = legStream.filter(leg -> leg.getOriginTimezoneId() != null && leg.getDestinationTimezoneId() != null && leg.getOriginTimezoneId().split(TIMEZONE_SEPARATOR)[TIMEZONE_REGION_INDEX].equals(leg.getDestinationTimezoneId().split(TIMEZONE_SEPARATOR)[TIMEZONE_REGION_INDEX]));
                 break;
             case RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMETIMEZONE:
                 legStream = legStream.filter(leg -> leg.getOriginOffsetUtc().equals(leg.getDestinationOffsetUtc()));

@@ -63,8 +63,10 @@ public interface FlightScheduleLegRepository extends JpaRepository<FlightSchedul
                     (:startDate IS NOT NULL AND :endDate IS NOT NULL AND flop.start_date_utc >= :startDate AND
                      flop.end_date_utc <= :endDate)
                     )
+                    AND a_origin.id != 'RMO' AND a_destination.id != 'RMO'
+                    AND a_origin.location_type = 'Airport' AND a_destination.location_type = 'Airport'
                 GROUP BY fsl.origin_airport, fsl.destination_airport
-            """, nativeQuery = true)
+            """, nativeQuery = true)//TODO check RMO at some point
     List<LegRenderDataProjection> findDistinctFlightScheduleLegsByStartAndEndDate(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate

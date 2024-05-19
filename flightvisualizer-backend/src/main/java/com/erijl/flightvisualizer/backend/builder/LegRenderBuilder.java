@@ -32,7 +32,7 @@ public class LegRenderBuilder {
 
     }
 
-    public static List<LegRender> buildLegRenders(List<LegRenderDataProjection> legRenderDataProjections) {
+    public static List<LegRender> buildLegRenderList(List<LegRenderDataProjection> legRenderDataProjections) {
         return legRenderDataProjections.stream()
                 .map(LegRenderBuilder::buildLegRender)
                 .collect(Collectors.toCollection(ArrayList::new));

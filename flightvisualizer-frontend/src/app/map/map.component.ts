@@ -10,7 +10,6 @@ import {
   MapEventType,
   SourceType
 } from "../core/enum";
-import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
 import {environment} from "../../environments/environment";
@@ -43,7 +42,7 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
   selectionType: DetailSelectionType = DetailSelectionType.AIRPORT;
 
-  constructor(private geoService: GeoService, private filterService: FilterService, private dataStoreService: DataStoreService) {
+  constructor(private geoService: GeoService, private dataStoreService: DataStoreService) {
   }
 
   ngOnInit(): void {

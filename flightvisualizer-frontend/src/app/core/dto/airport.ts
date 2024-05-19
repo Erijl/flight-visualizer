@@ -77,16 +77,6 @@ export class FlightSchedule {
   }
 }
 
-export class FlightDateFrequencyDto {
-  startDateUtc: Date;
-  count: number;
-
-  constructor(startDateUtc?: Date, frequency?: number) {
-    this.startDateUtc = startDateUtc || new Date();
-    this.count = frequency || 0;
-  }
-}
-
 //export class DateRange {
 //  start: Date | null;
 //  end: Date | null;
@@ -147,7 +137,7 @@ export class FlightDateFrequencyDto {
 //  }
 //}
 
-export const DefaultTimeFilter = TimeFilter.create({dateRange: DateRange.create({start: new Date(), end: undefined}), timeRange: TimeRange.create({start: 0, end: 1439}), aircraftDepOrArrInTimeRange: AircraftTimeFilterType.ARRIVALANDDEPARTURE, includeDifferentDayDepartures: true, includeDifferentDayArrivals: true});
+export const DefaultTimeFilter = TimeFilter.create({dateRange: DateRange.create({start: new Date(), end: undefined}), timeRange: TimeRange.create({start: 0, end: 1439, inverted: false}), aircraftDepOrArrInTimeRange: AircraftTimeFilterType.ARRIVALANDDEPARTURE, includeDifferentDayDepartures: true, includeDifferentDayArrivals: true});
 
 export const DefaultGeneralFilter = GeneralFilter.create({airportDisplayType: AirportDisplayType.AIRPORTDISPLAYTYPE_ALL, routeDisplayType: RouteDisplayType.ROUTEDISPLAYTYPE_ALL});
 

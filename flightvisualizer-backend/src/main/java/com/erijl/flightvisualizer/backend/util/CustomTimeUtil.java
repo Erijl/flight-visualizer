@@ -2,6 +2,7 @@ package com.erijl.flightvisualizer.backend.util;
 
 import com.erijl.flightvisualizer.backend.model.api.LegResponse;
 import com.erijl.flightvisualizer.backend.model.entities.FlightScheduleLeg;
+import com.google.protobuf.Timestamp;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -99,16 +100,33 @@ public class CustomTimeUtil {
     }
 
     /**
-     * Converts a {@link com.google.protobuf.Timestamp} to a {@link LocalDate} UTC
+     * Converts a {@link Timestamp} to a {@link LocalDate} UTC
      *
-     * @param timestamp {@link com.google.protobuf.Timestamp} to be converted
+     * @param timestamp {@link Timestamp} to be converted
      * @return A {@link LocalDate} representing the converted timestamp, or null if the timestamp is null or has no value
      */
-    public static LocalDate convertProtoTimestampToLocalDate(com.google.protobuf.Timestamp timestamp) {
+    public static LocalDate convertProtoTimestampToLocalDate(Timestamp timestamp) {
         if (timestamp == null || timestamp.getSeconds() == 0 && timestamp.getNanos() == 0) {
             return null;
         }
 
         return Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()).atZone(TIMEZONE).toLocalDate();
+    }
+
+    /**
+     * Converts a {@link LocalDate} to a {@link Timestamp} UTC
+     *
+     * @param localDate {@link LocalDate} to be converted
+     * @return A {@link Timestamp} representing the converted local date, or null if the local date is null
+     */
+    public static Timestamp convertLocalDateToProtoTimestamp(LocalDate localDate) {
+        if (localDate == null) {
+            return null;
+        }
+
+        return Timestamp.newBuilder()
+                .setSeconds(localDate.atStartOfDay(TIMEZONE).toEpochSecond())
+                .setNanos(0)
+                .build();
     }
 }

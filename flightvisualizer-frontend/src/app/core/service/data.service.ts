@@ -1,13 +1,9 @@
 import { Injectable } from '@angular/core';
 import {catchError, filter, map, Observable, of, tap} from "rxjs";
-import {
-  FlightDateFrequencyDto,
-  FlightSchedule,
-  FlightScheduleRouteDto
-} from "../dto/airport";
+import {FlightSchedule} from "../dto/airport";
 import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {AirportRenders, DateRange} from "../../protos/objects";
+import {AirportRenders, FlightDateFrequencies} from "../../protos/objects";
 import {
   CombinedFilterRequest,
   GeneralFilter,
@@ -38,20 +34,17 @@ export class DataService {
     );
   }
 
-  getFlightScheduleLegRoutes(dateRange: DateRange) {
-    return this.http.get<FlightScheduleRouteDto[]>(this.apiEndpoint + 'flightScheduleLeg/distance?startDate=' + this.convertDateToUTCString(dateRange.start?.toUTCString()) + '&endDate=' + this.convertDateToUTCString(dateRange.end?.toUTCString()))
-      .pipe(
-        tap(_ => this.log('fetched getFlightScheduleLegRoutes')),
-        catchError(this.handleError<FlightScheduleRouteDto[]>('getFlightScheduleLegRoutes', []))
-      );
-  }
-
   getFlightDateFrequencies() {
-    return this.http.get<FlightDateFrequencyDto[]>(this.apiEndpoint + 'flightdatefrequency')
-      .pipe(
-        tap(_ => this.log('fetched getFlightDateFrequencies')),
-        catchError(this.handleError<FlightDateFrequencyDto[]>('getFlightDateFrequencies', []))
-      );
+    const headers = new HttpHeaders({ 'Accept': 'application/x-protobuf' });
+    return this.http.get(this.apiEndpoint + 'flightdatefrequency', {
+      headers,
+      responseType: 'arraybuffer'
+    }).pipe(
+      map(arrayBuffer => {
+        const flightDateFrequencies = FlightDateFrequencies.decode(new Uint8Array(arrayBuffer));
+        return flightDateFrequencies.frequencies;
+      })
+    );
   }
 
   getFlightScheduleById(id: number) {

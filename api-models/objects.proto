@@ -46,3 +46,11 @@ message AirportRender {
   Coordinate coordinate = 2;
 }
 
+message FlightDateFrequency {
+  google.protobuf.Timestamp date = 1;
+  int32 frequency = 2;
+}
+
+message FlightDateFrequencies {
+  repeated FlightDateFrequency frequencies = 1;
+}

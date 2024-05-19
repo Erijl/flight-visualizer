@@ -1,5 +1,4 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
 import {DefaultTimeFilter} from "../core/dto/airport";
 import {state, style, trigger} from "@angular/animations";
@@ -45,7 +44,7 @@ export class TimePanelComponent implements OnInit, OnDestroy {
     AircraftTimeFilterType.ARRIVAL
   ];
   aircraftTimeFilterType: AircraftTimeFilterType = AircraftTimeFilterType.ARRIVALANDDEPARTURE;
-
+  allowedDates: Date[] = [];
 
   // UI State
   panelOpenState = false;
@@ -54,18 +53,14 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   // Callbacks
   dateFilter = this.getIsDateAvailableInputFilter();
 
-  constructor(private filterService: FilterService, private dataStoreService: DataStoreService) {
+  constructor(private dataStoreService: DataStoreService) {
   }
 
   ngOnInit(): void {
 
     this.flightDateFrequenciesSubscription = this.dataStoreService.allFlightDateFrequencies.subscribe(frequencies => {
-      const dates = frequencies.map(frequency => {
-        const date = new Date(frequency.startDateUtc);
-        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      });
-      this.flightDateFrequencies = new Set(dates);
-      this.dateFilter = this.getIsDateAvailableInputFilter();
+      this.allowedDates = frequencies.map(frequency => frequency!.date!);
+      console.log(this.allowedDates);
     });
 
     this.timeFilterSubscription = this.dataStoreService.timeFilter.subscribe(timeFilter => {
@@ -74,12 +69,9 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   }
 
   getIsDateAvailableInputFilter() {
-    return (date: Date | null): boolean => {
-      if (!date || !this.flightDateFrequencies) {
-        return false;
-      }
-      const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      return this.flightDateFrequencies.has(dateString);
+    return (d: Date | null): boolean => {
+      if (!d) return false;
+      return this.allowedDates.some(allowedDate => allowedDate.toDateString() == d.toDateString());
     };
   }
 

@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
 import {DataStoreService} from "../core/service/data-store.service";
 import {FlightSchedule, FlightScheduleRouteDto} from "../core/dto/airport";
-import {FilterService} from "../core/service/filter.service";
 import {LegRender} from "../protos/objects";
 
 @Component({
