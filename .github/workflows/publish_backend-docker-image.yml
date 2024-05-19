@@ -23,7 +23,9 @@ jobs:
         uses: arduino/setup-protoc@v3
 
       - name: Generate Java from Protobuf
-        run: protoc -I=./api-models --java_out=./flightvisualizer-backend/src/main/java ./api-models/*.proto
+        run: |
+          mvn -B dependency:get -Dartifact=com.google.protobuf:protobuf-java:3.23.0
+          protoc -I=./api-models --java_out=./flightvisualizer-backend/src/main/java ./api-models/*.proto
 
       - name: Docker Login
         uses: docker/login-action@v3
