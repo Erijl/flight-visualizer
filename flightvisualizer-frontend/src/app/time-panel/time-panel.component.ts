@@ -59,7 +59,9 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.flightDateFrequenciesSubscription = this.dataStoreService.allFlightDateFrequencies.subscribe(frequencies => {
+      const offset = new Date().getTimezoneOffset();
       this.allowedDates = frequencies.map(frequency => frequency!.date!);
+      console.log(this.allowedDates)
     });
 
     this.timeFilterSubscription = this.dataStoreService.timeFilter.subscribe(timeFilter => {
@@ -75,6 +77,16 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   }
 
   onDateRangeChange(): void {
+    // Adjust for timezone because Angular returns a local date (?) (it works, just leave it)
+    const offset = new Date().getTimezoneOffset();
+    if(this.timeFilter.dateRange && this.timeFilter.dateRange.start) {
+      this.timeFilter.dateRange.start = new Date(this.timeFilter.dateRange.start.getTime() + ((offset * 60000)*(-1)));
+    }
+
+    if(this.timeFilter.dateRange && this.timeFilter.dateRange.end) {
+      this.timeFilter.dateRange.end = new Date(this.timeFilter.dateRange.end.getTime() + ((offset * 60000)*(-1)));
+    }
+
     this.dataStoreService.setTimeFilter(this.timeFilter);
   }
 

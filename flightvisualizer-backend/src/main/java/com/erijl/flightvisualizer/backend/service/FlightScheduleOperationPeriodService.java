@@ -19,6 +19,7 @@ public class FlightScheduleOperationPeriodService {
 
     public List<FlightDateFrequency> getFlightDateFrequency() {
         List<FlightDateFrequencyProjection> flightDateFrequencyProjectionList = flightScheduleOperationPeriodRepository.getFlightDateFrequency();
+        System.out.println(flightDateFrequencyProjectionList.get(0).getStartDateUtc());
 
         return FlightDateFrequencyBuilder.buildFLightDateFrequencyList(flightDateFrequencyProjectionList);
     }

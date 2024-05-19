@@ -4,6 +4,6 @@ import java.time.LocalDate;
 
 public interface FlightDateFrequencyProjection {
 
-    LocalDate getStartDateUtc();
+    String getStartDateUtc();
     Integer getFlightCount();
 }

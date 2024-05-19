@@ -11,8 +11,7 @@ public interface FlightScheduleOperationPeriodRepository extends CrudRepository<
 
     @Query(value = """
             select
-                fsop.start_date_utc as 'startDateUtc',
-                fsop.start_date_utc as 'tempDate',
+                DATE_FORMAT(fsop.start_date_utc, '%Y-%m-%d') as 'startDateUtc',
                 count(fsop.start_date_utc) as 'flightCount'
             from flight_schedule_operation_period fsop
             group by fsop.start_date_utc

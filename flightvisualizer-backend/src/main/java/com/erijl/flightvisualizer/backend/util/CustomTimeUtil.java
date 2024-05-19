@@ -129,4 +129,14 @@ public class CustomTimeUtil {
                 .setNanos(0)
                 .build();
     }
+
+    /**
+     * Converts a date string in the 'yyyy-MM-dd' format to a {@link LocalDate} object.
+     *
+     * @param date The date string in the 'yyyy-MM-dd' format to be converted
+     * @return A {@link LocalDate} object representing the converted date
+     */
+    public static LocalDate convertyyyyMMddStringToUTCLocalDate(String date) {
+        return LocalDate.of(Integer.parseInt(date.substring(0, 4)), Integer.parseInt(date.substring(5, 7)), Integer.parseInt(date.substring(8)));
+    }
 }

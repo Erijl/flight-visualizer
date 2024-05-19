@@ -15,7 +15,7 @@ public class FlightDateFrequencyBuilder {
 
     public static FlightDateFrequency buildFlightDateFrequency(FlightDateFrequencyProjection flightDateFrequencyProjection) {
         return FlightDateFrequency.newBuilder()
-                .setDate(CustomTimeUtil.convertLocalDateToProtoTimestamp(flightDateFrequencyProjection.getStartDateUtc().plusDays(1))) //don't ask, db is in weird timezone
+                .setDate(CustomTimeUtil.convertLocalDateToProtoTimestamp(CustomTimeUtil.convertyyyyMMddStringToUTCLocalDate(flightDateFrequencyProjection.getStartDateUtc())))
                 .setFrequency(flightDateFrequencyProjection.getFlightCount())
                 .build();
     }
