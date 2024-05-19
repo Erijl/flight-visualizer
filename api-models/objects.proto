@@ -1,0 +1,89 @@
+// Proto Configuration
+syntax = "proto3";
+package proto.objects;
+
+// Java Configuration
+option java_multiple_files = true;
+option java_package = "com.erijl.flightvisualizer.protos.objects";
+option java_outer_classname = "Object";
+
+// Imports
+import "google/protobuf/timestamp.proto";
+import "enums.proto";
+
+// Classes
+
+message LegRender {
+  string originAirportIataCode = 1;
+  string destinationAirportIataCode = 2;
+  int32 durationMinutes = 3;
+  int32 distanceKilometers = 4;
+  repeated Coordinate coordinates = 5;
+  Details details = 6;
+
+  message Details {
+    string originAirportName = 1;
+    string destinationAirportName = 2;
+    int32 departureTimeUtc = 3;
+    int32 arrivalTimeUtc = 4;
+  }
+}
+
+message Coordinate {
+  double latitude = 1;
+  double longitude = 2;
+}
+
+message DateRange {
+  google.protobuf.Timestamp start = 1;
+  google.protobuf.Timestamp end = 2;
+}
+
+message TimeRange {
+  int32 start = 1;
+  int32 end = 2;
+  bool inverted = 3;
+}
+
+message AirportRenders {
+  repeated AirportRender airports = 1;
+}
+
+message AirportRender {
+  string iataCode = 1;
+  Coordinate coordinate = 2;
+}
+
+message FlightDateFrequency {
+  google.protobuf.Timestamp date = 1;
+  int32 frequency = 2;
+}
+
+message FlightDateFrequencies {
+  repeated FlightDateFrequency frequencies = 1;
+}
+
+message AirportDetails {
+  string iataCode = 1;
+  string name = 2;
+  Coordinate coordinate = 3;
+  string iataCityCode = 4;
+  string isoCountryCode = 5;
+  string offsetUtc = 6;
+  string timezoneId = 7;
+}
+
+message DetailedLegInformation {
+  int32 departureTimeUtc = 1;
+  int32 arrivalTimeUtc = 2;
+  int32 aircraftDepartureTimeDateDiffUtc = 3;
+  int32 aircraftArrivalTimeDateDiffUtc = 4;
+  string operationPeriodWeekdays = 5;
+  string aircraftCode = 6;
+  string aircraftName = 7;
+  string operationDate = 8;
+}
+
+message DetailedLegInformations {
+  repeated DetailedLegInformation detailedLegs = 1;
+}

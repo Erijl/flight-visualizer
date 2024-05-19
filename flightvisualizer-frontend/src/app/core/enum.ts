@@ -1,29 +1,33 @@
+import {AircraftTimeFilterType, AirportDisplayType, RouteDisplayType, RouteFilterType} from "../protos/enums";
 
-export enum AirportDisplayType {
-  ALL = "All",
-  WITHROUTES = "With Routes",
-  NONE = "None"
-}
+export const RouteFilterTypeLabels: { [key in RouteFilterType]: string } = {
+  [RouteFilterType.DURATION]: 'Duration',
+  [RouteFilterType.DISTANCE]: 'Distance',
+  [RouteFilterType.UNRECOGNIZED]: 'TECHNICAL VALUE'
+};
 
-export enum RouteDisplayType {
-  ALL = "All",
-  SPECIFICAIRPORT = "Specific Airport",
-  ONLYWITHINSAMECOUNTRY = "Only within same country",
-  WITHINSAMEREGION = "Within same region",
-  WITHINSAMETIMEZONE = "Within same timezone",
-}
+export const AirportDisplayTypeLabels: { [key in AirportDisplayType]: string } = {
+  [AirportDisplayType.AIRPORTDISPLAYTYPE_ALL]: 'All',
+  [AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES]: 'With Routes',
+  [AirportDisplayType.AIRPORTDISPLAYTYPE_NONE]: 'None',
+  [RouteFilterType.UNRECOGNIZED]: 'TECHNICAL VALUE'
+};
 
-export enum RouteFilterType {
-  DURATION = "Duration",
-  DISTANCE = "Distance",
-  //possibly add AIRPORTROUTECOUNT(?) in the future
-}
+export const RouteDisplayTypeLabels: { [key in RouteDisplayType]: string } = {
+  [RouteDisplayType.ROUTEDISPLAYTYPE_ALL]: 'All',
+  [RouteDisplayType.ROUTEDISPLAYTYPE_SPECIFICAIRPORT]: 'Specific Airport',
+  [RouteDisplayType.ROUTEDISPLAYTYPE_ONLYWITHINSAMECOUNTRY]: 'Only within same country',
+  [RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMEREGION]: 'Within same region',
+  [RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMETIMEZONE]: 'Within same timezone',
+  [RouteDisplayType.UNRECOGNIZED]: 'TECHNICAL VALUE'
+};
 
-export enum AircraftTimeFilterType {
-  ARRIVALANDDEPARTURE = "Arrival and Departure in period",
-  DEPARTURE = "Departure in period",
-  ARRIVAL = "Arrival in period",
-}
+export const AircraftTimeFilterTypeLabels: { [key in AircraftTimeFilterType]: string } = {
+  [AircraftTimeFilterType.ARRIVALANDDEPARTURE]: 'Arrival and Departure in period',
+  [AircraftTimeFilterType.DEPARTURE]: 'Departure in period',
+  [AircraftTimeFilterType.ARRIVAL]: 'Arrival in period',
+  [AircraftTimeFilterType.UNRECOGNIZED]: 'TECHNICAL VALUE'
+};
 
 export enum DetailSelectionType {
   AIRPORT = "airport",

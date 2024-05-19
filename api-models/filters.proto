@@ -1,0 +1,51 @@
+// Proto Configuration
+syntax = "proto3";
+package proto.filter;
+
+// Java Configuration
+option java_multiple_files = true;
+option java_package = "com.erijl.flightvisualizer.protos.filter";
+option java_outer_classname = "Filter";
+
+// Imports
+import "enums.proto";
+import "objects.proto";
+
+// Classes
+message RouteFilter {
+  enums.RouteFilterType routeFilterType = 1;
+  int32 start = 2;
+  int32 end = 3;
+}
+
+message TimeFilter {
+  objects.DateRange dateRange = 1;
+  objects.TimeRange timeRange = 2;
+  enums.AircraftTimeFilterType aircraftDepOrArrInTimeRange = 3;
+  bool includeDifferentDayDepartures = 4;
+  bool includeDifferentDayArrivals = 5;
+}
+
+message GeneralFilter {
+  enums.AirportDisplayType airportDisplayType = 1;
+  enums.RouteDisplayType routeDisplayType = 2;
+}
+
+message SelectedAirportFilter {
+  string iataCode = 1;
+  bool includingDepartures = 2;
+  bool includingArrivals = 3;
+}
+
+
+message CombinedFilterRequest {
+  RouteFilter routeFilter = 1;
+  TimeFilter timeFilter = 2;
+  GeneralFilter generalFilter = 3;
+  SelectedAirportFilter selectedAirportFilter = 4;
+}
+
+message SpecificRouteFilterRequest {
+  TimeFilter timeFilter = 1;
+  objects.LegRender legRender = 2;
+}

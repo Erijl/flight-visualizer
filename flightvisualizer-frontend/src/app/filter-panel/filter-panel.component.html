@@ -7,11 +7,11 @@
 
   <h2>Airports</h2>
   <select [(ngModel)]="generalFilter.airportDisplayType" (change)="onAirportDisplayTypeChange()">
-    <option *ngFor="let type of airportDisplayTypes" [value]="type">{{ type }}</option>
+    <option *ngFor="let type of airportDisplayTypes" [value]="type">{{ AirportDisplayTypeLabels[type] }}</option>
   </select>
   <h2>Routes</h2>
   <select [(ngModel)]="generalFilter.routeDisplayType" (change)="onRouteDisplayTypeChange()">
-    <option *ngFor="let type of routeDisplayTypes" [value]="type">{{ type }}</option>
+    <option *ngFor="let type of routeDisplayTypes" [value]="type">{{ RouteDisplayTypeLabels[type] }}</option>
   </select>
 
   <br>
@@ -19,7 +19,7 @@
   <div class="route-filter-container">
     <h3>Route Filters</h3>
     <select class="inverted-select" [(ngModel)]="routeFilter.routeFilterType" (change)="onRouteFilterTypeChange()">
-      <option *ngFor="let type of routeFilterTypes" [value]="type">{{ type }}</option>
+      <option *ngFor="let type of routeFilterTypes" [value]="type">{{ RouteFilterTypeLabels[type] }}</option>
     </select>
 
     <br>
@@ -37,15 +37,15 @@
 
     <div class="values-container">
       <div *ngIf="routeFilter.routeFilterType == RouteFilterType.DURATION">
-        <span>{{ routeFilter.start | intToTimeofday }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+        <span>{{ routeFilter.start | intToTimeofday }}h</span>
         -
-        <span>{{ routeFilter.end | intToTimeofday }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+        <span>{{ routeFilter.end | intToTimeofday }}h</span>
       </div>
 
       <div *ngIf="routeFilter.routeFilterType == RouteFilterType.DISTANCE">
-        <span>{{ routeFilter.start }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+        <span>{{ routeFilter.start }}km</span>
         -
-        <span>{{ routeFilter.end }}{{ routeFilter.routeFilterType | routeFilterType }}</span>
+        <span>{{ routeFilter.end }}km</span>
       </div>
     </div>
   </div>

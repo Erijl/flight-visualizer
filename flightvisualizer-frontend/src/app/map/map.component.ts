@@ -1,19 +1,20 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import mapboxgl from 'mapbox-gl';
-import {Airport, DefaultGeneralFilter, FlightScheduleRouteDto, GeneralFilter} from "../core/dto/airport";
+import {DefaultGeneralFilter, DefaultSelectedAirportFilter} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
 import {
-  AirportDisplayType, CursorStyles,
+  CursorStyles,
   DetailSelectionType,
   LayerType,
   MapEventType,
   SourceType
 } from "../core/enum";
-import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
 import {environment} from "../../environments/environment";
+import {GeneralFilter, SelectedAirportFilter} from "../protos/filters";
+import {AirportRender, LegRender} from "../protos/objects";
 
 @Component({
   selector: 'app-map',
@@ -34,14 +35,14 @@ export class MapComponent implements OnInit, OnDestroy {
   detailSelectionTypeSubscription!: Subscription;
 
   // UI data
-  generalFilter: GeneralFilter = DefaultGeneralFilter;
+  generalFilter: GeneralFilter = GeneralFilter.create(DefaultGeneralFilter);
 
   // UI state
-  selectedAirport: Airport = new Airport();
-  selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
+  selectedAirportFilter: SelectedAirportFilter = SelectedAirportFilter.create();
+  selectedRoute: LegRender = LegRender.create();
   selectionType: DetailSelectionType = DetailSelectionType.AIRPORT;
 
-  constructor(private geoService: GeoService, private filterService: FilterService, private dataStoreService: DataStoreService) {
+  constructor(private geoService: GeoService, private dataStoreService: DataStoreService) {
   }
 
   ngOnInit(): void {
@@ -59,8 +60,8 @@ export class MapComponent implements OnInit, OnDestroy {
       this.highlightSelectedRoute();
     });
 
-    this.selectedAirportSubscription = this.dataStoreService.selectedAirport.subscribe(airport => {
-      this.selectedAirport = airport;
+    this.selectedAirportSubscription = this.dataStoreService.selectedAirportFilter.subscribe(selectedAirportFilter => {
+      this.selectedAirportFilter = selectedAirportFilter;
 
       this.highlightSelectedAirport();
     });
@@ -85,7 +86,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.map.on('load', () => {
       this.dataStoreService.reRenderRoutes();
-      this.dataStoreService.reRenderAirports();
 
       this.map.resize();
     });
@@ -96,10 +96,10 @@ export class MapComponent implements OnInit, OnDestroy {
 
       if (!features.length) {
         if (this.selectionType === DetailSelectionType.AIRPORT) {
-          this.selectedAirport = new Airport();
-          this.dataStoreService.setSelectedAirport(this.selectedAirport);
+          this.selectedAirportFilter = SelectedAirportFilter.create();
+          this.dataStoreService.setSelectedAirportFilter(this.selectedAirportFilter);
         } else if (this.selectionType === DetailSelectionType.ROUTE) {
-          this.selectedRoute = new FlightScheduleRouteDto();
+          this.selectedRoute = LegRender.create();
           this.dataStoreService.setSelectedRoute(this.selectedRoute);
         }
       }
@@ -108,11 +108,11 @@ export class MapComponent implements OnInit, OnDestroy {
 
   onSelectionTypeChange(): void {
     if (this.selectionType === DetailSelectionType.AIRPORT) {
-      this.dataStoreService.setSelectedRoute(new FlightScheduleRouteDto());
+      this.dataStoreService.setSelectedRoute(LegRender.create());
 
       this.enableAirportLayerSelection();
     } else if (this.selectionType === DetailSelectionType.ROUTE) {
-      this.dataStoreService.setSelectedAirport(new Airport());
+      this.dataStoreService.setSelectedAirportFilter(SelectedAirportFilter.create());
 
       this.enableRouteLayerSelection();
     }
@@ -122,24 +122,27 @@ export class MapComponent implements OnInit, OnDestroy {
   airportLayerClickHandler = (e) => {
     // @ts-ignore
     const clickedAirport = e.features[0];
-    // @ts-ignore
-    const selectedAirport = this.dataStoreService.getAllAirports().find(airport => airport.iataAirportCode === clickedAirport.properties.iataAirportCode);
-    if (selectedAirport && selectedAirport.iataAirportCode != '' && selectedAirport.iataAirportCode != this.selectedAirport.iataAirportCode) {
-      this.selectedAirport = selectedAirport;
-      this.dataStoreService.setSelectedAirport(this.selectedAirport);
+    const selectedAirport = this.dataStoreService.getAllAirports().find(airport => airport.iataCode === clickedAirport.properties.iataAirportCode);
+    if (selectedAirport && selectedAirport.iataCode != '' && selectedAirport.iataCode != this.selectedAirportFilter.iataCode) {
+      this.selectedAirportFilter = SelectedAirportFilter.create(DefaultSelectedAirportFilter);
+      this.selectedAirportFilter.iataCode = selectedAirport.iataCode;
+
+      this.dataStoreService.setSelectedAirportFilter(this.selectedAirportFilter);
     }
   };
 
   // @ts-ignore
   routeLayerClickHandler = (e) => {
-    // @ts-ignore
     const clickedRoute = e.features[0];
-    // @ts-ignore
-    this.selectedRoute = this.dataStoreService.getAllFlightScheduleRouteDtos().find(route =>
-      route.originAirport.iataAirportCode === clickedRoute.properties.originAirport &&
-      route.destinationAirport.iataAirportCode === clickedRoute.properties.destinationAirport
+    const clickedLeg = this.dataStoreService.getAllLegRenders().find(leg =>
+      leg.originAirportIataCode === clickedRoute.properties.originAirport &&
+      leg.destinationAirportIataCode === clickedRoute.properties.destinationAirport
     );
-    this.dataStoreService.setSelectedRoute(this.selectedRoute);
+
+    if(clickedLeg) {
+      this.selectedRoute = clickedLeg;
+      this.dataStoreService.setSelectedRoute(this.selectedRoute);
+    }
   }
 
   layerMouseEnterHandler = () => {
@@ -154,8 +157,8 @@ export class MapComponent implements OnInit, OnDestroy {
     this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
     this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
 
-    if (this.selectedRoute.originAirport.iataAirportCode != '' && this.selectedRoute.destinationAirport.iataAirportCode != '') {
-      this.geoService.highlightRouteOnMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE, LayerType.ROUTEHIGHLIGHTLAYER, this.selectedRoute);
+    if (this.selectedRoute.originAirportIataCode != '' && this.selectedRoute.destinationAirportIataCode != '') {
+      this.geoService.highlightRouteOnMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE, LayerType.ROUTEHIGHLIGHTLAYER, this.selectedRoute); //TODO overhaul
     }
   }
 
@@ -163,13 +166,14 @@ export class MapComponent implements OnInit, OnDestroy {
     this.geoService.removeLayerFromMap(this.map, LayerType.AIRPORTHIGHLIGHTLAYER);
     this.geoService.removeSourceFromMap(this.map, SourceType.AIRPORTHIGHLIGHTSOURCE);
 
-    if (this.selectedAirport.iataAirportCode != '') {
-      this.geoService.highlightAirportOnMap(this.map, SourceType.AIRPORTHIGHLIGHTSOURCE, LayerType.AIRPORTHIGHLIGHTLAYER, this.selectedAirport);
+    const airportRender = this.dataStoreService.getAirportRenderByIataCode(this.selectedAirportFilter.iataCode);
+    if (airportRender && airportRender.iataCode != '') {
+      this.geoService.highlightAirportOnMap(this.map, SourceType.AIRPORTHIGHLIGHTSOURCE, LayerType.AIRPORTHIGHLIGHTLAYER, airportRender);
     }
   }
 
-  replaceCurrentlyRenderedAirports(newAirports: Airport[]): void {
-    let airportsGeoJson = this.geoService.convertAirportsToGeoJson(newAirports);
+  replaceCurrentlyRenderedAirports(newAirports: AirportRender[]): void {
+    let airportsGeoJson = this.geoService.convertAirportRendersToGeoJson(newAirports);
     if(!this.map) return;
 
     if(this.map.getSource(SourceType.AIRPORTSOURCE)) {
@@ -184,8 +188,8 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  replaceCurrentlyRenderedRoutes(newRoutes: FlightScheduleRouteDto[]): void {
-    let routesGeoJson = this.geoService.convertFlightScheduleRouteDtosToGeoJson(newRoutes);
+  replaceCurrentlyRenderedRoutes(newRoutes: LegRender[]): void {
+    let routesGeoJson = this.geoService.convertLegRendersToGeoJson(newRoutes);
     if(!this.map) return;
 
     if(this.map.getSource(SourceType.ROUTESOURCE)) {
@@ -240,6 +244,4 @@ export class MapComponent implements OnInit, OnDestroy {
     this.generalFilterSubscription.unsubscribe();
     this.detailSelectionTypeSubscription.unsubscribe();
   }
-
-  protected readonly AirportDisplayType = AirportDisplayType;
 }

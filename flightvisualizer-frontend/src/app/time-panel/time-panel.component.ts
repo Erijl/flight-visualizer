@@ -1,10 +1,11 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import {FilterService} from "../core/service/filter.service";
 import {DataStoreService} from "../core/service/data-store.service";
-import {DateRange, DefaultTimeFilter, TimeFilter, TimeRange} from "../core/dto/airport";
+import {DefaultTimeFilter} from "../core/dto/airport";
 import {state, style, trigger} from "@angular/animations";
 import {Subscription} from "rxjs";
-import {AircraftTimeFilterType, RouteDisplayType} from "../core/enum";
+import {AircraftTimeFilterType} from "../protos/enums";
+import {TimeFilter} from "../protos/filters";
+import {AircraftTimeFilterTypeLabels} from "../core/enum";
 
 @Component({
   selector: 'app-time-panel',
@@ -36,10 +37,14 @@ export class TimePanelComponent implements OnInit, OnDestroy {
 
   //UI Data
   flightDateFrequencies: Set<string> = new Set();
-  timeFilter: TimeFilter = DefaultTimeFilter;
-  aircraftTimeFilterTypes = Object.values(AircraftTimeFilterType);
+  timeFilter: TimeFilter = TimeFilter.create(DefaultTimeFilter);
+  aircraftTimeFilterTypes = [
+    AircraftTimeFilterType.ARRIVALANDDEPARTURE,
+    AircraftTimeFilterType.DEPARTURE,
+    AircraftTimeFilterType.ARRIVAL
+  ];
   aircraftTimeFilterType: AircraftTimeFilterType = AircraftTimeFilterType.ARRIVALANDDEPARTURE;
-
+  allowedDates: Date[] = [];
 
   // UI State
   panelOpenState = false;
@@ -48,18 +53,14 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   // Callbacks
   dateFilter = this.getIsDateAvailableInputFilter();
 
-  constructor(private filterService: FilterService, private dataStoreService: DataStoreService) {
+  constructor(private dataStoreService: DataStoreService) {
   }
 
   ngOnInit(): void {
 
     this.flightDateFrequenciesSubscription = this.dataStoreService.allFlightDateFrequencies.subscribe(frequencies => {
-      const dates = frequencies.map(frequency => {
-        const date = new Date(frequency.startDateUtc);
-        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      });
-      this.flightDateFrequencies = new Set(dates);
-      this.dateFilter = this.getIsDateAvailableInputFilter();
+      const offset = new Date().getTimezoneOffset();
+      this.allowedDates = frequencies.map(frequency => frequency!.date!);
     });
 
     this.timeFilterSubscription = this.dataStoreService.timeFilter.subscribe(timeFilter => {
@@ -68,16 +69,23 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   }
 
   getIsDateAvailableInputFilter() {
-    return (date: Date | null): boolean => {
-      if (!date || !this.flightDateFrequencies) {
-        return false;
-      }
-      const dateString = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-      return this.flightDateFrequencies.has(dateString);
+    return (d: Date | null): boolean => {
+      if (!d) return false;
+      return this.allowedDates.some(allowedDate => allowedDate.toDateString() == d.toDateString());
     };
   }
 
   onDateRangeChange(): void {
+    // Adjust for timezone because Angular returns a local date (?) (it works, just leave it)
+    const offset = new Date().getTimezoneOffset();
+    if(this.timeFilter.dateRange && this.timeFilter.dateRange.start) {
+      this.timeFilter.dateRange.start = new Date(this.timeFilter.dateRange.start.getTime() + ((offset * 60000)*(-1)));
+    }
+
+    if(this.timeFilter.dateRange && this.timeFilter.dateRange.end) {
+      this.timeFilter.dateRange.end = new Date(this.timeFilter.dateRange.end.getTime() + ((offset * 60000)*(-1)));
+    }
+
     this.dataStoreService.setTimeFilter(this.timeFilter);
   }
 
@@ -96,9 +104,7 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   }
 
   resetFilters(): void {
-    this.timeFilter = DefaultTimeFilter;
-    this.dataStoreService.setTimeFilter(this.timeFilter);
-
+    this.dataStoreService.initTimeFilter();
   }
 
   onTimeRangeChange(): void  {
@@ -108,4 +114,6 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.flightDateFrequenciesSubscription.unsubscribe();
   }
+
+  protected readonly AircraftTimeFilterTypeLabels = AircraftTimeFilterTypeLabels;
 }

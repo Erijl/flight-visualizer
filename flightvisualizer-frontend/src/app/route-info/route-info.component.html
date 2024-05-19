@@ -1,65 +1,90 @@
-<mat-card *ngIf="selectedRoute.legId != -1" class="route-card">
+<div [hidden]="selectedRoute.originAirportIataCode == ''">
+  <mat-card class="route-card">
 
-  <mat-card-header>
-    <mat-card-title>{{ selectedRoute.originAirport.iataAirportCode }} to {{ selectedRoute.destinationAirport.iataAirportCode }}</mat-card-title>
-  </mat-card-header>
+    <mat-card-header>
+      <mat-card-title>{{ selectedRoute.originAirportIataCode }}to {{ selectedRoute.destinationAirportIataCode }}
+      </mat-card-title>
+    </mat-card-header>
 
-  <mat-card-content class="route-card-content">
-    <div class="route-subtitle flex-container">
-      <span class="route-origin">{{ selectedRoute.originAirport.airportName }}</span>
-      <mat-icon class="route-icon">airplanemode_on</mat-icon>
-      <span class="route-destination">{{ selectedRoute.destinationAirport.airportName }}</span>
-    </div>
-
-    <div class="info-row">
-      <div class="info-pair">
-        <span class="info-title">Departure:</span>
-        <span class="info-value">{{selectedRoute.originAirport.iataAirportCode}}</span>
+    <mat-card-content class="route-card-content">
+      <div class="route-subtitle flex-container">
+        <span class="route-origin">{{ selectedRoute.details?.originAirportName }}</span>
+        <mat-icon class="route-icon">airplanemode_on</mat-icon>
+        <span class="route-destination">{{ selectedRoute.details?.destinationAirportName }}</span>
       </div>
-      <div class="info-pair">
-        <span class="info-title">Arrival:</span>
-        <span class="info-value">{{selectedRoute.destinationAirport.iataAirportCode}}</span>
-      </div>
-    </div>
 
-    <div class="info-row">
-      <div class="info-pair">
-        <span class="info-title">Departure Time:</span>
-        <span class="info-value">{{ selectedRoute.aircraftDepartureTimeUtc | intToTimeofday }}</span>
+      <div class="info-row">
+        <div class="info-pair">
+          <span class="info-title">Departure:</span>
+          <span class="info-value">{{ selectedRoute.originAirportIataCode }}</span>
+        </div>
+        <div class="info-pair">
+          <span class="info-title">Arrival:</span>
+          <span class="info-value">{{ selectedRoute.destinationAirportIataCode }}</span>
+        </div>
       </div>
-      <div class="info-pair">
-        <span class="info-title">Arrival Time:</span>
-        <span class="info-value">{{ selectedRoute.aircraftArrivalTimeUtc | intToTimeofday }}</span>
-      </div>
-    </div>
 
-    <div class="info-row">
-      <div class="info-pair">
-        <span class="info-title">Departure Date:</span>
-        <span class="info-value">+{{selectedRoute.aircraftDepartureTimeDateDiffUtc}}</span>
+      <div class="info-row">
+        <div class="info-pair">
+          <span class="info-title">Dep. Time:</span>
+          <span class="info-value">{{ selectedRoute.details?.departureTimeUtc | intToTimeofday }}</span>
+        </div>
+        <div class="info-pair">
+          <span class="info-title">Arr. Time:</span>
+          <span class="info-value">{{ selectedRoute.details?.arrivalTimeUtc | intToTimeofday }}</span>
+        </div>
       </div>
-      <div class="info-pair">
-        <span class="info-title">Arrival Date:</span>
-        <span class="info-value">+{{selectedRoute.aircraftArrivalTimeDateDiffUtc}}</span>
+
+      <div class="info-row">
+        <div class="info-pair">
+          <span class="info-title">Est. Distance:</span>
+          <span class="info-value">{{ selectedRoute.distanceKilometers }}Km</span>
+        </div>
+        <div class="info-pair">
+          <span class="info-title">Duration:</span>
+          <span class="info-value">{{ selectedRoute.durationMinutes | intToTimeofday }}h</span>
+        </div>
       </div>
-    </div>
+    </mat-card-content>
 
-    <div class="info-row">
-      <div class="info-pair">
-        <span class="info-title">Est. Distance:</span>
-        <span class="info-value">{{selectedRoute.kilometerDistance}}Km</span>
-      </div>
-      <div class="info-pair">
-        <span class="info-title">Duration:</span>
-        <span class="info-value">{{ filterService.calculateFlightDurationInMinutes(selectedRoute) | intToTimeofday }}h</span>
-      </div>
-    </div>
-  </mat-card-content>
+  </mat-card>
+  <br>
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort>
 
-</mat-card>
+      <ng-container matColumnDef="operationDate">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+        <td mat-cell *matCellDef="let routeDetail"> {{ routeDetail.operationDate }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="departureTimeUtc">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Dep. Time</th>
+        <td mat-cell *matCellDef="let routeDetail"> {{ routeDetail.departureTimeUtc | intToTimeofday }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="arrivalTimeUtc">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Arr. Time</th>
+        <td mat-cell *matCellDef="let routeDetail"> {{ routeDetail.arrivalTimeUtc | intToTimeofday }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="aircraftArrivalTimeDateDiffUtc">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Next day</th>
+        <td mat-cell *matCellDef="let routeDetail"> {{ routeDetail.aircraftArrivalTimeDateDiffUtc != 0 ? 'Yes' : 'No' }}</td>
+      </ng-container>
 
 
-<div *ngIf="selectedRoute.legId == -1" class="error-message">
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-header"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[10, 20]"
+                   [showFirstLastButtons]="false"
+                   aria-label="Select page of incoming routes">
+    </mat-paginator>
+  </div>
+</div>
+
+<div [hidden]="selectedRoute.originAirportIataCode != ''" class="error-message">
   <p>No Route Selected</p>
   <p>Please select an airport from the map</p>
 </div>

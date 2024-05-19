@@ -1,35 +1,66 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
 import {DataStoreService} from "../core/service/data-store.service";
-import {FlightSchedule, FlightScheduleRouteDto} from "../core/dto/airport";
-import {FilterService} from "../core/service/filter.service";
+import {DetailedLegInformation, LegRender} from "../protos/objects";
+import {MatPaginator} from "@angular/material/paginator";
+import {MatSort} from "@angular/material/sort";
+import {MatTableDataSource} from "@angular/material/table";
 
 @Component({
   selector: 'app-route-info',
   templateUrl: './route-info.component.html',
   styleUrl: './route-info.component.css'
 })
-export class RouteInfoComponent implements OnInit, OnDestroy{
+export class RouteInfoComponent implements OnInit, OnDestroy, AfterViewInit{
   selectedRouteSubscription!: Subscription;
+  currentlyRenderedRoutesSubscription!: Subscription;
+  routeDetailSubscription!: Subscription;
 
-  selectedRoute: FlightScheduleRouteDto = new FlightScheduleRouteDto();
+  // UI data
+  displayedColumns: string[] = ['operationDate', 'departureTimeUtc', 'arrivalTimeUtc', 'aircraftArrivalTimeDateDiffUtc'];
+  dataSource = new MatTableDataSource<DetailedLegInformation>([]);
 
-  flightSchedule: FlightSchedule = new FlightSchedule();
-  allRoutesInFLightSchedule: FlightScheduleRouteDto[] = [];
+  selectedRoute: LegRender = LegRender.create();
+  routeDetails: DetailedLegInformation[] = [];
 
-  //(TODO) (show the route its part of)
-  constructor(private dataStoreService: DataStoreService, protected filterService: FilterService) {
+  // ViewChild's
+  @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  constructor(private dataStoreService: DataStoreService) {
   }
 
   ngOnInit(): void {
     this.selectedRouteSubscription = this.dataStoreService.selectedRoute.subscribe(route => {
       this.selectedRoute = route;
-      this.flightSchedule = this.dataStoreService.getSpecificFlightSchedule(route.flightScheduleId);
-      this.allRoutesInFLightSchedule = this.dataStoreService.getAllRoutesForFlightSchedule(route.flightScheduleId);
+
+      this.updateTable();
     });
+
+    this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
+      this.updateTable();
+    });
+
+    this.routeDetailSubscription = this.dataStoreService.routeDetails.subscribe(routeDetails => {
+      this.routeDetails = routeDetails;
+      this.updateTable();
+    });
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  updateTable(): void {
+    this.dataSource = new MatTableDataSource<DetailedLegInformation>(this.routeDetails);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   ngOnDestroy(): void {
     this.selectedRouteSubscription.unsubscribe();
+    this.currentlyRenderedRoutesSubscription.unsubscribe();
+    this.routeDetailSubscription.unsubscribe();
   }
 }
