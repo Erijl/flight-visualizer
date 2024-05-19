@@ -13,8 +13,13 @@
   border-radius: 5px;
   color: #ddd;
 
-  width: 400px;
-  height: 520px;
+  min-width: 200px;
+  max-width: 30%; /* or any other percentage that suits your design */
+  width: auto; /* this will make the width dynamic */
+  min-height: 200px;
+  max-height: 90%; /* or any other percentage that suits your design */
+  height: auto; /* this will make the height dynamic */
+  overflow: auto; /* this will add a scrollbar if the content is larger than the max-height */
 }
 
 body.modal-open {
@@ -53,6 +58,7 @@ body.modal-open::before {
 }
 
 .keypoints {
+  font-size: 1.2em;
   list-style-type: none;
   padding: 0 20px;
   margin: 0;
@@ -67,7 +73,8 @@ body.modal-open::before {
 
 .understand-button {
   padding: 15px 30px;
-  font-size: 1.2em;
+  font-size: 1.3em;
+  font-weight: 700;
   margin-top: 20px;
   margin-bottom: 15px;
   background: #e91e62;
@@ -90,4 +97,23 @@ body.modal-open::before {
   color: #ddd;
   text-decoration: none;
   appearance: none;
+  cursor: pointer;
+}
+
+.highlight {
+  padding-top: 20px;
+  font-weight: bold;
+  padding-left: 20px;
+  text-align: center;
+  font-size: 1.3em;
+}
+
+.sublink {
+  color: dodgerblue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.sublink:hover {
+  color: darkblue;
 }

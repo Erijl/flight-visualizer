@@ -8,6 +8,14 @@ h1, h2 {
   font-weight: normal;
 }
 
+.sub-sub-header {
+  color: #ddd;
+  font-size: 1.25em;
+  font-weight: 400;
+  padding-left: 1px;
+  padding-bottom: 5px;
+}
+
 select {
   width: 100%;
   padding: 10px;
@@ -77,4 +85,15 @@ button:hover {
 
 .special-expansion-panel {
   background-color: #333;
+}
+
+.sub-panel-title {
+  color: #ddd;
+  font-size: 1.25em;
+  font-weight: 500;
+}
+
+.inverted-select {
+  background-color: #282828;
+  color: #ddd;
 }
