@@ -43,8 +43,8 @@
   <br>
   <h2>Flight Routes</h2>
   <div>
-    <mat-checkbox [(ngModel)]="specificAirportRoutesOutgoing" [color]="'primary'" (change)="onOutgoingChange()">Outgoing</mat-checkbox>
-    <mat-checkbox [(ngModel)]="specificAirportRoutesIncoming" [color]="'primary'" (change)="onIncomingChange()">Incoming</mat-checkbox>
+    <mat-checkbox [(ngModel)]="specificAirportRoutesOutgoing" [color]="'primary'" (change)="onOutgoingChange($event)">Outgoing</mat-checkbox>
+    <mat-checkbox [(ngModel)]="specificAirportRoutesIncoming" [color]="'primary'" (change)="onIncomingChange($event)">Incoming</mat-checkbox>
     <br>
     <!--<input type="checkbox" [(ngModel)]="compactFlightRouteInformationTable" (change)="oncompactFlightRouteInformationTableChange()"> Incoming-->
   </div>

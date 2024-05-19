@@ -93,9 +93,15 @@ public class FlightScheduleLegService {
         legs = legStream.collect(Collectors.toCollection(ArrayList::new));
 
 
-        responseBuilder.addAllLegRenders(LegRenderBuilder.buildLegRenders(legs))
-                .setFurthestFlightLeg(furthestLeg == null ? null : LegRenderBuilder.buildLegRender(furthestLeg))
-                .setLongestFlightLeg(longestLeg == null ? null : LegRenderBuilder.buildLegRender(longestLeg));
+        responseBuilder.addAllLegRenders(LegRenderBuilder.buildLegRenders(legs));
+
+        if(furthestLeg != null) {
+            responseBuilder.setFurthestFlightLeg(LegRenderBuilder.buildLegRender(furthestLeg));
+        }
+
+        if(longestLeg != null) {
+            responseBuilder.setLongestFlightLeg(LegRenderBuilder.buildLegRender(longestLeg));
+        }
 
         return responseBuilder.build();
     }

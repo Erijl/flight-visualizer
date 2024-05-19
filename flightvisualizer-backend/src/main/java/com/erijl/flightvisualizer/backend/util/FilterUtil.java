@@ -39,7 +39,7 @@ public class FilterUtil {
                 break;
             case RouteDisplayType.ROUTEDISPLAYTYPE_SPECIFICAIRPORT:
                 String iataCode = selectedAirportFilter.getIataCode();
-                legStream = legStream.filter(leg -> leg.getDestinationAirportIataCode().equals(iataCode) || leg.getDestinationAirportIataCode().equals(iataCode));
+                legStream = legStream.filter(leg -> (leg.getDestinationAirportIataCode().equals(iataCode) && selectedAirportFilter.getIncludingArrivals()) || (leg.getDestinationAirportIataCode().equals(iataCode) && selectedAirportFilter.getIncludingDepartures()));
                 break;
             case RouteDisplayType.ROUTEDISPLAYTYPE_ONLYWITHINSAMECOUNTRY:
                 legStream = legStream.filter(leg -> leg.getOriginIsoCountryCode().equals(leg.getDestinationIsoCountryCode()));

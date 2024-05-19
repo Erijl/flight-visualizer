@@ -50,13 +50,15 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
     this.dataSource.sort = this.sort;
   }
 
-  onOutgoingChange(): void {
-    this.dataStoreService.setSelectedAirportRoutesOutgoing(this.specificAirportRoutesOutgoing);
+  onOutgoingChange(event: any): void {
+    this.selectedAirportFilter.includingDepartures = event.checked;
+    this.dataStoreService.setSelectedAirportFilter(this.selectedAirportFilter);
     this.updateTable();
   }
 
-  onIncomingChange(): void {
-    this.dataStoreService.setSelectedAirportRoutesIncoming(this.specificAirportRoutesIncoming);
+  onIncomingChange(event: any): void {
+    this.selectedAirportFilter.includingArrivals = event.checked;
+    this.dataStoreService.setSelectedAirportFilter(this.selectedAirportFilter);
     this.updateTable();
   }
 

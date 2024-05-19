@@ -61,14 +61,6 @@ export class DataStoreService {
   selectedRoute = this._selectedRoute.asObservable();
 
 
-  // state
-  private _selectedAirportRoutesOutgoing: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-  selectedAirportRoutesOutgoing = this._selectedAirportRoutesOutgoing.asObservable();
-
-  private _selectedAirportRoutesIncoming: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-  selectedAirportRoutesIncoming = this._selectedAirportRoutesIncoming.asObservable();
-
-
   constructor(private dataService: DataService, private filterService: FilterService) {
     this.getAirports();
     this.getFlightDateFrequencies();
@@ -85,14 +77,6 @@ export class DataStoreService {
 
   getSelectedRoute(): FlightScheduleRouteDto {
     return this._selectedRoute.getValue();
-  }
-
-  getSelectedAirportRoutesOutgoing(): boolean {
-    return this._selectedAirportRoutesOutgoing.getValue();
-  }
-
-  getSelectedAirportRoutesIncoming(): boolean {
-    return this._selectedAirportRoutesIncoming.getValue();
   }
 
   getAllLegRenders() {
@@ -159,15 +143,6 @@ export class DataStoreService {
   private setCurrentlyDisplayedAirports(airports: AirportRender[]): void {
     this._currentlyDisplayedAirports.next(airports);
   }
-
-  setSelectedAirportRoutesOutgoing(outgoing: boolean): void {
-    this._selectedAirportRoutesOutgoing.next(outgoing);
-  }
-
-  setSelectedAirportRoutesIncoming(incoming: boolean): void {
-    this._selectedAirportRoutesIncoming.next(incoming);
-  }
-
   setTimeFilter(timeFilter: TimeFilter): void {
     this._timeFilter.next(timeFilter);
 

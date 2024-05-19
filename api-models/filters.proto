@@ -31,12 +31,12 @@ message GeneralFilter {
   enums.RouteDisplayType routeDisplayType = 2;
 }
 
-
 message SelectedAirportFilter {
   string iataCode = 1;
   bool includingDepartures = 2;
   bool includingArrivals = 3;
 }
+
 
 message CombinedFilterRequest {
   RouteFilter routeFilter = 1;
