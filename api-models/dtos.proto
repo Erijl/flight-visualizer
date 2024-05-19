@@ -1,0 +1,20 @@
+// Proto Configuration
+syntax = "proto3";
+package proto.objects;
+
+// Java Configuration
+option java_multiple_files = true;
+option java_package = "com.erijl.flightvisualizer.protos.dtos";
+option java_outer_classname = "Dto";
+
+// Imports
+import "google/protobuf/timestamp.proto";
+import "objects.proto";
+
+// Classes
+message SandboxModeResponseObject {
+  repeated objects.LegRender legRenders = 1;
+  repeated objects.AirportRender airportRenders = 2;
+  objects.LegRender longestFlightLeg = 3;
+  objects.LegRender furthestFlightLeg = 4;
+}

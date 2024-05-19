@@ -1,14 +1,23 @@
 import { Injectable } from '@angular/core';
-import {catchError, Observable, of, tap} from "rxjs";
-import {
-  Airport,
-  FlightDateFrequencyDto,
-  FlightSchedule,
-  FlightScheduleRouteDto,
-  DateRange
-} from "../dto/airport";
-import {HttpClient} from "@angular/common/http";
+import { filter, map, Observable, of } from "rxjs";
+import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
+import {
+  AirportDetails,
+  AirportRender,
+  AirportRenders,
+  DetailedLegInformations,
+  FlightDateFrequencies,
+  LegRender
+} from "../../protos/objects";
+import {
+  CombinedFilterRequest,
+  GeneralFilter,
+  RouteFilter,
+  SelectedAirportFilter, SpecificRouteFilterRequest,
+  TimeFilter
+} from "../../protos/filters";
+import {SandboxModeResponseObject} from "../../protos/dtos";
 
 @Injectable({
   providedIn: 'root'
@@ -19,35 +28,85 @@ export class DataService {
   constructor(private http: HttpClient) { }
 
   getAirports() {
-    return this.http.get<Airport[]>(this.apiEndpoint + 'airports')
-        .pipe(
-            tap(_ => this.log('fetched Airports')),
-            catchError(this.handleError<Airport[]>('getAirports', []))
-        );
-  }
-
-  getFlightScheduleLegRoutes(dateRange: DateRange) {
-    return this.http.get<FlightScheduleRouteDto[]>(this.apiEndpoint + 'flightScheduleLeg/distance?startDate=' + this.convertDateToUTCString(dateRange.start?.toUTCString()) + '&endDate=' + this.convertDateToUTCString(dateRange.end?.toUTCString()))
-      .pipe(
-        tap(_ => this.log('fetched getFlightScheduleLegRoutes')),
-        catchError(this.handleError<FlightScheduleRouteDto[]>('getFlightScheduleLegRoutes', []))
-      );
+    const headers = new HttpHeaders({ 'Accept': 'application/x-protobuf' });
+    return this.http.get(this.apiEndpoint + 'airports', {
+      headers,
+      responseType: 'arraybuffer'
+    }).pipe(
+      map(arrayBuffer => {
+        const airportRendersMessage = AirportRenders.decode(new Uint8Array(arrayBuffer));
+        return airportRendersMessage.airports;
+      })
+    );
   }
 
   getFlightDateFrequencies() {
-    return this.http.get<FlightDateFrequencyDto[]>(this.apiEndpoint + 'flightdatefrequency')
-      .pipe(
-        tap(_ => this.log('fetched getFlightDateFrequencies')),
-        catchError(this.handleError<FlightDateFrequencyDto[]>('getFlightDateFrequencies', []))
-      );
+    const headers = new HttpHeaders({ 'Accept': 'application/x-protobuf' });
+    return this.http.get(this.apiEndpoint + 'flightdatefrequency', {
+      headers,
+      responseType: 'arraybuffer'
+    }).pipe(
+      map(arrayBuffer => {
+        const flightDateFrequencies = FlightDateFrequencies.decode(new Uint8Array(arrayBuffer));
+        return flightDateFrequencies.frequencies;
+      })
+    );
   }
 
-  getFlightScheduleById(id: number) {
-    return this.http.get<FlightSchedule>(this.apiEndpoint + 'flightschedule?id=' + id)
-      .pipe(
-        tap(_ => this.log('fetched getFlightScheduleById')),
-        catchError(this.handleError<FlightSchedule>('getFlightScheduleById', new FlightSchedule()))
-      );
+  getAllLegsForSpecificRoute(leg: LegRender, timeFilter: TimeFilter) {
+    const request = SpecificRouteFilterRequest.create({legRender: leg, timeFilter: timeFilter});
+    const blob = new Blob([SpecificRouteFilterRequest.encode(request).finish()], { type: 'application/x-protobuf' });
+
+    const req = new HttpRequest('POST', this.apiEndpoint + 'flightScheduleLeg/routedetail', blob, {
+      headers: new HttpHeaders({ 'Accept': 'application/x-protobuf' }),
+      reportProgress: true,
+      responseType: 'arraybuffer'
+    });
+
+    return this.http.request(req).pipe(
+      filter(event => event.type === HttpEventType.Response),
+      map((event) => {
+        // @ts-ignore
+        return DetailedLegInformations.decode(new Uint8Array(event.body)).detailedLegs;
+      })
+    );
+  }
+
+  getDistinctFlightScheduleLegsForRendering(timeFilter: TimeFilter, generalFilter: GeneralFilter, routeFilter: RouteFilter, selectedAirportFilter: SelectedAirportFilter): Observable<SandboxModeResponseObject> {
+    const combinedFilter = CombinedFilterRequest.create({timeFilter: timeFilter, generalFilter: generalFilter, routeFilter: routeFilter, selectedAirportFilter: selectedAirportFilter});
+    const blob = new Blob([CombinedFilterRequest.encode(combinedFilter).finish()], { type: 'application/x-protobuf' });
+
+    const req = new HttpRequest('POST', this.apiEndpoint + 'flightScheduleLeg/distinct', blob, {
+      headers: new HttpHeaders({ 'Accept': 'application/x-protobuf' }),
+      reportProgress: true,
+      responseType: 'arraybuffer'
+    });
+
+    return this.http.request(req).pipe(
+      filter(event => event.type === HttpEventType.Response),
+      map((event) => {
+        // @ts-ignore
+        return SandboxModeResponseObject.decode(new Uint8Array(event.body));
+      })
+    );
+  }
+
+  getAirportDetails(airportRender: AirportRender): Observable<AirportDetails> {
+    const blob = new Blob([AirportRender.encode(airportRender).finish()], { type: 'application/x-protobuf' });
+
+    const req = new HttpRequest('POST', this.apiEndpoint + 'airport/detail', blob, {
+      headers: new HttpHeaders({ 'Accept': 'application/x-protobuf' }),
+      reportProgress: true,
+      responseType: 'arraybuffer'
+    });
+
+    return this.http.request(req).pipe(
+      filter(event => event.type === HttpEventType.Response),
+      map((event) => {
+        // @ts-ignore
+        return AirportDetails.decode(new Uint8Array(event.body));
+      })
+    );
   }
 
 

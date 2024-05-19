@@ -1,0 +1,37 @@
+// Proto Configuration
+syntax = "proto3";
+package proto.enums;
+
+// Java Configuration
+option java_multiple_files = true;
+option java_package = "com.erijl.flightvisualizer.protos.enums";
+option java_outer_classname = "Enums";
+
+// Imports
+
+
+// Classes
+enum RouteFilterType {
+  DURATION = 0;
+  DISTANCE = 1;
+}
+
+enum AircraftTimeFilterType {
+  ARRIVALANDDEPARTURE = 0;
+  DEPARTURE = 1;
+  ARRIVAL = 2;
+}
+
+enum AirportDisplayType {
+  AIRPORTDISPLAYTYPE_ALL = 0;
+  AIRPORTDISPLAYTYPE_WITHROUTES = 1;
+  AIRPORTDISPLAYTYPE_NONE = 2;
+}
+
+enum RouteDisplayType {
+  ROUTEDISPLAYTYPE_ALL = 0;
+  ROUTEDISPLAYTYPE_SPECIFICAIRPORT = 1;
+  ROUTEDISPLAYTYPE_ONLYWITHINSAMECOUNTRY = 2;
+  ROUTEDISPLAYTYPE_WITHINSAMEREGION = 3;
+  ROUTEDISPLAYTYPE_WITHINSAMETIMEZONE = 4;
+}

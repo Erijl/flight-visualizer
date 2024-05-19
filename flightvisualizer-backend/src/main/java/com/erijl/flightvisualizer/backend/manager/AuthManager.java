@@ -1,6 +1,6 @@
 package com.erijl.flightvisualizer.backend.manager;
 
-import com.erijl.flightvisualizer.backend.dto.AccessToken;
+import com.erijl.flightvisualizer.backend.model.api.AccessToken;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
 import com.google.gson.Gson;

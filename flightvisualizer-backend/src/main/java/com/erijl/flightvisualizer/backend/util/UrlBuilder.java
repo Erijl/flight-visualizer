@@ -1,8 +1,5 @@
 package com.erijl.flightvisualizer.backend.util;
 
-import com.erijl.flightvisualizer.backend.enums.TimeMode;
-import com.erijl.flightvisualizer.backend.model.FlightSchedule;
-
 import java.util.List;
 
 public class UrlBuilder {

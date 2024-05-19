@@ -35,3 +35,6 @@ build/
 ### Other ###
 *.properties
 *.log
+
+### Generated Protocol Buffers ###
+protos/
