@@ -28,7 +28,7 @@ jobs:
       - name: Generate TypeScript from Protobuf
         run: |
           npm install -g ts-proto 
-          protoc -I=./api-models --plugin=protoc-gen-ts_proto=./flightvisualizer-frontend/node_modules/.bin/protoc-gen-ts_proto.cmd --ts_proto_out=./flightvisualizer-frontend/src/app/protos --ts_proto_opt=esModuleInterop=true --ts_proto_opt=importSuffix=.js ./api-models/*.proto
+          protoc -I=./api-models --plugin=protoc-gen-ts_proto=./flightvisualizer-frontend/node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./flightvisualizer-frontend/src/app/protos --ts_proto_opt=esModuleInterop=true --ts_proto_opt=importSuffix=.js ./api-models/*.proto
         working-directory: .
 
       - name: Build
