@@ -22,19 +22,8 @@ jobs:
       - name: Install Protobuf Compiler (protoc)
         uses: arduino/setup-protoc@v3
 
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
       - name: Generate Java from Protobuf
         run: protoc -I=./api-models --java_out=./flightvisualizer-backend/src/main/java ./api-models/*.proto
-
-      - name: Build with Maven
-        run: mvn -B package -DskipTests
-        working-directory: ./flightvisualizer-backend
 
       - name: Docker Login
         uses: docker/login-action@v3
