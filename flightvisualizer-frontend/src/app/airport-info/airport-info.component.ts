@@ -4,7 +4,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
-import {LegRender} from "../protos/objects";
+import {AirportDetails, LegRender} from "../protos/objects";
 import {SelectedAirportFilter} from "../protos/filters";
 
 @Component({
@@ -16,11 +16,13 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   // Subscriptions
   selectedAirportSubscription!: Subscription;
   currentlyRenderedRoutesSubscription!: Subscription;
+  airportDetailsSubscription!: Subscription;
 
   // UI data
-  displayedColumns: string[] = ['origin', 'destination', 'kilometerDistance'];
+  displayedColumns: string[] = ['originAirportIataCode', 'destinationAirportIataCode', 'distanceKilometers', 'durationMinutes'];
   dataSource = new MatTableDataSource<LegRender>([]);
   selectedAirportFilter: SelectedAirportFilter = SelectedAirportFilter.create();
+  airportDetails: AirportDetails = AirportDetails.create();
 
   // UI state
   specificAirportRoutesOutgoing: boolean = true;
@@ -37,7 +39,12 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit(): void {
     this.selectedAirportSubscription = this.dataStoreService.selectedAirportFilter.subscribe(selectedAirportFilter => {
       this.selectedAirportFilter = selectedAirportFilter;
+
       this.updateTable();
+    });
+
+    this.airportDetailsSubscription = this.dataStoreService.airportDetails.subscribe(airportDetails => {
+      this.airportDetails = airportDetails;
     });
 
     this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
@@ -63,7 +70,7 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   updateTable(): void {
-    this.dataSource = new MatTableDataSource<LegRender>(this.dataStoreService.getAllLegRenders()); //TODO overhaul
+    this.dataSource = new MatTableDataSource<LegRender>(this.dataStoreService.getLegRendersForSelectedAirport()); //TODO overhaul
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }

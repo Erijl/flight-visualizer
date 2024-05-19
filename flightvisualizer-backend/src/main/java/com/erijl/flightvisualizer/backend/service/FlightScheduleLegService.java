@@ -93,10 +93,10 @@ public class FlightScheduleLegService {
         LegRenderDataProjection furthestLeg = preMatureFilterLegs.stream().max(Comparator.comparing(LegRenderDataProjection::getDistanceKilometers)).orElse(null);
         LegRenderDataProjection longestLeg = preMatureFilterLegs.stream().max(Comparator.comparing(LegRenderDataProjection::getDurationMinutes)).orElse(null);
 
-        legStream = FilterUtil.applyRouteFilter(combinedFilterRequest.getRouteFilter(), preMatureFilterLegs.stream());
-        legs = legStream.collect(Collectors.toCollection(ArrayList::new));
+        //legStream = FilterUtil.applyRouteFilter(combinedFilterRequest.getRouteFilter(), preMatureFilterLegs.stream());
+        //legs = legStream.collect(Collectors.toCollection(ArrayList::new));
 
-        List<LegRender> legRenders = LegRenderBuilder.buildLegRenderList(legs);
+        List<LegRender> legRenders = LegRenderBuilder.buildLegRenderList(preMatureFilterLegs);
         List<AirportRender> airportRenders = this.airportService.getAllAirportsWithFilter(combinedFilterRequest.getGeneralFilter(), legRenders);
 
         responseBuilder.addAllLegRenders(legRenders);

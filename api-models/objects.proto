@@ -54,3 +54,13 @@ message FlightDateFrequency {
 message FlightDateFrequencies {
   repeated FlightDateFrequency frequencies = 1;
 }
+
+message AirportDetails {
+  string iataCode = 1;
+  string name = 2;
+  Coordinate coordinate = 3;
+  string iataCityCode = 4;
+  string isoCountryCode = 5;
+  string offsetUtc = 6;
+  string timezoneId = 7;
+}

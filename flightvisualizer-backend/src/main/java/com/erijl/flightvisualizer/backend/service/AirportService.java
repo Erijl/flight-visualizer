@@ -1,5 +1,6 @@
 package com.erijl.flightvisualizer.backend.service;
 
+import com.erijl.flightvisualizer.backend.builder.AirportDetailsBuilder;
 import com.erijl.flightvisualizer.backend.builder.AirportRenderBuilder;
 import com.erijl.flightvisualizer.backend.model.api.AirportResponse;
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
@@ -8,8 +9,10 @@ import com.erijl.flightvisualizer.backend.model.projections.AirportRenderDataPro
 import com.erijl.flightvisualizer.backend.model.repository.AirportRepository;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
+import com.erijl.flightvisualizer.backend.validators.AirportRenderValidator;
 import com.erijl.flightvisualizer.protos.enums.AirportDisplayType;
 import com.erijl.flightvisualizer.protos.filter.GeneralFilter;
+import com.erijl.flightvisualizer.protos.objects.AirportDetails;
 import com.erijl.flightvisualizer.protos.objects.AirportRender;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
 import com.google.gson.Gson;
@@ -69,6 +72,14 @@ public class AirportService {
 
         return AirportRenderBuilder.buildAirportRenderList(airportProjections);
     }
+
+    public AirportDetails getAirportDetails(AirportRender airportRender) {
+        AirportRenderValidator.validate(airportRender);
+
+        Airport airport = this.getAirportById(airportRender.getIataCode());
+        return AirportDetailsBuilder.buildAirportDetails(airport);
+    }
+
 
     @Cacheable(value = "airport", key = "#iataAirportCode", unless = "#result == null")
     public void ensureAirportExists(String iataAirportCode) {

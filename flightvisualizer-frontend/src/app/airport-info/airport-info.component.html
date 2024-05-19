@@ -1,44 +1,44 @@
-<div [hidden]="selectedAirportFilter.iataCode == ''">
-<!--//TODO write a custom component for the airport card
+<div [hidden]="selectedAirportFilter.iataCode == '' || airportDetails.iataCode == ''">
+
   <mat-card class="airport-card">
     <mat-card-header>
-      <mat-card-title>{{ selectedAirport.iataCode }} Airport</mat-card-title>
-      <mat-card-subtitle>{{ selectedAirport.airportName }} - {{ selectedAirport.timezoneId ? selectedAirport.timezoneId.split('/')[0] : '?' }}</mat-card-subtitle>
+      <mat-card-title>{{ airportDetails.iataCode }} Airport</mat-card-title>
+      <mat-card-subtitle>{{ airportDetails.name }} - {{ airportDetails.timezoneId ? airportDetails.timezoneId.split('/')[0] : '?' }}</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content class="airport-card-content">
       <div class="info-row">
         <div class="info-pair">
           <span class="info-title">City Code:</span>
-          <span class="info-value">{{ selectedAirport.iataCityCode }}</span>
+          <span class="info-value">{{ airportDetails.iataCityCode }}</span>
         </div>
         <div class="info-pair">
           <span class="info-title">Country Code:</span>
-          <span class="info-value">{{ selectedAirport.isoCountryCode }}</span>
+          <span class="info-value">{{ airportDetails.isoCountryCode }}</span>
         </div>
       </div>
       <div class="info-row">
         <div class="info-pair">
           <span class="info-title">Latitude:</span>
-          <span class="info-value">{{ selectedAirport.latitude }}</span>
+          <span class="info-value">{{ airportDetails.coordinate?.latitude }}</span>
         </div>
         <div class="info-pair">
           <span class="info-title">Longitude:</span>
-          <span class="info-value">{{ selectedAirport.longitude }}</span>
+          <span class="info-value">{{ airportDetails.coordinate?.longitude }}</span>
         </div>
       </div>
       <div class="info-row">
         <div class="info-pair">
           <span class="info-title">Timezone:</span>
-          <span class="info-value">{{ selectedAirport.timezoneId ? selectedAirport.timezoneId.split('/')[1].replaceAll("_", " ") : '?' }}</span>
+          <span class="info-value">{{ airportDetails.timezoneId ? airportDetails.timezoneId.split('/')[1].replaceAll("_", " ") : '?' }}</span>
         </div>
         <div class="info-pair">
           <span class="info-title">UTC Offset:</span>
-          <span class="info-value">{{ selectedAirport.offsetUtc }}h</span>
+          <span class="info-value">{{ airportDetails.offsetUtc }}h</span>
         </div>
       </div>
     </mat-card-content>
-  </mat-card>-->
+  </mat-card>
 
   <br>
   <h2>Flight Routes</h2>
@@ -51,19 +51,24 @@
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource" matSort>
 
-      <ng-container matColumnDef="origin">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Origin</th>
+      <ng-container matColumnDef="originAirportIataCode">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Orig.</th>
         <td mat-cell *matCellDef="let route"> {{ route.originAirportIataCode }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="destination">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Destination</th>
+      <ng-container matColumnDef="destinationAirportIataCode">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Dest.</th>
         <td mat-cell *matCellDef="let route"> {{ route.destinationAirportIataCode }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="kilometerDistance">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Distance</th>
+      <ng-container matColumnDef="distanceKilometers">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Distance</th>
         <td mat-cell *matCellDef="let route"> {{ route.distanceKilometers }}Km</td>
+      </ng-container>
+
+      <ng-container matColumnDef="durationMinutes">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Duration</th>
+        <td mat-cell *matCellDef="let route"> {{ route.durationMinutes | intToTimeofday}}h</td>
       </ng-container>
 
 
@@ -79,7 +84,7 @@
 
 </div>
 
-<div [hidden]="selectedAirportFilter.iataCode != ''" class="error-message">
+<div [hidden]="selectedAirportFilter.iataCode != '' || airportDetails.iataCode == ''" class="error-message">
   <p>No Airport Selected</p>
   <p>Please select an airport from the map</p>
 </div>

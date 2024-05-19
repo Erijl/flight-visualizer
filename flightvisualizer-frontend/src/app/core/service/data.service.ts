@@ -3,7 +3,7 @@ import {catchError, filter, map, Observable, of, tap} from "rxjs";
 import {FlightSchedule} from "../dto/airport";
 import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {AirportRenders, FlightDateFrequencies} from "../../protos/objects";
+import {AirportDetails, AirportRender, AirportRenders, FlightDateFrequencies} from "../../protos/objects";
 import {
   CombinedFilterRequest,
   GeneralFilter,
@@ -70,6 +70,24 @@ export class DataService {
       map((event) => {
         // @ts-ignore
         return SandboxModeResponseObject.decode(new Uint8Array(event.body));
+      })
+    );
+  }
+
+  getAirportDetails(airportRender: AirportRender): Observable<AirportDetails> {
+    const blob = new Blob([AirportRender.encode(airportRender).finish()], { type: 'application/x-protobuf' });
+
+    const req = new HttpRequest('POST', this.apiEndpoint + 'airport/detail', blob, {
+      headers: new HttpHeaders({ 'Accept': 'application/x-protobuf' }),
+      reportProgress: true,
+      responseType: 'arraybuffer'
+    });
+
+    return this.http.request(req).pipe(
+      filter(event => event.type === HttpEventType.Response),
+      map((event) => {
+        // @ts-ignore
+        return AirportDetails.decode(new Uint8Array(event.body));
       })
     );
   }

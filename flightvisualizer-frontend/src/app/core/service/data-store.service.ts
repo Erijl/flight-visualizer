@@ -8,7 +8,7 @@ import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {DetailSelectionType} from "../enum";
 import {GeneralFilter, RouteFilter, SelectedAirportFilter, TimeFilter} from "../../protos/filters";
-import {AirportRender, FlightDateFrequency, LegRender} from "../../protos/objects";
+import {AirportDetails, AirportRender, FlightDateFrequency, LegRender} from "../../protos/objects";
 import {RouteDisplayType} from "../../protos/enums";
 
 @Injectable({
@@ -56,6 +56,10 @@ export class DataStoreService {
   // selected data
   private _selectedRoute: BehaviorSubject<FlightScheduleRouteDto> = new BehaviorSubject<FlightScheduleRouteDto>(new FlightScheduleRouteDto());
   selectedRoute = this._selectedRoute.asObservable();
+
+  // details
+  private _airportDetails: BehaviorSubject<AirportDetails> = new BehaviorSubject<AirportDetails>(AirportDetails.create());
+  airportDetails = this._airportDetails.asObservable();
 
 
   constructor(private dataService: DataService) {
@@ -122,11 +126,20 @@ export class DataStoreService {
     return this.allAirports.find(airport => airport.iataCode == iataCode);
   }
 
+  getLegRendersForSelectedAirport(): LegRender[] {
+    const filter = this.getSelectedAirportFilter();
+    return this.allLegRenders.filter(leg => (filter.includingDepartures && leg.originAirportIataCode == filter.iataCode) || (filter.includingArrivals && leg.destinationAirportIataCode == filter.iataCode));
+  }
+
   // SETTERS
 
   setSelectedAirportFilter(selectedAirportFilter: SelectedAirportFilter): void {
     this._selectedAirportFilter.next(selectedAirportFilter);
-    console.log("Selected airport filter: ", selectedAirportFilter);
+
+    const render = this.getAirportRenderByIataCode(selectedAirportFilter.iataCode);
+    if (render) {
+      this.getAirportDetails(render);
+    }
 
     if (this.getGeneralFilter().routeDisplayType == RouteDisplayType.ROUTEDISPLAYTYPE_SPECIFICAIRPORT) {
       this.updateRenderedRoutes();
@@ -158,6 +171,10 @@ export class DataStoreService {
     this.updateRenderedRoutes();
   }
 
+  setAirportDetails(airportDetails: AirportDetails): void {
+    this._airportDetails.next(airportDetails);
+  }
+
   // FETCHING DATA
   private getDistinctFlightScheduleLegsForRendering(): void {
     this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter(), this.getGeneralFilter(), this.getRouteFilter(), this.getSelectedAirportFilter()).subscribe(sandboxModeResponseObject => {
@@ -169,6 +186,12 @@ export class DataStoreService {
 
       this._renderedRoutes.next(sandboxModeResponseObject.legRenders);
       this._currentlyDisplayedAirports.next(sandboxModeResponseObject.airportRenders);
+    });
+  }
+
+  private getAirportDetails(airportRender: AirportRender): void {
+    this.dataService.getAirportDetails(airportRender).subscribe(airportDetails => {
+      this.setAirportDetails(airportDetails);
     });
   }
 
