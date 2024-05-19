@@ -35,6 +35,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Print Project Structure
+        run: ls -R
+        working-directory: ./flightvisualizer-backend
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
