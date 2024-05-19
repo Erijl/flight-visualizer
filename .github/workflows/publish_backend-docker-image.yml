@@ -30,8 +30,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Generate Java from Protobuf
-        run: mvn -B protobuf:compile
-        working-directory: ./flightvisualizer-backend
+        run: protoc -I=./api-models --java_out=./flightvisualizer-backend/src/main/java ./api-models/*.proto
 
       - name: Build with Maven
         run: mvn -B package -DskipTests
