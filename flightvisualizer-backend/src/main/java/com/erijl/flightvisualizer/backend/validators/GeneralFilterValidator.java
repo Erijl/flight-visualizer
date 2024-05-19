@@ -9,6 +9,12 @@ public class GeneralFilterValidator {
     private GeneralFilterValidator() {
     }
 
+    /**
+     * Validates the GeneralFilter object.
+     *
+     * @param generalFilter the GeneralFilter object to validate
+     * @throws IllegalArgumentException if the validation fails
+     */
     public static void validate(GeneralFilter generalFilter) {
         if (generalFilter == null) {
             throw new IllegalArgumentException("GeneralFilter cannot be null");

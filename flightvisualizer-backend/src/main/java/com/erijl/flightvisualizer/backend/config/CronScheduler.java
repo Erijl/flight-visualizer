@@ -8,7 +8,7 @@ import com.erijl.flightvisualizer.backend.model.repository.*;
 import com.erijl.flightvisualizer.backend.service.AircraftService;
 import com.erijl.flightvisualizer.backend.service.AirlineService;
 import com.erijl.flightvisualizer.backend.service.AirportService;
-import com.erijl.flightvisualizer.backend.util.CustomTimeUtil;
+import com.erijl.flightvisualizer.backend.util.TimeUtil;
 import com.erijl.flightvisualizer.backend.util.MathUtil;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
@@ -32,7 +32,7 @@ public class CronScheduler {
     @Value("${flight.visualizer.api.url}")
     private String baseUrl;
 
-    CustomTimeUtil customTimeUtil;
+    TimeUtil timeUtil;
     private final RestUtil restUtil;
     private final AuthManager authManager;
 
@@ -51,8 +51,8 @@ public class CronScheduler {
 
     //TODO remove java.util.date globally
     //TODO use MapStruct for conversion here
-    public CronScheduler(CustomTimeUtil customTimeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
-        this.customTimeUtil = customTimeUtil;
+    public CronScheduler(TimeUtil timeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
+        this.timeUtil = timeUtil;
         this.restUtil = restUtil;
         this.airlineService = airlineService;
         this.aircraftService = aircraftService;
@@ -91,8 +91,8 @@ public class CronScheduler {
         String requestUrl = new UrlBuilder(this.baseUrl)
                 .flightSchedule()
                 .filterAirlineCodes("LH")
-                .filterStartDate(this.customTimeUtil.convertDateToDDMMMYY(today))
-                .filterEndDate(this.customTimeUtil.convertDateToDDMMMYY(tomorrow))
+                .filterStartDate(this.timeUtil.convertDateToDDMMMYY(today))
+                .filterEndDate(this.timeUtil.convertDateToDDMMMYY(tomorrow))
                 .filterDaysOfOperation(new WeekRepresentation(today).toDaysOfOperationString())
                 .getUrl();
 
@@ -123,11 +123,11 @@ public class CronScheduler {
         flightScheduleResponseList.forEach(flightScheduleResponse -> {
             FlightScheduleOperationPeriod operationPeriod = this.flightScheduleOperationPeriodRepository.save(
                     new FlightScheduleOperationPeriod(
-                            this.customTimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getStartDate()),
-                            this.customTimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getEndDate()),
+                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getStartDate()),
+                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getEndDate()),
                             flightScheduleResponse.getPeriodOfOperationResponseUTC().getDaysOfOperation(),
-                            this.customTimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getStartDate()),
-                            this.customTimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getEndDate()),
+                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getStartDate()),
+                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getEndDate()),
                             flightScheduleResponse.getPeriodOfOperationResponseLT().getDaysOfOperation()
                     )
             );
@@ -190,7 +190,7 @@ public class CronScheduler {
                                 flightScheduleLeg.getAircraftArrivalTimeLT(),
                                 flightScheduleLeg.getAircraftArrivalTimeDateDiffLT(),
                                 flightScheduleLeg.getAircraftArrivalTimeVariation(),
-                                CustomTimeUtil.calculateDurationInMinutes(flightScheduleLeg),
+                                TimeUtil.calculateDurationInMinutes(flightScheduleLeg),
                                 MathUtil.calculateDistanceBetweenAirports(originAirport, destinationAirport),
                                 drawableCoordinates.getOriginLongitude(),
                                 drawableCoordinates.getDestinationLongitude()

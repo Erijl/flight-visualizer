@@ -10,6 +10,12 @@ public class RouteFilterValidator {
 
     private RouteFilterValidator() {}
 
+    /**
+     * Validates the given RouteFilter object.
+     *
+     * @param routeFilter RouteFilter object to validate
+     * @throws IllegalArgumentException if the validation fails
+     */
     public static void validate(RouteFilter routeFilter) {
         if (routeFilter == null) {
             throw new IllegalArgumentException("RouteFilter cannot be null");

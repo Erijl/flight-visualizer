@@ -2,14 +2,10 @@ package com.erijl.flightvisualizer.backend.service;
 
 import com.erijl.flightvisualizer.backend.builder.DetailedLegInformationBuilder;
 import com.erijl.flightvisualizer.backend.builder.LegRenderBuilder;
-import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto;
-import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistance;
-import com.erijl.flightvisualizer.backend.model.enums.LocationType;
 import com.erijl.flightvisualizer.backend.model.projections.LegRenderDataProjection;
 import com.erijl.flightvisualizer.backend.model.repository.FlightScheduleLegRepository;
-import com.erijl.flightvisualizer.backend.util.CustomTimeUtil;
+import com.erijl.flightvisualizer.backend.util.TimeUtil;
 import com.erijl.flightvisualizer.backend.util.FilterUtil;
-import com.erijl.flightvisualizer.backend.util.MathUtil;
 import com.erijl.flightvisualizer.backend.validators.*;
 import com.erijl.flightvisualizer.protos.dtos.SandboxModeResponseObject;
 import com.erijl.flightvisualizer.protos.filter.CombinedFilterRequest;
@@ -19,9 +15,7 @@ import com.erijl.flightvisualizer.protos.objects.DetailedLegInformations;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -48,8 +42,8 @@ public class FlightScheduleLegService {
     public DetailedLegInformations getLegsForRouteDetailed(SpecificRouteFilterRequest request) {
         SpecificRouteFilterRequestValidator.validate(request);
 
-        LocalDate startDate = CustomTimeUtil.convertProtoTimestampToLocalDate(request.getTimeFilter().getDateRange().getStart());
-        LocalDate endDate = CustomTimeUtil.convertProtoTimestampToLocalDate(request.getTimeFilter().getDateRange().getEnd());
+        LocalDate startDate = TimeUtil.convertProtoTimestampToLocalDate(request.getTimeFilter().getDateRange().getStart());
+        LocalDate endDate = TimeUtil.convertProtoTimestampToLocalDate(request.getTimeFilter().getDateRange().getEnd());
         LegRender legRender = request.getLegRender();
         List<LegRenderDataProjection> legs = flightScheduleLegRepository
                 .getDetailedLegInformationForRoute(startDate, endDate, legRender.getOriginAirportIataCode(), legRender.getDestinationAirportIataCode());
@@ -74,8 +68,8 @@ public class FlightScheduleLegService {
         CombinedFilterRequestValidator.validate(combinedFilterRequest);
 
         //TODO possible error when selecting too many days (check db performance)
-        LocalDate startDate = CustomTimeUtil.convertProtoTimestampToLocalDate(combinedFilterRequest.getTimeFilter().getDateRange().getStart());
-        LocalDate endDate = CustomTimeUtil.convertProtoTimestampToLocalDate(combinedFilterRequest.getTimeFilter().getDateRange().getEnd());
+        LocalDate startDate = TimeUtil.convertProtoTimestampToLocalDate(combinedFilterRequest.getTimeFilter().getDateRange().getStart());
+        LocalDate endDate = TimeUtil.convertProtoTimestampToLocalDate(combinedFilterRequest.getTimeFilter().getDateRange().getEnd());
         List<LegRenderDataProjection> legs = flightScheduleLegRepository
                 .findDistinctFlightScheduleLegsByStartAndEndDate(startDate, endDate);
 

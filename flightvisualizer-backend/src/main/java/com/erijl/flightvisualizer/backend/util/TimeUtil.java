@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.Locale;
 
 @Component
-public class CustomTimeUtil {
+public class TimeUtil {
 
     private static final int MAX_MINUTES_IN_DAY = 1439;
     private static final ZoneId TIMEZONE = ZoneId.of("UTC");
@@ -69,30 +69,20 @@ public class CustomTimeUtil {
         }
     }
 
-    public LocalDate convertDateToUtcLocalDate(Date date) {
-        return date.toInstant()
-                .atZone(TIMEZONE)
-                .toLocalDate();
-    }
-
-    public LocalDate convertStringToLocalDate(String date) {
-        return LocalDate.parse(date);
-    }
-
     public java.sql.Date convertDateToSqlDate(Date date) {
         return new java.sql.Date(date.getTime());
     }
 
+    /**
+     * Calculates the duration of a flight leg in minutes.
+     *
+     * @param legResponse The {@link LegResponse} object containing the departure and arrival times
+     * @return The duration of the flight leg in minutes
+     */
     public static int calculateDurationInMinutes(LegResponse legResponse) {
         return calculateDurationInMinutes(legResponse.getAircraftDepartureTimeUTC(),
                 legResponse.getAircraftArrivalTimeUTC(),
                 legResponse.getAircraftArrivalTimeDateDiffUTC());
-    }
-
-    public static int calculateDurationInMinutes(FlightScheduleLeg flightScheduleLeg) {
-        return calculateDurationInMinutes(flightScheduleLeg.getAircraftDepartureTimeUtc(),
-                flightScheduleLeg.getAircraftArrivalTimeUtc(),
-                flightScheduleLeg.getAircraftArrivalTimeDateDiffUtc());
     }
 
     private static int calculateDurationInMinutes(int a, int b, int d) {

@@ -11,6 +11,7 @@ public class CombinedFilterRequestValidator {
      * Validates the CombinedFilterRequest object
      *
      * @param combinedFilterRequest CombinedFilterRequest object to validate
+     * @throws IllegalArgumentException if the validation fails
      */
     public static void validate(CombinedFilterRequest combinedFilterRequest) {
         if (combinedFilterRequest == null) {

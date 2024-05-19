@@ -1,6 +1,5 @@
 package com.erijl.flightvisualizer.backend.config;
 
-import com.erijl.flightvisualizer.backend.config.converter.ProtobufJsonFormatHttpMessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

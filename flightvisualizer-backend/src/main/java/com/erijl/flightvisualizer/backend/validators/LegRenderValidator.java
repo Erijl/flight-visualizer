@@ -4,6 +4,13 @@ import com.erijl.flightvisualizer.protos.objects.LegRender;
 
 public class LegRenderValidator {
 
+    private LegRenderValidator() {
+    }
+
+    /**
+     * Validates a {@link LegRender}
+     * @param legRender the {@link LegRender} to validate
+     */
     public static void validate(LegRender legRender) {
         if (legRender == null) {
             throw new IllegalArgumentException("Request is not valid");

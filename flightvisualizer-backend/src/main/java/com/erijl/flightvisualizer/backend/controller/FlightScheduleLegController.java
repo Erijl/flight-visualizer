@@ -1,7 +1,5 @@
 package com.erijl.flightvisualizer.backend.controller;
 
-import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto;
-import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistance;
 import com.erijl.flightvisualizer.backend.service.FlightScheduleLegService;
 import com.erijl.flightvisualizer.protos.dtos.SandboxModeResponseObject;
 import com.erijl.flightvisualizer.protos.filter.CombinedFilterRequest;
@@ -12,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StopWatch;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Slf4j
 @RestController

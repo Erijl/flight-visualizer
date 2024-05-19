@@ -11,13 +11,13 @@ import java.util.GregorianCalendar;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class CustomTimeUtilTest {
+public class TimeUtilTest {
 
     @Test
     void testConvertDateToDDMMMYY() {
-        CustomTimeUtil customTimeUtil = new CustomTimeUtil();
+        TimeUtil timeUtil = new TimeUtil();
 
-        assertEquals("11AUG23", customTimeUtil.convertDateToDDMMMYY(
+        assertEquals("11AUG23", timeUtil.convertDateToDDMMMYY(
                 new GregorianCalendar(
                         2023,
                         Calendar.AUGUST,
@@ -25,7 +25,7 @@ public class CustomTimeUtilTest {
                 ).getTime()
         ));
 
-        assertEquals("01DEC24", customTimeUtil.convertDateToDDMMMYY(
+        assertEquals("01DEC24", timeUtil.convertDateToDDMMMYY(
                 new GregorianCalendar(
                         2024,
                         Calendar.DECEMBER,
@@ -48,7 +48,7 @@ public class CustomTimeUtilTest {
 
         // Departs at 300 and arrives at 1000, duraion = 700 minutes
 
-        assertEquals(700, CustomTimeUtil.calculateDurationInMinutes(legResponse));
+        assertEquals(700, TimeUtil.calculateDurationInMinutes(legResponse));
     }
 
     @Test
@@ -63,7 +63,7 @@ public class CustomTimeUtilTest {
         flightScheduleLeg.setAircraftDepartureTimeUtc(300);
         flightScheduleLeg.setAircraftArrivalTimeUtc(1000);
 
-        assertEquals(2139, CustomTimeUtil.calculateDurationInMinutes(legResponse));
+        assertEquals(2139, TimeUtil.calculateDurationInMinutes(legResponse));
     }
 
     /*
@@ -89,7 +89,7 @@ public class CustomTimeUtilTest {
         flightScheduleLeg.setAircraftDepartureTimeUtc(300);
         flightScheduleLeg.setAircraftArrivalTimeUtc(1000);
 
-        assertEquals(10773, CustomTimeUtil.calculateDurationInMinutes(legResponse));
+        assertEquals(10773, TimeUtil.calculateDurationInMinutes(legResponse));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class CustomTimeUtilTest {
                 .setNanos(0)
                 .build();
 
-        assertEquals("2021-05-03", CustomTimeUtil.convertProtoTimestampToLocalDate(timestamp).toString());
+        assertEquals("2021-05-03", TimeUtil.convertProtoTimestampToLocalDate(timestamp).toString());
     }
 
     @Test
@@ -109,6 +109,6 @@ public class CustomTimeUtilTest {
                 .setNanos(0)
                 .build();
 
-        assertNull(CustomTimeUtil.convertProtoTimestampToLocalDate(timestamp));
+        assertNull(TimeUtil.convertProtoTimestampToLocalDate(timestamp));
     }
 }

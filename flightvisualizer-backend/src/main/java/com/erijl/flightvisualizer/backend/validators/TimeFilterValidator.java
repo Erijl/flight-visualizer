@@ -13,6 +13,7 @@ public class TimeFilterValidator {
      * Validates the TimeFilter object
      *
      * @param timeFilter TimeFilter object to validate
+     * @throws IllegalArgumentException if the validation fails
      */
     public static void validate(TimeFilter timeFilter) {
         if (timeFilter == null) {

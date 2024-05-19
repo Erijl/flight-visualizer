@@ -1,7 +1,7 @@
 package com.erijl.flightvisualizer.backend.builder;
 
 import com.erijl.flightvisualizer.backend.model.projections.FlightDateFrequencyProjection;
-import com.erijl.flightvisualizer.backend.util.CustomTimeUtil;
+import com.erijl.flightvisualizer.backend.util.TimeUtil;
 import com.erijl.flightvisualizer.protos.objects.FlightDateFrequency;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class FlightDateFrequencyBuilder {
 
     public static FlightDateFrequency buildFlightDateFrequency(FlightDateFrequencyProjection flightDateFrequencyProjection) {
         return FlightDateFrequency.newBuilder()
-                .setDate(CustomTimeUtil.convertLocalDateToProtoTimestamp(CustomTimeUtil.convertyyyyMMddStringToUTCLocalDate(flightDateFrequencyProjection.getStartDateUtc())))
+                .setDate(TimeUtil.convertLocalDateToProtoTimestamp(TimeUtil.convertyyyyMMddStringToUTCLocalDate(flightDateFrequencyProjection.getStartDateUtc())))
                 .setFrequency(flightDateFrequencyProjection.getFlightCount())
                 .build();
     }

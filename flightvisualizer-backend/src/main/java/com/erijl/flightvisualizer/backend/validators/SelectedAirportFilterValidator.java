@@ -8,6 +8,12 @@ public class SelectedAirportFilterValidator {
 
     private SelectedAirportFilterValidator() {}
 
+    /**
+     * Validates the given SelectedAirportFilter object.
+     *
+     * @param selectedAirportFilter SelectedAirportFilter object to validate
+     * @throws IllegalArgumentException if the validation fails
+     */
     public static void validate(SelectedAirportFilter selectedAirportFilter) {
         if (selectedAirportFilter == null) {
             throw new IllegalArgumentException("SelectedAirportFilter cannot be null");

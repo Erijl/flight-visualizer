@@ -17,7 +17,7 @@ export class RouteInfoComponent implements OnInit, OnDestroy, AfterViewInit{
   routeDetailSubscription!: Subscription;
 
   // UI data
-  displayedColumns: string[] = ['operationDate', 'departureTimeUtc', 'arrivalTimeUtc'];
+  displayedColumns: string[] = ['operationDate', 'departureTimeUtc', 'arrivalTimeUtc', 'aircraftArrivalTimeDateDiffUtc'];
   dataSource = new MatTableDataSource<DetailedLegInformation>([]);
 
   selectedRoute: LegRender = LegRender.create();

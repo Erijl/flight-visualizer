@@ -1,6 +1,4 @@
 <div [hidden]="selectedRoute.originAirportIataCode == ''">
-
-
   <mat-card class="route-card">
 
     <mat-card-header>
@@ -28,11 +26,11 @@
 
       <div class="info-row">
         <div class="info-pair">
-          <span class="info-title">Departure Time:</span>
+          <span class="info-title">Dep. Time:</span>
           <span class="info-value">{{ selectedRoute.details?.departureTimeUtc | intToTimeofday }}</span>
         </div>
         <div class="info-pair">
-          <span class="info-title">Arrival Time:</span>
+          <span class="info-title">Arr. Time:</span>
           <span class="info-value">{{ selectedRoute.details?.arrivalTimeUtc | intToTimeofday }}</span>
         </div>
       </div>
@@ -67,6 +65,11 @@
       <ng-container matColumnDef="arrivalTimeUtc">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Arr. Time</th>
         <td mat-cell *matCellDef="let routeDetail"> {{ routeDetail.arrivalTimeUtc | intToTimeofday }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="aircraftArrivalTimeDateDiffUtc">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Next day</th>
+        <td mat-cell *matCellDef="let routeDetail"> {{ routeDetail.aircraftArrivalTimeDateDiffUtc != 0 ? 'Yes' : 'No' }}</td>
       </ng-container>
 
 

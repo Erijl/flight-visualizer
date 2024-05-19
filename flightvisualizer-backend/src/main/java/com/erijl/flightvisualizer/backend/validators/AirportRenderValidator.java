@@ -7,6 +7,12 @@ public class AirportRenderValidator {
     private AirportRenderValidator() {
     }
 
+    /**
+     * Validates an {@link AirportRender}
+     *
+     * @param airportRender the {@link AirportRender} to validate
+     * @throws IllegalArgumentException if the validation fails
+     */
     public static void validate(AirportRender airportRender) {
         if(airportRender == null) {
             throw new IllegalArgumentException("AirportRender cannot be null");
