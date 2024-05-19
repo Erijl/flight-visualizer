@@ -23,9 +23,7 @@ jobs:
         working-directory: ./flightvisualizer-frontend
 
       - name: Install Protobuf Compiler (protoc)
-        uses: arduino/setup-protoc@v2
-        with:
-          version: '3.x'
+        uses: arduino/setup-protoc@v3
 
       - name: Generate TypeScript from Protobuf
         run: |
