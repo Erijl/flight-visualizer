@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
-import {catchError, filter, map, Observable, of, tap} from "rxjs";
+import { filter, map, Observable, of } from "rxjs";
 import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {AirportDetails, AirportRender, AirportRenders, FlightDateFrequencies} from "../../protos/objects";
+import {
+  AirportDetails,
+  AirportRender,
+  AirportRenders,
+  DetailedLegInformations,
+  FlightDateFrequencies,
+  LegRender
+} from "../../protos/objects";
 import {
   CombinedFilterRequest,
   GeneralFilter,
   RouteFilter,
-  SelectedAirportFilter,
+  SelectedAirportFilter, SpecificRouteFilterRequest,
   TimeFilter
 } from "../../protos/filters";
 import {SandboxModeResponseObject} from "../../protos/dtos";
@@ -42,6 +49,25 @@ export class DataService {
       map(arrayBuffer => {
         const flightDateFrequencies = FlightDateFrequencies.decode(new Uint8Array(arrayBuffer));
         return flightDateFrequencies.frequencies;
+      })
+    );
+  }
+
+  getAllLegsForSpecificRoute(leg: LegRender, timeFilter: TimeFilter) {
+    const request = SpecificRouteFilterRequest.create({legRender: leg, timeFilter: timeFilter});
+    const blob = new Blob([SpecificRouteFilterRequest.encode(request).finish()], { type: 'application/x-protobuf' });
+
+    const req = new HttpRequest('POST', this.apiEndpoint + 'flightScheduleLeg/routedetail', blob, {
+      headers: new HttpHeaders({ 'Accept': 'application/x-protobuf' }),
+      reportProgress: true,
+      responseType: 'arraybuffer'
+    });
+
+    return this.http.request(req).pipe(
+      filter(event => event.type === HttpEventType.Response),
+      map((event) => {
+        // @ts-ignore
+        return DetailedLegInformations.decode(new Uint8Array(event.body)).detailedLegs;
       })
     );
   }

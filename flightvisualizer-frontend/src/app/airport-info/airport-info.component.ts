@@ -27,7 +27,6 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   // UI state
   specificAirportRoutesOutgoing: boolean = true;
   specificAirportRoutesIncoming: boolean = true;
-  compactFlightRouteInformationTable: boolean = true;
 
   // ViewChild's
   @ViewChild(MatSort) sort!: MatSort;
@@ -70,7 +69,7 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   updateTable(): void {
-    this.dataSource = new MatTableDataSource<LegRender>(this.dataStoreService.getLegRendersForSelectedAirport()); //TODO overhaul
+    this.dataSource = new MatTableDataSource<LegRender>(this.dataStoreService.getLegRendersForSelectedAirport());
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }

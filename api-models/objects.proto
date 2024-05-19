@@ -72,3 +72,18 @@ message AirportDetails {
   string offsetUtc = 6;
   string timezoneId = 7;
 }
+
+message DetailedLegInformation {
+  int32 departureTimeUtc = 1;
+  int32 arrivalTimeUtc = 2;
+  int32 aircraftDepartureTimeDateDiffUtc = 3;
+  int32 aircraftArrivalTimeDateDiffUtc = 4;
+  string operationPeriodWeekdays = 5;
+  string aircraftCode = 6;
+  string aircraftName = 7;
+  string operationDate = 8;
+}
+
+message DetailedLegInformations {
+  repeated DetailedLegInformation detailedLegs = 1;
+}

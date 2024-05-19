@@ -6,7 +6,13 @@ import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {DetailSelectionType} from "../enum";
 import {GeneralFilter, RouteFilter, SelectedAirportFilter, TimeFilter} from "../../protos/filters";
-import {AirportDetails, AirportRender, FlightDateFrequency, LegRender} from "../../protos/objects";
+import {
+  AirportDetails,
+  AirportRender,
+  DetailedLegInformation,
+  FlightDateFrequency,
+  LegRender
+} from "../../protos/objects";
 import {RouteDisplayType} from "../../protos/enums";
 
 @Injectable({
@@ -58,6 +64,9 @@ export class DataStoreService {
   private _airportDetails: BehaviorSubject<AirportDetails> = new BehaviorSubject<AirportDetails>(AirportDetails.create());
   airportDetails = this._airportDetails.asObservable();
 
+  private _routeDetails: BehaviorSubject<DetailedLegInformation[]> = new BehaviorSubject<DetailedLegInformation[]>([]);
+  routeDetails = this._routeDetails.asObservable();
+
 
   constructor(private dataService: DataService) {
     this.getFlightDateFrequencies();
@@ -78,10 +87,6 @@ export class DataStoreService {
 
   getAllLegRenders() {
     return this.allLegRenders;
-  }
-
-  getAllLegsForSpecificRoute(id: number): LegRender[] {
-    return this.allLegRenders; //TODO overhaul
   }
 
   getTimeFilter(): TimeFilter {
@@ -108,11 +113,6 @@ export class DataStoreService {
     return this.longestFlightLeg;
   }
 
-  getCurrentlyDisplayedRoutesForSelectedAirport(): LegRender[] {
-    const selectedAirportIataCode = this.getSelectedAirportFilter().iataCode;
-    return this.allLegRenders; //TODO overhaul
-  }
-
   getAirportRenderByIataCode(iataCode: string): AirportRender | undefined {
     return this.allAirports.find(airport => airport.iataCode == iataCode);
   }
@@ -120,6 +120,11 @@ export class DataStoreService {
   getLegRendersForSelectedAirport(): LegRender[] {
     const filter = this.getSelectedAirportFilter();
     return this.allLegRenders.filter(leg => (filter.includingDepartures && leg.originAirportIataCode == filter.iataCode) || (filter.includingArrivals && leg.destinationAirportIataCode == filter.iataCode));
+  }
+
+  getLegRendersForSelectedRoute(): LegRender[] {
+    const selectedLeg = this.getSelectedRoute();
+    return this.allLegRenders.filter(leg => leg.originAirportIataCode == selectedLeg.originAirportIataCode && leg.destinationAirportIataCode == selectedLeg.destinationAirportIataCode);
   }
 
   // SETTERS
@@ -139,6 +144,12 @@ export class DataStoreService {
 
   setSelectedRoute(route: LegRender): void {
     this._selectedRoute.next(route);
+
+    const originRender = this.getAirportRenderByIataCode(route.originAirportIataCode);
+    const destinationRender = this.getAirportRenderByIataCode(route.destinationAirportIataCode);
+    if (originRender && destinationRender) {
+      this.getAllLegsForSpecificRoute(route);
+    }
   }
 
   setTimeFilter(timeFilter: TimeFilter): void {
@@ -166,6 +177,10 @@ export class DataStoreService {
     this._airportDetails.next(airportDetails);
   }
 
+  setRouteDetails(routeDetails: DetailedLegInformation[]): void {
+    this._routeDetails.next(routeDetails);
+  }
+
   // FETCHING DATA
   private getDistinctFlightScheduleLegsForRendering(): void {
     this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter(), this.getGeneralFilter(), this.getRouteFilter(), this.getSelectedAirportFilter()).subscribe(sandboxModeResponseObject => {
@@ -183,6 +198,12 @@ export class DataStoreService {
   private getAirportDetails(airportRender: AirportRender): void {
     this.dataService.getAirportDetails(airportRender).subscribe(airportDetails => {
       this.setAirportDetails(airportDetails);
+    });
+  }
+
+  private getAllLegsForSpecificRoute(leg: LegRender): void {
+    this.dataService.getAllLegsForSpecificRoute(leg, this.getTimeFilter()).subscribe(routeDetails => {
+      this.setRouteDetails(routeDetails);
     });
   }
 

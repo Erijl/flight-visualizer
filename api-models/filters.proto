@@ -44,3 +44,8 @@ message CombinedFilterRequest {
   GeneralFilter generalFilter = 3;
   SelectedAirportFilter selectedAirportFilter = 4;
 }
+
+message SpecificRouteFilterRequest {
+  TimeFilter timeFilter = 1;
+  objects.LegRender legRender = 2;
+}

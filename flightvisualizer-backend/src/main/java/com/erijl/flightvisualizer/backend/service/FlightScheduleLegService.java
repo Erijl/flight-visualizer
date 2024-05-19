@@ -1,5 +1,6 @@
 package com.erijl.flightvisualizer.backend.service;
 
+import com.erijl.flightvisualizer.backend.builder.DetailedLegInformationBuilder;
 import com.erijl.flightvisualizer.backend.builder.LegRenderBuilder;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegDto;
 import com.erijl.flightvisualizer.backend.model.dtos.FlightScheduleLegWithDistance;
@@ -12,7 +13,9 @@ import com.erijl.flightvisualizer.backend.util.MathUtil;
 import com.erijl.flightvisualizer.backend.validators.*;
 import com.erijl.flightvisualizer.protos.dtos.SandboxModeResponseObject;
 import com.erijl.flightvisualizer.protos.filter.CombinedFilterRequest;
+import com.erijl.flightvisualizer.protos.filter.SpecificRouteFilterRequest;
 import com.erijl.flightvisualizer.protos.objects.AirportRender;
+import com.erijl.flightvisualizer.protos.objects.DetailedLegInformations;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
 import org.springframework.stereotype.Service;
 
@@ -36,37 +39,37 @@ public class FlightScheduleLegService {
         this.airportService = airportService;
     }
 
-    public Iterable<FlightScheduleLegDto> getFlightScheduleLegs(String startDate, String endDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    /**
+     * Get detailed leg information for a specific route
+     *
+     * @param request a valid {@link SpecificRouteFilterRequest}
+     * @return a {@link DetailedLegInformations}
+     */
+    public DetailedLegInformations getLegsForRouteDetailed(SpecificRouteFilterRequest request) {
+        SpecificRouteFilterRequestValidator.validate(request);
 
-        if (!startDate.isEmpty() && !endDate.isEmpty()) {
-            return flightScheduleLegRepository.findAllWithoutAssociationsByStartAndEndDate(Date.valueOf(LocalDate.parse(startDate, formatter)), Date.valueOf(LocalDate.parse(endDate, formatter)));
-        } else if (!startDate.isEmpty()) {
-            return flightScheduleLegRepository.findAllWithoutAssociationsBySingleDate(Date.valueOf(LocalDate.parse(startDate, formatter)));
-        } else {
-            return flightScheduleLegRepository.findAllWithoutAssociationsBySingleDate(Date.valueOf(LocalDate.parse(endDate, formatter)));
-        }
+        LocalDate startDate = CustomTimeUtil.convertProtoTimestampToLocalDate(request.getTimeFilter().getDateRange().getStart());
+        LocalDate endDate = CustomTimeUtil.convertProtoTimestampToLocalDate(request.getTimeFilter().getDateRange().getEnd());
+        LegRender legRender = request.getLegRender();
+        List<LegRenderDataProjection> legs = flightScheduleLegRepository
+                .getDetailedLegInformationForRoute(startDate, endDate, legRender.getOriginAirportIataCode(), legRender.getDestinationAirportIataCode());
+
+        Stream<LegRenderDataProjection> legStream = legs.stream();
+
+        legStream = FilterUtil.applyTimeFilter(request.getTimeFilter(), legStream);
+        legs = legStream.collect(Collectors.toCollection(ArrayList::new));
+
+        return DetailedLegInformations.newBuilder()
+                .addAllDetailedLegs(DetailedLegInformationBuilder.buildDetailedLegInformationList(legs))
+                .build();
     }
 
-    public List<FlightScheduleLegWithDistance> getFlightScheduleLegsWithDistance(String startDate, String endDate) {
-
-        Iterable<FlightScheduleLegDto> flightScheduleLegDtos = this.getFlightScheduleLegs(startDate, endDate);
-
-        List<FlightScheduleLegWithDistance> flightScheduleLegWithDistances = new ArrayList<>();
-        for (FlightScheduleLegDto flightScheduleLegDto : flightScheduleLegDtos) {
-            if (LocationType.AIRPORT.equalsName(flightScheduleLegDto.getOriginAirport().getLocationType()) &&
-                    LocationType.AIRPORT.equalsName(flightScheduleLegDto.getDestinationAirport().getLocationType())) {
-                flightScheduleLegWithDistances.add(
-                        new FlightScheduleLegWithDistance(
-                                flightScheduleLegDto,
-                                MathUtil.calculateDistanceBetweenAirports(flightScheduleLegDto.getOriginAirport(), flightScheduleLegDto.getDestinationAirport())
-                        )
-                );
-            }
-        }
-        return flightScheduleLegWithDistances;
-    }
-
+    /**
+     * Get distinct flight schedule legs for rendering
+     *
+     * @param combinedFilterRequest a valid {@link CombinedFilterRequest}
+     * @return a {@link SandboxModeResponseObject}
+     */
     public SandboxModeResponseObject getDistinctFlightScheduleLegsForRendering(CombinedFilterRequest combinedFilterRequest) {
         CombinedFilterRequestValidator.validate(combinedFilterRequest);
 

@@ -1,5 +1,7 @@
 package com.erijl.flightvisualizer.backend.model.projections;
 
+import java.time.LocalDate;
+
 public interface LegRenderDataProjection {
     String getOriginAirportIataCode();
     String getDestinationAirportIataCode();
@@ -21,4 +23,8 @@ public interface LegRenderDataProjection {
     Integer getDistanceKilometers();
     String getOriginAirportName();
     String getDestinationAirportName();
+    String getOperationPeriodWeekdays();
+    String getAircraftCode();
+    String getAircraftName();
+    String getOperationDate();
 }
