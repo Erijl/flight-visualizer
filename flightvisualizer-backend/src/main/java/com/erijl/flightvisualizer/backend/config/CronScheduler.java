@@ -5,11 +5,12 @@ import com.erijl.flightvisualizer.backend.model.api.FlightScheduleResponse;
 import com.erijl.flightvisualizer.backend.model.api.LegResponse;
 import com.erijl.flightvisualizer.backend.model.entities.*;
 import com.erijl.flightvisualizer.backend.model.internal.CoordinatePair;
+import com.erijl.flightvisualizer.backend.model.internal.FlightScheduleOperationPeriodKey;
+import com.erijl.flightvisualizer.backend.model.internal.PerformanceTracker;
 import com.erijl.flightvisualizer.backend.model.repository.*;
 import com.erijl.flightvisualizer.backend.service.AircraftService;
 import com.erijl.flightvisualizer.backend.service.AirlineService;
 import com.erijl.flightvisualizer.backend.service.AirportService;
-import com.erijl.flightvisualizer.backend.service.FlightScheduleOperationPeriodService;
 import com.erijl.flightvisualizer.backend.util.TimeUtil;
 import com.erijl.flightvisualizer.backend.util.MathUtil;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
@@ -22,11 +23,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StopWatch;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -48,33 +47,34 @@ public class CronScheduler {
     private final AirlineService airlineService;
     private final AircraftService aircraftService;
     private final AirportService airportService;
-    private final FlightScheduleOperationPeriodService flightScheduleOperationPeriodService;
 
     private final FlightScheduleCronRunRepository flightScheduleCronRunRepository;
-
     private final FlightScheduleRepository flightScheduleRepository;
     private final FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository;
     private final FlightScheduleDataElementRepository flightScheduleDataElementRepository;
     private final FlightScheduleLegRepository flightScheduleLegRepository;
     private final Gson gson = new GsonBuilder().create();
+    private final PerformanceTracker performanceTracker;
 
 
     //TODO remove java.util.date globally
     //TODO use MapStruct for conversion here
     //TODO make TimeUtil static
-    public CronScheduler(TimeUtil timeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleOperationPeriodService flightScheduleOperationPeriodService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
+    //TODO delete 2024-05-16
+    //TODO delete 2024-05-15
+    public CronScheduler(TimeUtil timeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
         this.timeUtil = timeUtil;
         this.restUtil = restUtil;
         this.airlineService = airlineService;
         this.aircraftService = aircraftService;
         this.airportService = airportService;
-        this.flightScheduleOperationPeriodService = flightScheduleOperationPeriodService;
         this.flightScheduleRepository = flightScheduleRepository;
         this.authManager = authManager;
         this.flightScheduleCronRunRepository = flightScheduleCronRunRepository;
         this.flightScheduleOperationPeriodRepository = flightScheduleOperationPeriodRepository;
         this.flightScheduleDataElementRepository = flightScheduleDataElementRepository;
         this.flightScheduleLegRepository = flightScheduleLegRepository;
+        this.performanceTracker = new PerformanceTracker();
     }
 
 
@@ -102,24 +102,20 @@ public class CronScheduler {
     //    }
     //}
 
-    @Scheduled(initialDelay = 1000)
+    @Scheduled(fixedRate = 1000 * 60 * 60)
     public void fetchCurrentFlightSchedule() {
         LocalDate currentDate = LocalDate.now(ZoneId.of("UTC"));
 
         try {
             log.info("[{}]: Fetching flight schedule for {}", LocalDate.now(), currentDate);
-            StopWatch stopWatch = new StopWatch();
-            stopWatch.start();
+            performanceTracker.startTracking();
 
+            performanceTracker.addPerformance("Start fetching");
             fetchFlightSchedule(currentDate);
+            performanceTracker.stop();
 
-            stopWatch.stop();
-            long seconds = Duration.ofMillis(stopWatch.getTotalTimeMillis()).getSeconds();
-            long HH = seconds / 3600;
-            long MM = (seconds % 3600) / 60;
-            long SS = seconds % 60;
-            String timeInHHMMSS = String.format("%02d:%02d:%02d", HH, MM, SS);
-            log.info("Flight schedule for {} fetched in {}", currentDate, timeInHHMMSS);
+            log.info("Flight schedule for {} fetched", currentDate);
+            log.info(performanceTracker.getPerformanceTrackrecordString());
         } catch (Exception e) {
             log.error("Error fetching flight schedule for {}", currentDate, e);
         }
@@ -146,6 +142,7 @@ public class CronScheduler {
                 .filterDaysOfOperation(new WeekRepresentation(dateToFetch).toDaysOfOperationString())
                 .getUrl();
 
+        performanceTracker.addPerformance("Requesting flight Schedule");
         ResponseEntity<String> response = this.restUtil.exchangeRequest(
                 requestUrl, HttpMethod.GET, this.restUtil.getStandardHeaders(this.authManager.getBearerAccessToken()));
 
@@ -160,21 +157,12 @@ public class CronScheduler {
         }
 
         if (aggregatedFlights != null && !aggregatedFlights.isEmpty()) {
+            performanceTracker.addPerformance("Inserting flight schedule");
             this.insertFlightScheduleResponse(aggregatedFlights, cronRun);
         }
     }
 
     private void insertFlightScheduleResponse(List<FlightScheduleResponse> flightScheduleResponseList, FlightScheduleCronRun cronRun) {
-        /**
-         * Current execution times:
-         * operation period insertion	11:12 min (can be optimized below 1 min)
-         * flight schedule insertion	01:29 min // fine
-         * data_element insertion 		11:39 min (doubt optimization possible)
-         * flight leg insertion		    01:50 min // fine
-         * --------------------------------------
-         * total time			        26:10 min
-         */
-        List<FlightSchedule> flightSchedules = new ArrayList<>();
         List<FlightScheduleDataElement> flightScheduleDataElements = new ArrayList<>();
         List<FlightScheduleLeg> flightScheduleLegs = new ArrayList<>();
 
@@ -204,23 +192,36 @@ public class CronScheduler {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
+        performanceTracker.addPerformance("Ensure foreign key relation");
         this.ensureForeignKeyRelationInBatch(flightScheduleResponseList, cronRun, airlineCodes, airportCodes, aircraftCodes);
+
+        performanceTracker.addPerformance("Instantiating bulk objects");
+        Map<String, FlightScheduleOperationPeriod> operationPeriodMap = new HashMap<>();
 
         Map<String, Airline> airlines = airlineService.getAirlinesById(airlineCodes);
         Map<String, Airport> airports = airportService.getAirportsById(airportCodes);
         Map<String, Aircraft> aircrafts = aircraftService.getAircraftsById(aircraftCodes);
 
+        performanceTracker.addPerformance("Going through flight schedule response list");
         for (FlightScheduleResponse flightScheduleResponse : flightScheduleResponseList) {
-            FlightScheduleOperationPeriod operationPeriod = flightScheduleOperationPeriodRepository.save(
-                    new FlightScheduleOperationPeriod(
-                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getStartDate()),
-                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getEndDate()),
-                            flightScheduleResponse.getPeriodOfOperationResponseUTC().getDaysOfOperation(),
-                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getStartDate()),
-                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getEndDate()),
-                            flightScheduleResponse.getPeriodOfOperationResponseLT().getDaysOfOperation()
-                    )
-            );
+
+            java.sql.Date startDateUtc = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getStartDate());
+            java.sql.Date endDateUtc = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getEndDate());
+            String operationDaysUtc = flightScheduleResponse.getPeriodOfOperationResponseUTC().getDaysOfOperation();
+            java.sql.Date startDateLt = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getStartDate());
+            java.sql.Date endDateLt = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getEndDate());
+            String operationDaysLt = flightScheduleResponse.getPeriodOfOperationResponseLT().getDaysOfOperation();
+
+            String operationPeriodKeyString = new FlightScheduleOperationPeriodKey(
+                    startDateUtc.toString(), endDateUtc.toString(), new WeekRepresentation(operationDaysUtc), startDateLt.toString(), endDateLt.toString(), new WeekRepresentation(operationDaysLt)
+            ).toString();
+
+            FlightScheduleOperationPeriod operationPeriod = operationPeriodMap.computeIfAbsent(operationPeriodKeyString, key -> {
+                FlightScheduleOperationPeriod newPeriod = new FlightScheduleOperationPeriod(
+                        startDateUtc, endDateUtc, operationDaysUtc, startDateLt, endDateLt, operationDaysLt
+                );
+                return flightScheduleOperationPeriodRepository.save(newPeriod);
+            });
 
             Airline airline = airlines.get(flightScheduleResponse.getAirline());
 
@@ -232,7 +233,6 @@ public class CronScheduler {
                             flightScheduleResponse.getSuffix()
                     )
             );
-            flightSchedules.add(flightSchedule);
 
             flightScheduleResponse.getDataElementResponses().forEach(flightScheduleDataElement ->
                     flightScheduleDataElements.add(
@@ -283,10 +283,11 @@ public class CronScheduler {
                 );
             });
         }
-
         // Batch inserts
-        flightScheduleRepository.saveAll(flightSchedules);
+        performanceTracker.addPerformance("Batch insert: flightScheduleDataElementRepository");
         flightScheduleDataElementRepository.saveAll(flightScheduleDataElements);
+
+        performanceTracker.addPerformance("Batch insert: flightScheduleLegRepository");
         flightScheduleLegRepository.saveAll(flightScheduleLegs);
 
         this.flightScheduleCronRunRepository.updateCronRunFinish(cronRun.getCronRunId(), new Timestamp(new Date().getTime()));
@@ -307,7 +308,5 @@ public class CronScheduler {
         this.aircraftService.ensureAircraftsExist(aircraftCodes);
         this.airportService.ensureAirportsExist(airportCodes);
     }
-
-
 
 }
