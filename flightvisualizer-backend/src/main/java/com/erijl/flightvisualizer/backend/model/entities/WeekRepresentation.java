@@ -59,6 +59,18 @@ public class WeekRepresentation {
         this.sunday = currentDayOfWeek == DayOfWeek.SUNDAY;
     }
 
+    public WeekRepresentation(LocalDate date) {
+        DayOfWeek currentDayOfWeek = date.getDayOfWeek();
+
+        this.monday = currentDayOfWeek == DayOfWeek.MONDAY;
+        this.tuesday = currentDayOfWeek == DayOfWeek.TUESDAY;
+        this.wednesday = currentDayOfWeek == DayOfWeek.WEDNESDAY;
+        this.thursday = currentDayOfWeek == DayOfWeek.THURSDAY;
+        this.friday = currentDayOfWeek == DayOfWeek.FRIDAY;
+        this.saturday = currentDayOfWeek == DayOfWeek.SATURDAY;
+        this.sunday = currentDayOfWeek == DayOfWeek.SUNDAY;
+    }
+
     public WeekRepresentation() {
         this.monday = false;
         this.tuesday = false;

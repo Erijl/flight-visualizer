@@ -1,6 +1,7 @@
 package com.erijl.flightvisualizer.backend.manager;
 
 import com.erijl.flightvisualizer.backend.model.api.AccessToken;
+import com.erijl.flightvisualizer.backend.model.exceptions.NotFoundException;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.util.UrlBuilder;
 import com.google.gson.Gson;
@@ -11,17 +12,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
 @Component
 public class AuthManager {
 
     private final RestUtil restUtil;
     private final Gson gson = new GsonBuilder().create();
+    private final static int EXPIRATION_IN_SECONDS = 21599;
 
     private String accessToken;
-    private Date expirationDate;
+    private LocalDateTime expirationDate;
 
     @Value("${flight.visualizer.api.url}")
     private String baseUrl;
@@ -37,18 +40,18 @@ public class AuthManager {
     }
 
     public String getBearerAccessToken() {
-        if (accessToken == null) {
+        if(this.accessToken == null || this.expirationDate == null || LocalDateTime.now().isAfter(this.expirationDate)) {
             AccessToken accessTokenDto = this.postAccessToken();
             if (accessTokenDto != null) {
                 this.accessToken = accessTokenDto.getAccessToken();
-                this.expirationDate = Date.from(
-                        new Date().
-                                toInstant().
-                                plus(accessTokenDto.getExpiresIn(), ChronoUnit.MILLIS)
-                );
+                this.expirationDate = LocalDateTime.now()
+                        .plusSeconds(
+                                accessTokenDto.getExpiresIn() < EXPIRATION_IN_SECONDS ?
+                                        accessTokenDto.getExpiresIn() :
+                                        EXPIRATION_IN_SECONDS
+                        );
             } else {
-                //TODO add proper error handling
-                return null;
+                throw new NotFoundException("Access Token not found");
             }
         }
 

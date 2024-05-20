@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
@@ -21,7 +22,7 @@ public class TimeUtil {
 
     /**
      * Date conversion to the 'ddMMMyy' format used by Lufthansa
-     * Example:
+     * example:
      * <pre>
      *  24.12.2023 -> 24DEC23
      * </pre>
@@ -32,6 +33,27 @@ public class TimeUtil {
     public String convertDateToDDMMMYY(Date date) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMMyy", Locale.ENGLISH);
         String formattedDate = dateFormat.format(date);
+
+        return formattedDate.substring(0, 2) +
+                formattedDate.substring(2, 5).toUpperCase() +
+                formattedDate.substring(5);
+    }
+
+
+
+    /**
+     * Date conversion to the 'ddMMMyy' format used by Lufthansa
+     * example:
+     * <pre>
+     *  24.12.2023 -> 24DEC23
+     * </pre>
+     *
+     * @param date a {@link LocalDate} to be converted
+     * @return A formatted {@link String} in the 'ddMMMyy' format
+     */
+    public String convertDateToDDMMMYY(LocalDate date) {
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("ddMMMyy", Locale.ENGLISH);
+        String formattedDate = date.format(dateFormat);
 
         return formattedDate.substring(0, 2) +
                 formattedDate.substring(2, 5).toUpperCase() +

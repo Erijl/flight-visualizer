@@ -4,6 +4,7 @@ import com.erijl.flightvisualizer.backend.builder.AirportDetailsBuilder;
 import com.erijl.flightvisualizer.backend.builder.AirportRenderBuilder;
 import com.erijl.flightvisualizer.backend.model.api.AirportResponse;
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
+import com.erijl.flightvisualizer.backend.model.entities.Airline;
 import com.erijl.flightvisualizer.backend.model.entities.Airport;
 import com.erijl.flightvisualizer.backend.model.projections.AirportRenderDataProjection;
 import com.erijl.flightvisualizer.backend.model.repository.AirportRepository;
@@ -25,11 +26,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class AirportService {
@@ -80,13 +79,26 @@ public class AirportService {
         return AirportDetailsBuilder.buildAirportDetails(airport);
     }
 
+    public Map<String, Airport> getAirportsById(Set<String> airportCodes) {
+        Iterable<Airport> airports = airportRepository.findAllById(airportCodes);
+        Map<String, Airport> airportMap = new HashMap<>();
+        airports.forEach(airport -> airportMap.put(airport.getIataAirportCode(), airport));
+        return airportMap;
+    }
 
-    @Cacheable(value = "airport", key = "#iataAirportCode", unless = "#result == null")
-    public void ensureAirportExists(String iataAirportCode) {
-        Optional<Airport> airport = this.airportRepository.findById(iataAirportCode);
 
-        if (airport.isEmpty()) {
-            this.requestAndInsertAirport(iataAirportCode);
+    public void ensureAirportsExist(Set<String> airportCodes) {
+        Iterable<Airport> existingAirports = airportRepository.findAllById(airportCodes);
+
+        Set<String> existingCodes = StreamSupport.stream(existingAirports.spliterator(), false)
+                .map(Airport::getIataAirportCode)
+                .collect(Collectors.toSet());
+
+        Set<String> missingCodes = new HashSet<>(airportCodes);
+        missingCodes.removeAll(existingCodes);
+
+        for (String missingCode : missingCodes) {
+            this.requestAndInsertAirport(missingCode);
         }
     }
 

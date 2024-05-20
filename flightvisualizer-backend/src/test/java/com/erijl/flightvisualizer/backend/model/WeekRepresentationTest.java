@@ -3,6 +3,7 @@ package com.erijl.flightvisualizer.backend.model;
 import com.erijl.flightvisualizer.backend.model.entities.WeekRepresentation;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -32,6 +33,21 @@ public class WeekRepresentationTest {
                 Calendar.JANUARY,
                 1
         ).getTime();
+
+        WeekRepresentation weekRepresentation = new WeekRepresentation(date);
+
+        assertTrue(weekRepresentation.isMonday());
+        assertFalse(weekRepresentation.isTuesday());
+        assertFalse(weekRepresentation.isWednesday());
+        assertFalse(weekRepresentation.isThursday());
+        assertFalse(weekRepresentation.isFriday());
+        assertFalse(weekRepresentation.isSaturday());
+        assertFalse(weekRepresentation.isSunday());
+    }
+
+    @Test
+    public void testConversionDateToWeekRepresentationLocalDate() {
+        LocalDate date = LocalDate.of(2024, 1, 1);
 
         WeekRepresentation weekRepresentation = new WeekRepresentation(date);
 

@@ -41,7 +41,7 @@ public class RestUtil {
     }
 
     public ResponseEntity<String> exchangeRequest(String requestUrl, HttpMethod httpMethod, HttpHeaders httpHeaders) {
-        return restTemplate.exchange(
+        return new RestTemplate().exchange(
                 requestUrl,
                 httpMethod,
                 new HttpEntity<>(httpHeaders),
@@ -51,7 +51,7 @@ public class RestUtil {
 
     public ResponseEntity<String> exchangeRequest(String requestUrl, HttpMethod httpMethod, HttpHeaders httpHeaders,
                                                    MultiValueMap<String, String> body) {
-        return restTemplate.exchange(
+        return new RestTemplate().exchange(
                 requestUrl,
                 httpMethod,
                 new HttpEntity<>(body, httpHeaders),

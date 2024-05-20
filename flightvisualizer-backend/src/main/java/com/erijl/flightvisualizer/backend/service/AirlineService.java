@@ -15,7 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class AirlineService {
@@ -38,12 +40,26 @@ public class AirlineService {
         this.authManager = authManager;
     }
 
-    @Cacheable(value="airline", key="#iataAirlineCode", unless="#result == null")
-    public void ensureAirlineExists(String iataAirlineCode) {
-        Optional<Airline> airline = airlineRepository.findById(iataAirlineCode);
+    public Map<String, Airline> getAirlinesById(Set<String> airlineCodes) {
+        Iterable<Airline> airlines = airlineRepository.findAllById(airlineCodes);
+        Map<String, Airline> airlineMap = new HashMap<>();
+        airlines.forEach(airline -> airlineMap.put(airline.getIataAirlineCode(), airline));
+        return airlineMap;
+    }
 
-        if(airline.isEmpty()) {
-            this.requestAndInsertAirline(iataAirlineCode);
+    public void ensureAirlinesExist(Set<String> airlineCodes) {
+        Iterable<Airline> existingAirlines = airlineRepository.findAllById(airlineCodes);
+
+        Set<String> existingCodes = StreamSupport.stream(existingAirlines.spliterator(), false)
+                .map(Airline::getIataAirlineCode)
+                .collect(Collectors.toSet());
+
+        Set<String> missingCodes = new HashSet<>(airlineCodes);
+        missingCodes.removeAll(existingCodes);
+
+        // SZS & SVS had a rebranding, but not in the LH api...
+        for (String missingCode : missingCodes.stream().filter(code -> !code.equals("SZS") && !code.equals("SVS")).collect(Collectors.toSet())) {
+            this.requestAndInsertAirline(missingCode);
         }
     }
 

@@ -16,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class AircraftService {
@@ -38,12 +40,25 @@ public class AircraftService {
         this.authManager = authManager;
     }
 
-    @Cacheable(value = "aircraft", key = "#iataAircraftCode", unless="#result == null")
-    public void ensureAircraftExists(String iataAircraftCode) {
-        Optional<Aircraft> aircraft = this.aircraftRepository.findById(iataAircraftCode);
+    public Map<String, Aircraft> getAircraftsById(Set<String> aircraftCodes) {
+        Iterable<Aircraft> aircrafts = aircraftRepository.findAllById(aircraftCodes);
+        Map<String, Aircraft> aircraftMap = new HashMap<>();
+        aircrafts.forEach(aircraft -> aircraftMap.put(aircraft.getIataAircraftCode(), aircraft));
+        return aircraftMap;
+    }
 
-        if(aircraft.isEmpty()) {
-            this.requestAndInsertAircraft(iataAircraftCode);
+    public void ensureAircraftsExist(Set<String> aircraftCodes) {
+        Iterable<Aircraft> existingAircrafts = aircraftRepository.findAllById(aircraftCodes);
+
+        Set<String> existingCodes = StreamSupport.stream(existingAircrafts.spliterator(), false)
+                .map(Aircraft::getIataAircraftCode)
+                .collect(Collectors.toSet());
+
+        Set<String> missingCodes = new HashSet<>(aircraftCodes);
+        missingCodes.removeAll(existingCodes);
+
+        for (String missingCode : missingCodes) {
+            this.requestAndInsertAircraft(missingCode);
         }
     }
 
