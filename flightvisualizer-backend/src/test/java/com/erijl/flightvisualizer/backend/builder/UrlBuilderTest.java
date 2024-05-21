@@ -1,6 +1,5 @@
-package com.erijl.flightvisualizer.backend.util;
+package com.erijl.flightvisualizer.backend.builder;
 
-import com.erijl.flightvisualizer.backend.builder.UrlBuilder;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
