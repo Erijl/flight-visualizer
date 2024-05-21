@@ -62,7 +62,7 @@ public class FlightScheduleLegService {
      * Get distinct flight schedule legs for rendering
      *
      * @param combinedFilterRequest a valid {@link CombinedFilterRequest}
-     * @return a {@link SandboxModeResponseObject}
+     * @return a {@link SandboxModeResponseObject} containing the filtered {@link LegRender}s and {@link AirportRender}s
      */
     public SandboxModeResponseObject getDistinctFlightScheduleLegsForRendering(CombinedFilterRequest combinedFilterRequest) {
         CombinedFilterRequestValidator.validate(combinedFilterRequest);

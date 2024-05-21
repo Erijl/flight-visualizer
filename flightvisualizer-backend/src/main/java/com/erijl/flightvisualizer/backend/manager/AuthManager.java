@@ -3,7 +3,7 @@ package com.erijl.flightvisualizer.backend.manager;
 import com.erijl.flightvisualizer.backend.model.api.AccessToken;
 import com.erijl.flightvisualizer.backend.model.exceptions.NotFoundException;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
-import com.erijl.flightvisualizer.backend.util.UrlBuilder;
+import com.erijl.flightvisualizer.backend.builder.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,9 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Component
 public class AuthManager {
@@ -39,6 +37,10 @@ public class AuthManager {
         this.restUtil = restUtil;
     }
 
+    /**
+     * Get a valid Bearer Access Token for the LH API
+     * @return {@link String} Bearer Access Token
+     */
     public String getBearerAccessToken() {
         if(this.accessToken == null || this.expirationDate == null || LocalDateTime.now().isAfter(this.expirationDate)) {
             AccessToken accessTokenDto = this.postAccessToken();

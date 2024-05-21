@@ -7,6 +7,7 @@ import com.erijl.flightvisualizer.backend.model.entities.*;
 import com.erijl.flightvisualizer.backend.model.internal.CoordinatePair;
 import com.erijl.flightvisualizer.backend.model.internal.FlightScheduleOperationPeriodKey;
 import com.erijl.flightvisualizer.backend.model.internal.PerformanceTracker;
+import com.erijl.flightvisualizer.backend.model.internal.WeekRepresentation;
 import com.erijl.flightvisualizer.backend.model.repository.*;
 import com.erijl.flightvisualizer.backend.service.AircraftService;
 import com.erijl.flightvisualizer.backend.service.AirlineService;
@@ -14,7 +15,7 @@ import com.erijl.flightvisualizer.backend.service.AirportService;
 import com.erijl.flightvisualizer.backend.util.TimeUtil;
 import com.erijl.flightvisualizer.backend.util.MathUtil;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
-import com.erijl.flightvisualizer.backend.util.UrlBuilder;
+import com.erijl.flightvisualizer.backend.builder.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -77,13 +78,11 @@ public class CronScheduler {
         this.performanceTracker = new PerformanceTracker();
     }
 
-
     //@Scheduled(initialDelay = 1000)
     //public void fetchOldFlightSchedules() {
     //    LocalDate startDate = LocalDate.of(2024, 4, 6);
     //    LocalDate endDate = LocalDate.of(2024, 5, 10);
     //    LocalDate currentDate = startDate;
-//
     //    while (!currentDate.isAfter(endDate)) {
     //        try {
     //            log.info("[{}]: Fetching flight schedule for {}", LocalDate.now(), currentDate);
@@ -91,13 +90,11 @@ public class CronScheduler {
     //        } catch (Exception e) {
     //            log.error("Error fetching flight schedule for {}", currentDate, e); // Log the error
     //        }
-//
     //        try {
     //            Thread.sleep(60 * 1000);
     //        } catch (InterruptedException e) {
     //            log.warn("Delay interrupted", e);
     //        }
-//
     //        currentDate = currentDate.plusDays(1);
     //    }
     //}

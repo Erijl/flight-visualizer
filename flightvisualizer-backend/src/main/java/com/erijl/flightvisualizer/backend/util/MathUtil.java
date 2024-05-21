@@ -12,8 +12,14 @@ public class MathUtil {
     private MathUtil() {
     }
 
+    /**
+     * Calculates the distance between two airports in kilometers using the Haversine formula
+     *
+     * @param originAirport      the origin {@link Airport}
+     * @param destinationAirport the destination {@link Airport}
+     * @return the distance between the two {@link Airport}s in kilometers
+     */
     public static int calculateDistanceBetweenAirports(Airport originAirport, Airport destinationAirport) {
-
         if ((originAirport == null || destinationAirport == null)
                 || (originAirport.getLatitude() == null || originAirport.getLongitude() == null)
                 || (destinationAirport.getLatitude() == null || destinationAirport.getLongitude() == null)) {
@@ -21,18 +27,20 @@ public class MathUtil {
         }
 
         double originLatitudeInRadians = Math.toRadians(originAirport.getLatitude().doubleValue());
-        double destinationLatitudeInRadians = Math.toRadians(destinationAirport.getLatitude().doubleValue());
-        double deltaLatitudeInRadians = Math.toRadians(destinationAirport.getLatitude().doubleValue() - originAirport.getLatitude().doubleValue());
-        double deltaLongitudeInRadians = Math.toRadians(destinationAirport.getLongitude().doubleValue() - originAirport.getLongitude().doubleValue());
-
-        double haversineFormulaPartA = Math.sin(deltaLatitudeInRadians / 2) * Math.sin(deltaLatitudeInRadians / 2) +
-                Math.cos(originLatitudeInRadians) * Math.cos(destinationLatitudeInRadians) *
-                        Math.sin(deltaLongitudeInRadians / 2) * Math.sin(deltaLongitudeInRadians / 2);
+        double haversineFormulaPartA = getHaversineFormulaPartA(originAirport, destinationAirport, originLatitudeInRadians);
         double haversineFormulaPartC = 2 * Math.atan2(Math.sqrt(haversineFormulaPartA), Math.sqrt(1 - haversineFormulaPartA));
 
         return ((int) Math.floor(EARTH_RADIUS_IN_METRES * haversineFormulaPartC)) / 1000;
     }
 
+    /**
+     * Calculates at which coordinates to draw a line between two airports
+     * due to the 180° meridian longitude border (anti-meridian)
+     *
+     * @param originAirport      the origin {@link Airport}
+     * @param destinationAirport the destination {@link Airport}
+     * @return a {@link CoordinatePair} containing the respective origin and destination longitudes
+     */
     public static CoordinatePair calculateDrawableCoordinates(Airport originAirport, Airport destinationAirport) {
         CoordinatePair coordinatePair = new CoordinatePair();
         coordinatePair.setOriginLongitude(originAirport.getLongitude());
@@ -51,5 +59,15 @@ public class MathUtil {
         }
 
         return coordinatePair;
+    }
+
+    private static double getHaversineFormulaPartA(Airport originAirport, Airport destinationAirport, double originLatitudeInRadians) {
+        double destinationLatitudeInRadians = Math.toRadians(destinationAirport.getLatitude().doubleValue());
+        double deltaLatitudeInRadians = Math.toRadians(destinationAirport.getLatitude().doubleValue() - originAirport.getLatitude().doubleValue());
+        double deltaLongitudeInRadians = Math.toRadians(destinationAirport.getLongitude().doubleValue() - originAirport.getLongitude().doubleValue());
+
+        return Math.sin(deltaLatitudeInRadians / 2) * Math.sin(deltaLatitudeInRadians / 2) +
+                Math.cos(originLatitudeInRadians) * Math.cos(destinationLatitudeInRadians) *
+                        Math.sin(deltaLongitudeInRadians / 2) * Math.sin(deltaLongitudeInRadians / 2);
     }
 }

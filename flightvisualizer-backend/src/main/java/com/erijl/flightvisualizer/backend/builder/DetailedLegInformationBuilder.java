@@ -12,6 +12,12 @@ public class DetailedLegInformationBuilder {
     private DetailedLegInformationBuilder() {
     }
 
+    /**
+     * Build a {@link DetailedLegInformation} object from a {@link LegRenderDataProjection} projection
+     *
+     * @param airportProjection the leg projection
+     * @return the DetailedLegInformation object
+     */
     public static DetailedLegInformation buildDetailedLegInformation(LegRenderDataProjection airportProjection) {
         return DetailedLegInformation.newBuilder()
                 .setDepartureTimeUtc(airportProjection.getAircraftDepartureTimeUtc())
@@ -25,6 +31,12 @@ public class DetailedLegInformationBuilder {
                 .build();
     }
 
+    /**
+     * Build a list of {@link DetailedLegInformation} objects from a list of {@link LegRenderDataProjection} projections
+     *
+     * @param airportProjections the list of leg projections
+     * @return the list of DetailedLegInformation objects
+     */
     public static List<DetailedLegInformation> buildDetailedLegInformationList(List<LegRenderDataProjection> airportProjections) {
         return airportProjections.stream()
                 .map(DetailedLegInformationBuilder::buildDetailedLegInformation)

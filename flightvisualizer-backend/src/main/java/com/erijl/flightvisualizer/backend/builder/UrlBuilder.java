@@ -1,7 +1,10 @@
-package com.erijl.flightvisualizer.backend.util;
+package com.erijl.flightvisualizer.backend.builder;
 
 import java.util.List;
 
+/**
+ * A builder class to create valid URLs for the Lufthansa API
+ */
 public class UrlBuilder {
 
     private final StringBuilder url;

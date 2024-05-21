@@ -1,4 +1,4 @@
-package com.erijl.flightvisualizer.backend.model.entities;
+package com.erijl.flightvisualizer.backend.model.internal;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,17 +13,11 @@ import java.util.Date;
 public class WeekRepresentation {
 
     private boolean monday;
-
     private boolean tuesday;
-
     private boolean wednesday;
-
     private boolean thursday;
-
     private boolean friday;
-
     private boolean saturday;
-
     private boolean sunday;
 
     /**

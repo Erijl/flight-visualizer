@@ -1,6 +1,6 @@
 package com.erijl.flightvisualizer.backend.model;
 
-import com.erijl.flightvisualizer.backend.model.entities.WeekRepresentation;
+import com.erijl.flightvisualizer.backend.model.internal.WeekRepresentation;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

@@ -1,7 +1,6 @@
 package com.erijl.flightvisualizer.backend.util;
 
 import com.erijl.flightvisualizer.backend.model.api.LegResponse;
-import com.erijl.flightvisualizer.backend.model.entities.FlightScheduleLeg;
 import com.google.protobuf.Timestamp;
 import org.springframework.stereotype.Component;
 
@@ -39,8 +38,6 @@ public class TimeUtil {
                 formattedDate.substring(5);
     }
 
-
-
     /**
      * Date conversion to the 'ddMMMyy' format used by Lufthansa
      * example:
@@ -68,19 +65,8 @@ public class TimeUtil {
      * </pre>
      *
      * @param ddMMMyyFormat The date string in the 'ddMMMyy' format to be converted
-     * @return A {@link Date} object representing the converted date. Returns null if the string cannot be parsed.
-     * @throws ParseException if the string cannot be parsed into a date
+     * @return A {@link java.sql.Date} object representing the converted date. Returns null if the string cannot be parsed.
      */
-    public Date convertDDMMMYYToDate(String ddMMMyyFormat) {
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMMyy", Locale.ENGLISH);
-            return dateFormat.parse(ddMMMyyFormat);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public java.sql.Date convertDDMMMYYToSQLDate(String ddMMMyyFormat) {
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMMyy", Locale.ENGLISH);
@@ -91,6 +77,12 @@ public class TimeUtil {
         }
     }
 
+    /**
+     * Converts a {@link Date} object to a {@link java.sql.Date} object.
+     *
+     * @param date The {@link Date} object to be converted
+     * @return A {@link java.sql.Date} object representing the converted date
+     */
     public java.sql.Date convertDateToSqlDate(Date date) {
         return new java.sql.Date(date.getTime());
     }
@@ -107,9 +99,6 @@ public class TimeUtil {
                 legResponse.getAircraftArrivalTimeDateDiffUTC());
     }
 
-    private static int calculateDurationInMinutes(int a, int b, int d) {
-        return (MAX_MINUTES_IN_DAY * d) + (b - a);
-    }
 
     /**
      * Converts a {@link Timestamp} to a {@link LocalDate} UTC
@@ -150,5 +139,9 @@ public class TimeUtil {
      */
     public static LocalDate convertyyyyMMddStringToUTCLocalDate(String date) {
         return LocalDate.of(Integer.parseInt(date.substring(0, 4)), Integer.parseInt(date.substring(5, 7)), Integer.parseInt(date.substring(8)));
+    }
+
+    private static int calculateDurationInMinutes(int a, int b, int d) {
+        return (MAX_MINUTES_IN_DAY * d) + (b - a);
     }
 }

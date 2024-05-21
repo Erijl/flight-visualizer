@@ -10,10 +10,9 @@ import java.util.Collections;
 @Component
 public class RestUtil {
 
-    private final RestTemplate restTemplate;
 
-    public RestUtil(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public RestUtil() {
+
     }
 
     public HttpHeaders getStandardHeaders() {

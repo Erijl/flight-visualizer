@@ -5,11 +5,10 @@ import com.erijl.flightvisualizer.backend.manager.AuthManager;
 import com.erijl.flightvisualizer.backend.model.entities.Aircraft;
 import com.erijl.flightvisualizer.backend.model.repository.AircraftRepository;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
-import com.erijl.flightvisualizer.backend.util.UrlBuilder;
+import com.erijl.flightvisualizer.backend.builder.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +39,12 @@ public class AircraftService {
         this.authManager = authManager;
     }
 
+    /**
+     * Get all requested {@link Aircraft} objects by their IATA codes
+     *
+     * @param aircraftCodes {@link Set} of IATA code {@link String}s to fetch
+     * @return {@link Map} of {@link Aircraft} objects with their IATA code as key
+     */
     public Map<String, Aircraft> getAircraftsById(Set<String> aircraftCodes) {
         Iterable<Aircraft> aircrafts = aircraftRepository.findAllById(aircraftCodes);
         Map<String, Aircraft> aircraftMap = new HashMap<>();
@@ -47,6 +52,12 @@ public class AircraftService {
         return aircraftMap;
     }
 
+    /**
+     * Ensure that all requested {@link Aircraft} objects exist in the database by first checking the database and
+     * else fetching and inserting them if necessary
+     *
+     * @param aircraftCodes {@link Set} of IATA code {@link String}s to check
+     */
     public void ensureAircraftsExist(Set<String> aircraftCodes) {
         Iterable<Aircraft> existingAircrafts = aircraftRepository.findAllById(aircraftCodes);
 
@@ -60,11 +71,6 @@ public class AircraftService {
         for (String missingCode : missingCodes) {
             this.requestAndInsertAircraft(missingCode);
         }
-    }
-
-    @Cacheable(value = "aircraft", key = "#iataAircraftCode", unless="#result == null")
-    public Aircraft getAircraftById(String iataAircraftCode) {
-        return this.aircraftRepository.findById(iataAircraftCode).orElse(null);
     }
 
     private void requestAndInsertAircraft(String iataAircraftCode) {

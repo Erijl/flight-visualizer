@@ -1,6 +1,5 @@
 package com.erijl.flightvisualizer.backend.model.internal;
 
-import com.erijl.flightvisualizer.backend.model.entities.WeekRepresentation;
 import lombok.Getter;
 import lombok.Setter;
 

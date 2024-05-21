@@ -16,16 +16,29 @@ public class PerformanceTracker {
         this.stopWatch = new StopWatch();
     }
 
+    /**
+     * Start the initial tracking
+     */
     public void startTracking() {
         stopWatch.start();
         startTime = System.currentTimeMillis();
     }
 
+    /**
+     * Add a performance key to the tracker
+     *
+     * @param key the key to add
+     */
     public void addPerformance(String key) {
         long currentTime = System.currentTimeMillis();
         performanceMap.put(key, currentTime - startTime);
     }
 
+    /**
+     * Get the complete performance track record as a string
+     *
+     * @return the performance track record as a string
+     */
     public String getPerformanceTrackrecordString() {
         try {
             StringBuilder builder = new StringBuilder();
@@ -46,10 +59,14 @@ public class PerformanceTracker {
         }
     }
 
+    /**
+     * Stop the tracking
+     */
     public void stop() {
         this.addPerformance("Finished");
         this.stopWatch.stop();
     }
+
 
     private String formatDuration(long millis) {
         long seconds = Duration.ofMillis(millis).getSeconds();

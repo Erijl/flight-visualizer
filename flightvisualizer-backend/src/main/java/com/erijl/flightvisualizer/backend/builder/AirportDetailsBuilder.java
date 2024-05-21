@@ -9,6 +9,12 @@ public class AirportDetailsBuilder {
     private AirportDetailsBuilder() {
     }
 
+    /**
+     * Build an {@link AirportDetails} object from an {@link Airport} entity
+     *
+     * @param airport the airport entity
+     * @return the AirportDetails object
+     */
     public static AirportDetails buildAirportDetails(Airport airport) {
         return AirportDetails.newBuilder()
                 .setIataCode(airport.getIataAirportCode())
