@@ -59,10 +59,7 @@ public class CronScheduler {
 
 
     //TODO remove java.util.date globally
-    //TODO use MapStruct for conversion here
     //TODO make TimeUtil static
-    //TODO delete 2024-05-16
-    //TODO delete 2024-05-15
     public CronScheduler(TimeUtil timeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
         this.timeUtil = timeUtil;
         this.restUtil = restUtil;
