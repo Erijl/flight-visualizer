@@ -23,6 +23,7 @@ export class DataStoreService {
   // 'raw' data
   allLegRenders: LegRender[] = [];
   allAirports: AirportRender[] = [];
+  isInitialized: boolean = false;
 
   furthestFLightLeg: LegRender = LegRender.create();
   longestFlightLeg: LegRender = LegRender.create();
@@ -66,6 +67,10 @@ export class DataStoreService {
 
   private _routeDetails: BehaviorSubject<DetailedLegInformation[]> = new BehaviorSubject<DetailedLegInformation[]>([]);
   routeDetails = this._routeDetails.asObservable();
+
+  // UI state
+  private _showLoadingScreen: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  showLoadingScreen = this._showLoadingScreen.asObservable();
 
 
   constructor(private dataService: DataService) {
@@ -181,8 +186,18 @@ export class DataStoreService {
     this._routeDetails.next(routeDetails);
   }
 
+  setShowLoadingScreen(show: boolean): void {
+    this._showLoadingScreen.next(show);
+  }
+
+  setIsInitialized(isInitialized: boolean): void {
+    this.isInitialized = isInitialized;
+  }
+
   // FETCHING DATA
   private getDistinctFlightScheduleLegsForRendering(): void {
+    if(!this.isInitialized) return;
+    this.setShowLoadingScreen(true);
     this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter(), this.getGeneralFilter(), this.getRouteFilter(), this.getSelectedAirportFilter()).subscribe(sandboxModeResponseObject => {
       this.furthestFLightLeg = sandboxModeResponseObject.furthestFlightLeg ?? LegRender.create()
       this.longestFlightLeg = sandboxModeResponseObject.longestFlightLeg ?? LegRender.create();
@@ -192,6 +207,7 @@ export class DataStoreService {
 
       this._renderedRoutes.next(sandboxModeResponseObject.legRenders);
       this._currentlyDisplayedAirports.next(sandboxModeResponseObject.airportRenders);
+      this.setShowLoadingScreen(false);
     });
   }
 

@@ -133,10 +133,4 @@ export class DataService {
   private log(message: string) {
     console.log(`DEBUG: ${message}`);
   }
-
-  private convertDateToUTCString(date: string | undefined) {
-    if(!date) return '';
-    const utcDate = new Date(date);
-    return utcDate ? utcDate.getUTCFullYear() + '-' + ((utcDate.getUTCMonth() + 1) > 9 ? (utcDate.getUTCMonth() + 1) : '0' + (utcDate.getUTCMonth() + 1)) + '-' + (utcDate.getUTCDate() > 9 ? (utcDate.getUTCDate()) : '0' + (utcDate.getUTCDate())) : '';
-  }
 }

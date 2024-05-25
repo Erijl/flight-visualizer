@@ -25,14 +25,14 @@ main {
 
 .header-container {
   text-align: center;
-  margin-bottom: 20px; /* Adjust this to change the spacing between the header and the subheader */
+  margin-bottom: 20px;
 }
 
 .cards-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 80px; /* Adjust this to change the spacing between the cards */
+  gap: 80px;
 }
 
 .card {
@@ -104,7 +104,7 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 .wip-overlay p {
