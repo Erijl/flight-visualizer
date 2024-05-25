@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DetailSelectionType} from "../core/enum";
 import {Subscription} from "rxjs";
 import {DataStoreService} from "../core/service/data-store.service";
-import {AirportRender} from "../protos/objects";
 
 @Component({
   selector: 'app-detail-panel',
@@ -12,7 +11,7 @@ import {AirportRender} from "../protos/objects";
 export class DetailPanelComponent implements OnInit, OnDestroy{
 
   detailSelectionTypeSubscription!: Subscription;
-  selectedAirpotSubscription!: Subscription;
+  selectedAirportSubscription!: Subscription;
   selectedRouteSubscription!: Subscription;
 
   selectionType: DetailSelectionType = DetailSelectionType.AIRPORT;
@@ -27,7 +26,7 @@ export class DetailPanelComponent implements OnInit, OnDestroy{
       this.selectionType = type;
     });
 
-    this.selectedAirpotSubscription = this.dataStoreService.selectedAirportFilter.subscribe((selectedAirportFilter) => {
+    this.selectedAirportSubscription = this.dataStoreService.selectedAirportFilter.subscribe((selectedAirportFilter) => {
       if (selectedAirportFilter.iataCode != '') {
         this.expanded = true;
       }
@@ -46,5 +45,7 @@ export class DetailPanelComponent implements OnInit, OnDestroy{
 
   ngOnDestroy(): void {
     this.detailSelectionTypeSubscription.unsubscribe();
+    this.selectedAirportSubscription.unsubscribe();
+    this.selectedRouteSubscription.unsubscribe();
   }
 }

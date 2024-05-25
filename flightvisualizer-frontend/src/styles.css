@@ -14,3 +14,19 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   font-size: 1.65em;
   font-weight: 700;
 }
+
+.mat-mdc-card-header-text {
+  width: 100% !important;
+}
+
+mat-button-toggle-group {
+  width: 100%;
+}
+
+mat-button-toggle {
+  flex: 1 1 100%;
+  box-sizing: border-box;
+  align-items: center;
+  flex-direction: row;
+  display: flex;
+}

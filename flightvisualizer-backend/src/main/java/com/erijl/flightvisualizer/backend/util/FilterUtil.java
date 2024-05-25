@@ -43,7 +43,7 @@ public class FilterUtil {
                                 leg.getDestinationAirportIataCode().equals(iataCode) &&
                                         selectedAirportFilter.getIncludingArrivals()
                         ) || (
-                                leg.getDestinationAirportIataCode().equals(iataCode) && //TODO check logic, unsure, but it's late
+                                leg.getOriginAirportIataCode().equals(iataCode) &&
                                         selectedAirportFilter.getIncludingDepartures()
                         )
                 );

@@ -36,7 +36,7 @@
   display: flex;
   justify-content: space-between;
   position: relative;
-  width: 100%;
+  width: 100% !important;
   padding-bottom: 12px;
 }
 
@@ -57,9 +57,11 @@
 }
 
 .route-icon {
-  position: absolute;
-  left: 48%;
   transform: rotate(90deg);
+}
+
+.route-splitter {
+  left: 50%;
 }
 
 .error-message {
@@ -71,4 +73,12 @@
 
 .error-message p {
   margin-bottom: 3px;
+}
+
+.table-row {
+  height: 30px !important;
+}
+
+.table-header {
+  height: 40px !important;
 }

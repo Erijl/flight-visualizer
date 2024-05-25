@@ -10,9 +10,10 @@ import java.util.Collections;
 @Component
 public class RestUtil {
 
+    private final RestTemplate restTemplate;
 
     public RestUtil() {
-
+        restTemplate = new RestTemplate();
     }
 
     public HttpHeaders getStandardHeaders() {
@@ -40,7 +41,7 @@ public class RestUtil {
     }
 
     public ResponseEntity<String> exchangeRequest(String requestUrl, HttpMethod httpMethod, HttpHeaders httpHeaders) {
-        return new RestTemplate().exchange(
+        return restTemplate.exchange(
                 requestUrl,
                 httpMethod,
                 new HttpEntity<>(httpHeaders),
@@ -50,7 +51,7 @@ public class RestUtil {
 
     public ResponseEntity<String> exchangeRequest(String requestUrl, HttpMethod httpMethod, HttpHeaders httpHeaders,
                                                    MultiValueMap<String, String> body) {
-        return new RestTemplate().exchange(
+        return restTemplate.exchange(
                 requestUrl,
                 httpMethod,
                 new HttpEntity<>(body, httpHeaders),
