@@ -113,3 +113,10 @@ main {
   transform: rotate(45deg);
   font-weight: bold;
 }
+
+.toast-container {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: var(--toast-message-overlay-z-index);
+}
