@@ -73,9 +73,8 @@ main {
   vertical-align: middle;
 }
 .header {
-  font-size: 2.5rem;
+  font-size: 3rem;
   font-weight: 700;
-  text-transform: uppercase;
   font-family: 'Roboto Condensed', sans-serif;
 }
 
@@ -119,4 +118,17 @@ main {
   top: 16px;
   right: 16px;
   z-index: var(--toast-message-overlay-z-index);
+}
+.link-container {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.link-item {
+  font-size: 1rem;
+  color: #ddd;
+  text-decoration: none;
+  appearance: none;
+  cursor: pointer;
 }

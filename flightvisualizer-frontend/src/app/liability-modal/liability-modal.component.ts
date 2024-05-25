@@ -3,7 +3,9 @@ import {Component, EventEmitter, Output} from '@angular/core';
 enum ModalState {
   LIABILITY = 'LIABILITY',
   PRIVACY_POLICY = 'PRIVACY_POLICY',
-  IMPRINT = 'IMPRINT'
+  IMPRINT = 'IMPRINT',
+  WELCOME = 'WELCOME',
+  CREDITS = 'CREDITS'
 }
 
 @Component({
@@ -13,7 +15,7 @@ enum ModalState {
 })
 export class LiabilityModalComponent {
   @Output() closeModalEvent = new EventEmitter();
-  modalState = ModalState.LIABILITY;
+  modalState = ModalState.WELCOME;
 
   closeModal() {
     this.closeModalEvent.emit();

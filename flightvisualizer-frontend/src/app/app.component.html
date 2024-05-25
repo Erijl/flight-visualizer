@@ -13,7 +13,7 @@
   <div *ngIf="showModeSelect" class="mode-select-screen">
     <div class="header-container">
       <h1 class="header">Welcome to Flightvisualizer</h1>
-      <h2 class="subheader">Please select a mode</h2>
+      <h2 class="subheader">"ESC"-Menu: Please select a mode</h2>
     </div>
     <div class="cards-container">
       <div class="card" (click)="selectMode(1)">
@@ -48,6 +48,12 @@
           <p>Work In Progress</p>
         </div>
       </div>
+    </div>
+    <div class="link-container">
+      <a href="mailto:support@flight-visualizer.com" class="link-item">Contact</a>
+      <a href="/3rdpartylicenses.txt" target="_parent" class="link-item">Licenses</a>
+      <a href="https://github.com/Erijl/flight-visualizer" target="_blank" class="link-item">GitHub</a>
+      <a href="https://github.com/Erijl/flight-visualizer" target="_blank" class="link-item">Suggest Feature</a>
     </div>
   </div>
   <app-map *ngIf="renderMap"></app-map>
