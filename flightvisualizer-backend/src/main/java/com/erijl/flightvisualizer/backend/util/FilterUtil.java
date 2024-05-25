@@ -35,17 +35,31 @@ public class FilterUtil {
         switch (generalFilter.getRouteDisplayType()) {
             default:
             case RouteDisplayType.ROUTEDISPLAYTYPE_ALL:
-                legStream = legStream;
                 break;
             case RouteDisplayType.ROUTEDISPLAYTYPE_SPECIFICAIRPORT:
                 String iataCode = selectedAirportFilter.getIataCode();
-                legStream = legStream.filter(leg -> (leg.getDestinationAirportIataCode().equals(iataCode) && selectedAirportFilter.getIncludingArrivals()) || (leg.getDestinationAirportIataCode().equals(iataCode) && selectedAirportFilter.getIncludingDepartures()));
+                legStream = legStream.filter(leg ->
+                        (
+                                leg.getDestinationAirportIataCode().equals(iataCode) &&
+                                        selectedAirportFilter.getIncludingArrivals()
+                        ) || (
+                                leg.getOriginAirportIataCode().equals(iataCode) &&
+                                        selectedAirportFilter.getIncludingDepartures()
+                        )
+                );
                 break;
             case RouteDisplayType.ROUTEDISPLAYTYPE_ONLYWITHINSAMECOUNTRY:
-                legStream = legStream.filter(leg -> leg.getOriginIsoCountryCode().equals(leg.getDestinationIsoCountryCode()));
+                legStream = legStream.filter(leg ->
+                        leg.getOriginIsoCountryCode().equals(leg.getDestinationIsoCountryCode()));
                 break;
             case RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMEREGION:
-                legStream = legStream.filter(leg -> leg.getOriginTimezoneId() != null && leg.getDestinationTimezoneId() != null && leg.getOriginTimezoneId().split(TIMEZONE_SEPARATOR)[TIMEZONE_REGION_INDEX].equals(leg.getDestinationTimezoneId().split(TIMEZONE_SEPARATOR)[TIMEZONE_REGION_INDEX]));
+                legStream = legStream.filter(leg ->
+                        leg.getOriginTimezoneId() != null &&
+                                leg.getDestinationTimezoneId() != null &&
+                                leg.getOriginTimezoneId().split(TIMEZONE_SEPARATOR)[TIMEZONE_REGION_INDEX].equals(
+                                        leg.getDestinationTimezoneId().split(TIMEZONE_SEPARATOR)[TIMEZONE_REGION_INDEX]
+                        )
+                );
                 break;
             case RouteDisplayType.ROUTEDISPLAYTYPE_WITHINSAMETIMEZONE:
                 legStream = legStream.filter(leg -> leg.getOriginOffsetUtc().equals(leg.getDestinationOffsetUtc()));
@@ -91,13 +105,16 @@ public class FilterUtil {
      * @param legStream   {@link LegRenderDataProjection} {@link Stream} to apply the filters to
      * @return filtered {@link Stream} of {@link LegRenderDataProjection}
      */
-    public static Stream<LegRenderDataProjection> applyRouteFilter(RouteFilter routeFilter, Stream<LegRenderDataProjection> legStream) {
+    public static Stream<LegRenderDataProjection> applyRouteFilter(RouteFilter routeFilter,
+                                                                   Stream<LegRenderDataProjection> legStream) {
         switch (routeFilter.getRouteFilterType()) {
             case RouteFilterType.DISTANCE:
-                legStream = legStream.filter(leg -> isLegIntRouteFilterRange(leg, routeFilter, LegRenderDataProjection::getDistanceKilometers));
+                legStream = legStream.filter(leg ->
+                        isLegIntRouteFilterRange(leg, routeFilter, LegRenderDataProjection::getDistanceKilometers));
                 break;
             case RouteFilterType.DURATION:
-                legStream = legStream.filter(leg -> isLegIntRouteFilterRange(leg, routeFilter, LegRenderDataProjection::getDurationMinutes));
+                legStream = legStream.filter(leg ->
+                        isLegIntRouteFilterRange(leg, routeFilter, LegRenderDataProjection::getDurationMinutes));
                 break;
             default:
                 break;
@@ -106,8 +123,11 @@ public class FilterUtil {
         return legStream;
     }
 
-    private static boolean isLegIntRouteFilterRange(LegRenderDataProjection leg, RouteFilter routeFilter, Function<LegRenderDataProjection, Integer> filterValueExtractor) {
-        return routeFilter.getStart() <= filterValueExtractor.apply(leg) && filterValueExtractor.apply(leg) <= routeFilter.getEnd();
+    private static boolean isLegIntRouteFilterRange(LegRenderDataProjection leg, RouteFilter routeFilter,
+                                                    Function<LegRenderDataProjection, Integer> filterValueExtractor) {
+
+        return routeFilter.getStart() <= filterValueExtractor.apply(leg) &&
+                filterValueExtractor.apply(leg) <= routeFilter.getEnd();
     }
 
     private static boolean isLegInTimeRange(LegRenderDataProjection leg, TimeFilter timeFilter) {
@@ -122,7 +142,8 @@ public class FilterUtil {
         return isInTimeRange(leg, timeFilter.getTimeRange(), LegRenderDataProjection::getAircraftDepartureTimeUtc);
     }
 
-    private static boolean isInTimeRange(LegRenderDataProjection leg, TimeRange timeRange, Function<LegRenderDataProjection, Integer> timeExtractor) {
+    private static boolean isInTimeRange(LegRenderDataProjection leg, TimeRange timeRange,
+                                         Function<LegRenderDataProjection, Integer> timeExtractor) {
         if(timeRange.getInverted()) {
             return MIN_MINUTES_IN_DAY <= timeExtractor.apply(leg) && timeExtractor.apply(leg) <= timeRange.getStart() ||
                     timeRange.getEnd() <= timeExtractor.apply(leg) && timeExtractor.apply(leg) <= MAX_MINUTES_IN_DAY;

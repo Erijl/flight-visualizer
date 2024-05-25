@@ -8,7 +8,7 @@ import com.erijl.flightvisualizer.backend.model.entities.Airport;
 import com.erijl.flightvisualizer.backend.model.projections.AirportRenderDataProjection;
 import com.erijl.flightvisualizer.backend.model.repository.AirportRepository;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
-import com.erijl.flightvisualizer.backend.util.UrlBuilder;
+import com.erijl.flightvisualizer.backend.builder.UrlBuilder;
 import com.erijl.flightvisualizer.backend.validators.AirportRenderValidator;
 import com.erijl.flightvisualizer.protos.enums.AirportDisplayType;
 import com.erijl.flightvisualizer.protos.filter.GeneralFilter;
@@ -25,11 +25,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class AirportService {
@@ -51,15 +49,22 @@ public class AirportService {
         this.authManager = authManager;
     }
 
+    /**
+     * Get all airports with the given filter based on the {@link List} of {@link LegRender}s
+     *
+     * @param generalFilter {@link GeneralFilter} to apply
+     * @param legRenders    {@link List} of {@link LegRender}s to filter by
+     * @return {@link List} of {@link AirportRender}s
+     */
     public List<AirportRender> getAllAirportsWithFilter(GeneralFilter generalFilter, List<LegRender> legRenders) {
 
-        if(generalFilter.getAirportDisplayType() == AirportDisplayType.AIRPORTDISPLAYTYPE_NONE) {
+        if (generalFilter.getAirportDisplayType() == AirportDisplayType.AIRPORTDISPLAYTYPE_NONE) {
             return new ArrayList<>();
         }
 
         List<AirportRenderDataProjection> airportProjections = this.airportRepository.findAllAirportRenders();
 
-        if(generalFilter.getAirportDisplayType() == AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES) {
+        if (generalFilter.getAirportDisplayType() == AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES && !legRenders.isEmpty()) {
             HashSet<String> airportCodes = new HashSet<>();
             for (LegRender legRender : legRenders) {
                 airportCodes.add(legRender.getOriginAirportIataCode());
@@ -73,6 +78,12 @@ public class AirportService {
         return AirportRenderBuilder.buildAirportRenderList(airportProjections);
     }
 
+    /**
+     * Get the {@link AirportDetails} for the given {@link AirportRender}
+     *
+     * @param airportRender {@link AirportRender} to get details for
+     * @return {@link AirportDetails}
+     */
     public AirportDetails getAirportDetails(AirportRender airportRender) {
         AirportRenderValidator.validate(airportRender);
 
@@ -80,13 +91,38 @@ public class AirportService {
         return AirportDetailsBuilder.buildAirportDetails(airport);
     }
 
+    /**
+     * Get all requested {@link Airport} objects by their IATA codes
+     *
+     * @param airportCodes {@link Set} of IATA code {@link String}s to fetch
+     * @return {@link Map} of {@link Airport} objects with their IATA code as key
+     */
+    public Map<String, Airport> getAirportsById(Set<String> airportCodes) {
+        Iterable<Airport> airports = airportRepository.findAllById(airportCodes);
+        Map<String, Airport> airportMap = new HashMap<>();
+        airports.forEach(airport -> airportMap.put(airport.getIataAirportCode(), airport));
+        return airportMap;
+    }
 
-    @Cacheable(value = "airport", key = "#iataAirportCode", unless = "#result == null")
-    public void ensureAirportExists(String iataAirportCode) {
-        Optional<Airport> airport = this.airportRepository.findById(iataAirportCode);
 
-        if (airport.isEmpty()) {
-            this.requestAndInsertAirport(iataAirportCode);
+    /**
+     * Ensure that all requested {@link Airport} objects exist in the database by first checking the database and
+     * else fetching and inserting them if necessary
+     *
+     * @param airportCodes {@link Set} of IATA code {@link String}s to check
+     */
+    public void ensureAirportsExist(Set<String> airportCodes) {
+        Iterable<Airport> existingAirports = airportRepository.findAllById(airportCodes);
+
+        Set<String> existingCodes = StreamSupport.stream(existingAirports.spliterator(), false)
+                .map(Airport::getIataAirportCode)
+                .collect(Collectors.toSet());
+
+        Set<String> missingCodes = new HashSet<>(airportCodes);
+        missingCodes.removeAll(existingCodes);
+
+        for (String missingCode : missingCodes) {
+            this.requestAndInsertAirport(missingCode);
         }
     }
 

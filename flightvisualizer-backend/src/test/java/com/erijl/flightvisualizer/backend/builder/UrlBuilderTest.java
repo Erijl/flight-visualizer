@@ -1,4 +1,4 @@
-package com.erijl.flightvisualizer.backend.util;
+package com.erijl.flightvisualizer.backend.builder;
 
 import org.junit.jupiter.api.Test;
 

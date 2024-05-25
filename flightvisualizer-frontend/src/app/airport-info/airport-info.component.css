@@ -113,13 +113,13 @@ button:hover {
 .info-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px; /* Add some space between the rows */
+  margin-bottom: 10px;
 }
 
 .info-pair {
   display: flex;
   justify-content: space-between;
-  width: 45%; /* Adjust this value as needed */
+  width: 45%;
 }
 
 .info-title {

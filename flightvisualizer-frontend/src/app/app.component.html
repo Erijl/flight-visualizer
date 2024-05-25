@@ -1,3 +1,4 @@
+<app-loading-overlay *ngIf="isLoading"></app-loading-overlay>
 <div [class.blur]="showModal">
   <app-liability-modal *ngIf="showModal" (closeModalEvent)="closeModal()"></app-liability-modal>
   <div *ngIf="showModeSelect" class="mode-select-screen">

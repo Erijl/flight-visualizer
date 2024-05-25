@@ -14,7 +14,8 @@ import java.math.BigDecimal;
 public class FlightScheduleLeg {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "flight_schedule_leg_generator")
+    @TableGenerator(name = "flight_schedule_leg_generator", table = "flight_schedule_leg_hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "next_val")
     @Column(name = "id")
     private Integer legId;
 

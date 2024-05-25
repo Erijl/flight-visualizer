@@ -13,6 +13,12 @@ public class AirportRenderBuilder {
     private AirportRenderBuilder() {
     }
 
+    /**
+     * Build an {@link AirportRender} object from an {@link AirportRenderDataProjection} projection
+     *
+     * @param airportProjection the airport projection
+     * @return the AirportRender object
+     */
     public static AirportRender buildAirportRender(AirportRenderDataProjection airportProjection) {
         return AirportRender.newBuilder()
                 .setIataCode(airportProjection.getIataCode())
@@ -23,6 +29,12 @@ public class AirportRenderBuilder {
                 ).build();
     }
 
+    /**
+     * Build a list of {@link AirportRender} objects from a list of {@link AirportRenderDataProjection} projections
+     *
+     * @param airportProjections the list of airport projections
+     * @return the list of AirportRender objects
+     */
     public static List<AirportRender> buildAirportRenderList(List<AirportRenderDataProjection> airportProjections) {
         return airportProjections.stream()
                 .map(AirportRenderBuilder::buildAirportRender)

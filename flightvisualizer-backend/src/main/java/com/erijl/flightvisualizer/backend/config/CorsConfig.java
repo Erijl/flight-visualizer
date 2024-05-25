@@ -1,5 +1,6 @@
 package com.erijl.flightvisualizer.backend.config;
 
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +27,7 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
 
             @Override
-            public void addCorsMappings(CorsRegistry registry) { //TODO: make more secure (rate limit, ...)
+            public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedOrigins(corsAllowedOrigins.split(","))
                         .allowedMethods(corsAllowedMethods.split(","))

@@ -12,8 +12,8 @@ public class RestUtil {
 
     private final RestTemplate restTemplate;
 
-    public RestUtil(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public RestUtil() {
+        restTemplate = new RestTemplate();
     }
 
     public HttpHeaders getStandardHeaders() {

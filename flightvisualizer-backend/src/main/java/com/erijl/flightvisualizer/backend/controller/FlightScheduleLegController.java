@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class FlightScheduleLegController {
 
-
     private final FlightScheduleLegService flightScheduleLegService;
 
     public FlightScheduleLegController(FlightScheduleLegService flightScheduleLegService) {

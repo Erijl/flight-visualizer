@@ -63,12 +63,7 @@ button:hover {
 }
 
 .selection-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px;
-  border-radius: 5px;
-  appearance: none;
+  width: 100% !important;
 }
 
 .custom-header {

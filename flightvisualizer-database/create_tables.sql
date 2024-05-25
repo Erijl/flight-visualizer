@@ -102,3 +102,33 @@ CREATE TABLE flight_schedule_cron_run
     airport_count         INT,
     flight_schedule_count INT
 );
+
+CREATE TABLE k163243_flightvisualizer.flight_schedule_data_element_hibernate_sequences
+(
+    sequence_name VARCHAR(255) NOT NULL,
+    next_val      BIGINT,
+    PRIMARY KEY (sequence_name)
+);
+
+INSERT INTO flight_schedule_data_element_hibernate_sequences (sequence_name, next_val)
+VALUES ('flight_schedule_data_element', 1400000);
+
+CREATE TABLE k163243_flightvisualizer.flight_schedule_leg_hibernate_sequences
+(
+    sequence_name VARCHAR(255) NOT NULL,
+    next_val      BIGINT,
+    PRIMARY KEY (sequence_name)
+);
+
+INSERT INTO flight_schedule_leg_hibernate_sequences (sequence_name, next_val)
+VALUES ('flight_schedule_leg', 200000);
+
+CREATE TABLE k163243_flightvisualizer.flight_schedule_hibernate_sequences
+(
+    sequence_name VARCHAR(255) NOT NULL,
+    next_val      BIGINT,
+    PRIMARY KEY (sequence_name)
+);
+
+INSERT INTO flight_schedule_hibernate_sequences (sequence_name, next_val)
+VALUES ('flight_schedule', 200000);

@@ -2,8 +2,12 @@ package com.erijl.flightvisualizer.backend.config;
 
 import com.erijl.flightvisualizer.backend.manager.AuthManager;
 import com.erijl.flightvisualizer.backend.model.api.FlightScheduleResponse;
+import com.erijl.flightvisualizer.backend.model.api.LegResponse;
 import com.erijl.flightvisualizer.backend.model.entities.*;
 import com.erijl.flightvisualizer.backend.model.internal.CoordinatePair;
+import com.erijl.flightvisualizer.backend.model.internal.FlightScheduleOperationPeriodKey;
+import com.erijl.flightvisualizer.backend.model.internal.PerformanceTracker;
+import com.erijl.flightvisualizer.backend.model.internal.WeekRepresentation;
 import com.erijl.flightvisualizer.backend.model.repository.*;
 import com.erijl.flightvisualizer.backend.service.AircraftService;
 import com.erijl.flightvisualizer.backend.service.AirlineService;
@@ -11,12 +15,14 @@ import com.erijl.flightvisualizer.backend.service.AirportService;
 import com.erijl.flightvisualizer.backend.util.TimeUtil;
 import com.erijl.flightvisualizer.backend.util.MathUtil;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
-import com.erijl.flightvisualizer.backend.util.UrlBuilder;
+import com.erijl.flightvisualizer.backend.builder.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
@@ -25,7 +31,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+@Slf4j
 @Component
 public class CronScheduler {
 
@@ -41,16 +50,16 @@ public class CronScheduler {
     private final AirportService airportService;
 
     private final FlightScheduleCronRunRepository flightScheduleCronRunRepository;
-
     private final FlightScheduleRepository flightScheduleRepository;
     private final FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository;
     private final FlightScheduleDataElementRepository flightScheduleDataElementRepository;
     private final FlightScheduleLegRepository flightScheduleLegRepository;
     private final Gson gson = new GsonBuilder().create();
+    private final PerformanceTracker performanceTracker;
 
 
     //TODO remove java.util.date globally
-    //TODO use MapStruct for conversion here
+    //TODO make TimeUtil static
     public CronScheduler(TimeUtil timeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
         this.timeUtil = timeUtil;
         this.restUtil = restUtil;
@@ -63,39 +72,71 @@ public class CronScheduler {
         this.flightScheduleOperationPeriodRepository = flightScheduleOperationPeriodRepository;
         this.flightScheduleDataElementRepository = flightScheduleDataElementRepository;
         this.flightScheduleLegRepository = flightScheduleLegRepository;
+        this.performanceTracker = new PerformanceTracker();
     }
 
-    //@Scheduled(fixedRate = 1000 * 60 * 60)
-    public void fetchTodaysFlightSchedule() {
-        String currentLocalDateString = LocalDate.now(ZoneId.of("UTC")).toString();
-        FlightScheduleCronRun possibleCronRuns = this.flightScheduleCronRunRepository.
-                findFlightScheduleCronRunByCronRunDateUtcEquals(currentLocalDateString);
+    //@Scheduled(initialDelay = 1000)
+    //public void fetchOldFlightSchedules() {
+    //    LocalDate startDate = LocalDate.of(2024, 4, 6);
+    //    LocalDate endDate = LocalDate.of(2024, 5, 10);
+    //    LocalDate currentDate = startDate;
+    //    while (!currentDate.isAfter(endDate)) {
+    //        try {
+    //            log.info("[{}]: Fetching flight schedule for {}", LocalDate.now(), currentDate);
+    //            fetchTodaysFlightSchedule(currentDate);
+    //        } catch (Exception e) {
+    //            log.error("Error fetching flight schedule for {}", currentDate, e); // Log the error
+    //        }
+    //        try {
+    //            Thread.sleep(60 * 1000);
+    //        } catch (InterruptedException e) {
+    //            log.warn("Delay interrupted", e);
+    //        }
+    //        currentDate = currentDate.plusDays(1);
+    //    }
+    //}
 
-        if (possibleCronRuns != null && possibleCronRuns.getCronRunDateUtc().equals(currentLocalDateString)) {
-            System.out.printf("Cron Run Already Exists for %s%n", currentLocalDateString);
+    @Scheduled(fixedRate = 1000 * 60 * 60)
+    public void fetchCurrentFlightSchedule() {
+        LocalDate currentDate = LocalDate.now(ZoneId.of("UTC"));
+
+        try {
+            log.info("[{}]: Fetching flight schedule for {}", LocalDate.now(), currentDate);
+            performanceTracker.startTracking();
+
+            performanceTracker.addPerformance("Start fetching");
+            fetchFlightSchedule(currentDate);
+            performanceTracker.stop();
+
+            log.info("Flight schedule for {} fetched", currentDate);
+            log.info(performanceTracker.getPerformanceTrackrecordString());
+        } catch (Exception e) {
+            log.error("Error fetching flight schedule for {}", currentDate, e);
+        }
+    }
+
+    public void fetchFlightSchedule(LocalDate dateToFetch) {
+        FlightScheduleCronRun possibleCronRuns = this.flightScheduleCronRunRepository.
+                findFlightScheduleCronRunByCronRunDateUtcEquals(dateToFetch.toString());
+
+        if (possibleCronRuns != null && possibleCronRuns.getCronRunDateUtc().equals(dateToFetch.toString())) {
+            System.out.printf("Cron Run Already Exists for %s%n", dateToFetch);
             return;
         }
 
         FlightScheduleCronRun cronRun = new FlightScheduleCronRun();
-        LocalDate currentDateUtc = LocalDate.now(ZoneId.of("UTC"));
-        cronRun.setCronRunDateUtc(currentDateUtc.toString());
-
+        cronRun.setCronRunDateUtc(dateToFetch.toString());
         cronRun = this.flightScheduleCronRunRepository.save(cronRun);
-        Date today = new Date();
-        Date tomorrow = Date.from(
-                new Date().
-                        toInstant().
-                        plus(1, ChronoUnit.DAYS)
-        );
 
         String requestUrl = new UrlBuilder(this.baseUrl)
                 .flightSchedule()
                 .filterAirlineCodes("LH")
-                .filterStartDate(this.timeUtil.convertDateToDDMMMYY(today))
-                .filterEndDate(this.timeUtil.convertDateToDDMMMYY(tomorrow))
-                .filterDaysOfOperation(new WeekRepresentation(today).toDaysOfOperationString())
+                .filterStartDate(this.timeUtil.convertDateToDDMMMYY(dateToFetch))
+                .filterEndDate(this.timeUtil.convertDateToDDMMMYY(dateToFetch.plus(1, ChronoUnit.DAYS)))
+                .filterDaysOfOperation(new WeekRepresentation(dateToFetch).toDaysOfOperationString())
                 .getUrl();
 
+        performanceTracker.addPerformance("Requesting flight Schedule");
         ResponseEntity<String> response = this.restUtil.exchangeRequest(
                 requestUrl, HttpMethod.GET, this.restUtil.getStandardHeaders(this.authManager.getBearerAccessToken()));
 
@@ -110,32 +151,75 @@ public class CronScheduler {
         }
 
         if (aggregatedFlights != null && !aggregatedFlights.isEmpty()) {
+            performanceTracker.addPerformance("Inserting flight schedule");
             this.insertFlightScheduleResponse(aggregatedFlights, cronRun);
         }
     }
 
     private void insertFlightScheduleResponse(List<FlightScheduleResponse> flightScheduleResponseList, FlightScheduleCronRun cronRun) {
-        this.ensureForeignKeyRelation(flightScheduleResponseList, cronRun);
-
         List<FlightScheduleDataElement> flightScheduleDataElements = new ArrayList<>();
         List<FlightScheduleLeg> flightScheduleLegs = new ArrayList<>();
 
-        flightScheduleResponseList.forEach(flightScheduleResponse -> {
-            FlightScheduleOperationPeriod operationPeriod = this.flightScheduleOperationPeriodRepository.save(
-                    new FlightScheduleOperationPeriod(
-                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getStartDate()),
-                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getEndDate()),
-                            flightScheduleResponse.getPeriodOfOperationResponseUTC().getDaysOfOperation(),
-                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getStartDate()),
-                            this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getEndDate()),
-                            flightScheduleResponse.getPeriodOfOperationResponseLT().getDaysOfOperation()
-                    )
-            );
+        Set<String> airlineCodes = flightScheduleResponseList.stream()
+                .flatMap(flightScheduleResponse -> {
+                    Set<String> airlineCodesForResponse = new HashSet<>();
+                    airlineCodesForResponse.add(flightScheduleResponse.getAirline());
 
-            String airlineCode = flightScheduleResponse.getAirline();
-            Airline airline = (airlineCode == null || airlineCode.isEmpty()) ? null : this.airlineService.getAirlineById(airlineCode);
+                    flightScheduleResponse.getLegResponses().stream()
+                            .map(LegResponse::getAircraftOwner)
+                            .forEach(airlineCodesForResponse::add);
 
-            FlightSchedule flightSchedule = this.flightScheduleRepository.save(
+                    return airlineCodesForResponse.stream();
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Set<String> airportCodes = flightScheduleResponseList.stream()
+                .flatMap(fsr -> fsr.getLegResponses().stream())
+                .flatMap(lr -> Stream.of(lr.getOrigin(), lr.getDestination()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        Set<String> aircraftCodes = flightScheduleResponseList.stream()
+                .flatMap(fsr -> fsr.getLegResponses().stream())
+                .map(LegResponse::getAircraftType)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        performanceTracker.addPerformance("Ensure foreign key relation");
+        this.ensureForeignKeyRelationInBatch(flightScheduleResponseList, cronRun, airlineCodes, airportCodes, aircraftCodes);
+
+        performanceTracker.addPerformance("Instantiating bulk objects");
+        Map<String, FlightScheduleOperationPeriod> operationPeriodMap = new HashMap<>();
+
+        Map<String, Airline> airlines = airlineService.getAirlinesById(airlineCodes);
+        Map<String, Airport> airports = airportService.getAirportsById(airportCodes);
+        Map<String, Aircraft> aircrafts = aircraftService.getAircraftsById(aircraftCodes);
+
+        performanceTracker.addPerformance("Going through flight schedule response list");
+        for (FlightScheduleResponse flightScheduleResponse : flightScheduleResponseList) {
+
+            java.sql.Date startDateUtc = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getStartDate());
+            java.sql.Date endDateUtc = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getEndDate());
+            String operationDaysUtc = flightScheduleResponse.getPeriodOfOperationResponseUTC().getDaysOfOperation();
+            java.sql.Date startDateLt = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getStartDate());
+            java.sql.Date endDateLt = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getEndDate());
+            String operationDaysLt = flightScheduleResponse.getPeriodOfOperationResponseLT().getDaysOfOperation();
+
+            String operationPeriodKeyString = new FlightScheduleOperationPeriodKey(
+                    startDateUtc.toString(), endDateUtc.toString(), new WeekRepresentation(operationDaysUtc), startDateLt.toString(), endDateLt.toString(), new WeekRepresentation(operationDaysLt)
+            ).toString();
+
+            FlightScheduleOperationPeriod operationPeriod = operationPeriodMap.computeIfAbsent(operationPeriodKeyString, key -> {
+                FlightScheduleOperationPeriod newPeriod = new FlightScheduleOperationPeriod(
+                        startDateUtc, endDateUtc, operationDaysUtc, startDateLt, endDateLt, operationDaysLt
+                );
+                return flightScheduleOperationPeriodRepository.save(newPeriod);
+            });
+
+            Airline airline = airlines.get(flightScheduleResponse.getAirline());
+
+            FlightSchedule flightSchedule = flightScheduleRepository.save(
                     new FlightSchedule(
                             airline,
                             operationPeriod,
@@ -156,15 +240,10 @@ public class CronScheduler {
                     ));
 
             flightScheduleResponse.getLegResponses().forEach(flightScheduleLeg -> {
-                String origin = flightScheduleLeg.getOrigin();
-                String destination = flightScheduleLeg.getDestination();
-                String aircraftOwner = flightScheduleLeg.getAircraftOwner();
-                String aircraftType = flightScheduleLeg.getAircraftType();
-
-                Airport originAirport = (origin == null || origin.isEmpty()) ? null : this.airportService.getAirportById(origin);
-                Airport destinationAirport = (destination == null || destination.isEmpty()) ? null : this.airportService.getAirportById(destination);
-                Airline aircraftOwnerAirline = (aircraftOwner == null || aircraftOwner.isEmpty()) ? null : this.airlineService.getAirlineById(aircraftOwner);
-                Aircraft aircraft = (aircraftType == null || aircraftType.isEmpty()) ? null : this.aircraftService.getAircraftById(aircraftType);
+                Airport originAirport = airports.get(flightScheduleLeg.getOrigin());
+                Airport destinationAirport = airports.get(flightScheduleLeg.getDestination());
+                Airline aircraftOwnerAirline = airlines.get(flightScheduleLeg.getAircraftOwner());
+                Aircraft aircraft = aircrafts.get(flightScheduleLeg.getAircraftType());
 
                 CoordinatePair drawableCoordinates = MathUtil.calculateDrawableCoordinates(originAirport, destinationAirport);
 
@@ -197,50 +276,31 @@ public class CronScheduler {
                         )
                 );
             });
-        });
-        this.flightScheduleDataElementRepository.saveAll(flightScheduleDataElements);
-        this.flightScheduleLegRepository.saveAll(flightScheduleLegs);
+        }
+        // Batch inserts
+        performanceTracker.addPerformance("Batch insert: flightScheduleDataElementRepository");
+        flightScheduleDataElementRepository.saveAll(flightScheduleDataElements);
+
+        performanceTracker.addPerformance("Batch insert: flightScheduleLegRepository");
+        flightScheduleLegRepository.saveAll(flightScheduleLegs);
 
         this.flightScheduleCronRunRepository.updateCronRunFinish(cronRun.getCronRunId(), new Timestamp(new Date().getTime()));
     }
 
-    private void ensureForeignKeyRelation(List<FlightScheduleResponse> flightScheduleResponseList, FlightScheduleCronRun cronRun) {
-        HashSet<String> iataAirlineCodes = new HashSet<>();
-        HashSet<String> iataAirportCodes = new HashSet<>();
-        HashSet<String> iataAircraftCodes = new HashSet<>();
+    private void ensureForeignKeyRelationInBatch(List<FlightScheduleResponse> flightScheduleResponseList, FlightScheduleCronRun cronRun, Set<String> airlineCodes, Set<String> airportCodes, Set<String> aircraftCodes) {
+        aircraftCodes.remove(null);
+        airportCodes.remove(null);
+        airlineCodes.remove(null);
 
-        flightScheduleResponseList.forEach(flightScheduleResponse -> {
-
-            if (flightScheduleResponse.getAirline() != null && flightScheduleResponse.getAirline().length() <= 2) {
-                iataAirlineCodes.add(flightScheduleResponse.getAirline());
-            }
-
-            flightScheduleResponse.getLegResponses().forEach(flightScheduleLeg -> {
-                iataAircraftCodes.add(flightScheduleLeg.getAircraftType());
-                iataAirportCodes.add(flightScheduleLeg.getOrigin());
-                iataAirportCodes.add(flightScheduleLeg.getDestination());
-
-                if (flightScheduleLeg.getAircraftOwner() != null && flightScheduleLeg.getAircraftOwner().length() <= 2) {
-                    iataAirlineCodes.add(flightScheduleLeg.getAircraftOwner());
-                }
-            });
-        });
-
-        iataAircraftCodes.remove(null);
-        iataAirportCodes.remove(null);
-        iataAirlineCodes.remove(null);
-
-        cronRun.setAirlineCount(iataAirlineCodes.size());
-        cronRun.setAircraftCount(iataAircraftCodes.size());
-        cronRun.setAirportCount(iataAirportCodes.size());
+        cronRun.setAirlineCount(airlineCodes.size());
+        cronRun.setAircraftCount(aircraftCodes.size());
+        cronRun.setAirportCount(airportCodes.size());
         cronRun.setFlightScheduleCount(flightScheduleResponseList.size());
         this.flightScheduleCronRunRepository.save(cronRun);
 
-        iataAirlineCodes.forEach(this.airlineService::ensureAirlineExists);
-        iataAircraftCodes.forEach(this.aircraftService::ensureAircraftExists);
-        iataAirportCodes.forEach(this.airportService::ensureAirportExists);
+        this.airlineService.ensureAirlinesExist(airlineCodes);
+        this.aircraftService.ensureAircraftsExist(aircraftCodes);
+        this.airportService.ensureAirportsExist(airportCodes);
     }
-
-
 
 }

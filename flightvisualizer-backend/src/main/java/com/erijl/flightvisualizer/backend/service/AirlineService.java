@@ -5,17 +5,18 @@ import com.erijl.flightvisualizer.backend.manager.AuthManager;
 import com.erijl.flightvisualizer.backend.model.entities.Airline;
 import com.erijl.flightvisualizer.backend.model.repository.AirlineRepository;
 import com.erijl.flightvisualizer.backend.util.RestUtil;
-import com.erijl.flightvisualizer.backend.util.UrlBuilder;
+import com.erijl.flightvisualizer.backend.builder.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class AirlineService {
@@ -38,18 +39,39 @@ public class AirlineService {
         this.authManager = authManager;
     }
 
-    @Cacheable(value="airline", key="#iataAirlineCode", unless="#result == null")
-    public void ensureAirlineExists(String iataAirlineCode) {
-        Optional<Airline> airline = airlineRepository.findById(iataAirlineCode);
-
-        if(airline.isEmpty()) {
-            this.requestAndInsertAirline(iataAirlineCode);
-        }
+    /**
+     * Get all requested {@link Airline} objects by their IATA codes
+     *
+     * @param airlineCodes {@link Set} of IATA code {@link String}s to fetch
+     * @return {@link Map} of {@link Airline} objects with their IATA code as key
+     */
+    public Map<String, Airline> getAirlinesById(Set<String> airlineCodes) {
+        Iterable<Airline> airlines = airlineRepository.findAllById(airlineCodes);
+        Map<String, Airline> airlineMap = new HashMap<>();
+        airlines.forEach(airline -> airlineMap.put(airline.getIataAirlineCode(), airline));
+        return airlineMap;
     }
 
-    @Cacheable(value="airline", key="#iataAirlineCode", unless="#result == null")
-    public Airline getAirlineById(String iataAirlineCode) {
-        return this.airlineRepository.findById(iataAirlineCode).orElse(null);
+    /**
+     * Ensure that all requested {@link Airline} objects exist in the database by first checking the database and
+     * else fetching and inserting them if necessary
+     *
+     * @param airlineCodes {@link Set} of IATA code {@link String}s to check
+     */
+    public void ensureAirlinesExist(Set<String> airlineCodes) {
+        Iterable<Airline> existingAirlines = airlineRepository.findAllById(airlineCodes);
+
+        Set<String> existingCodes = StreamSupport.stream(existingAirlines.spliterator(), false)
+                .map(Airline::getIataAirlineCode)
+                .collect(Collectors.toSet());
+
+        Set<String> missingCodes = new HashSet<>(airlineCodes);
+        missingCodes.removeAll(existingCodes);
+
+        // SZS & SVS had a rebranding, but not in the LH api...
+        for (String missingCode : missingCodes.stream().filter(code -> !code.equals("SZS") && !code.equals("SVS")).collect(Collectors.toSet())) {
+            this.requestAndInsertAirline(missingCode);
+        }
     }
 
     private void requestAndInsertAirline(String iataAirlineCode) {
@@ -66,10 +88,10 @@ public class AirlineService {
 
             this.airlineRepository.save(
                     new Airline(
-                        tempAirline.getAirlineID(),
-                        tempAirline.getAirlineID_ICAO(),
-                        tempAirline.getNames().getName().getValue()
-            ));
+                            tempAirline.getAirlineID(),
+                            tempAirline.getAirlineID_ICAO(),
+                            tempAirline.getNames().getName().getValue()
+                    ));
         } else {
             //TODO add proper error handling
             System.out.println("Request Failed");

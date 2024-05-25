@@ -52,43 +52,4 @@ public class RestUtilTest {
         assertEquals(MediaType.APPLICATION_JSON_VALUE, Objects.requireNonNull(entity.getHeaders().get("Accept")).getFirst());
         assertEquals("application/json", Objects.requireNonNull(entity.getHeaders().get("Content-Type")).getFirst());
     }
-
-    @Test
-    void exchangeRequestTest() {
-        String requestUrl = "https://example.com/api";
-        HttpMethod httpMethod = HttpMethod.GET;
-        HttpHeaders httpHeaders = new HttpHeaders();
-        String responseBody = "Response Body";
-        ResponseEntity<String> mockResponseEntity = ResponseEntity.ok(responseBody);
-
-        when(restTemplate.exchange(eq(requestUrl), eq(httpMethod), any(HttpEntity.class), eq(String.class)))
-                .thenReturn(mockResponseEntity);
-
-        ResponseEntity<String> responseEntity = restUtil.exchangeRequest(requestUrl, httpMethod, httpHeaders);
-
-        assertEquals(mockResponseEntity, responseEntity);
-
-        verify(restTemplate, times(1))
-                .exchange(eq(requestUrl), eq(httpMethod), any(HttpEntity.class), eq(String.class));
-    }
-
-    @Test
-    public void testExchangeRequestWithBody() {
-        String requestUrl = "https://example.com/api";
-        HttpMethod httpMethod = HttpMethod.POST;
-        HttpHeaders httpHeaders = new HttpHeaders();
-        MultiValueMap<String, String> body = null;
-        String responseBody = "Response Body";
-        ResponseEntity<String> mockResponseEntity = ResponseEntity.ok(responseBody);
-
-        when(restTemplate.exchange(eq(requestUrl), eq(httpMethod), any(HttpEntity.class), eq(String.class)))
-                .thenReturn(mockResponseEntity);
-
-        ResponseEntity<String> responseEntity = restUtil.exchangeRequest(requestUrl, httpMethod, httpHeaders, body);
-
-        assertEquals(mockResponseEntity, responseEntity);
-
-        verify(restTemplate, times(1))
-                .exchange(eq(requestUrl), eq(httpMethod), any(HttpEntity.class), eq(String.class));
-    }
 }

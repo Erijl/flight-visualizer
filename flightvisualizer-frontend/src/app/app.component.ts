@@ -1,24 +1,38 @@
-import {Component, HostListener} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
+import {Subscription} from "rxjs";
+import {DataStoreService} from "./core/service/data-store.service";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'Flightvisualizer';
   showModal = true;
   renderMap = false;
   showModeSelect = true;
+  isLoading = false;
+
+  showLoadingScreenSubscription!: Subscription;
+
+  constructor(private dataStoreService: DataStoreService) {
+  }
+
+  ngOnInit(): void {
+    this.showLoadingScreenSubscription = this.dataStoreService.showLoadingScreen.subscribe((show: boolean) => {
+      this.isLoading = show;
+    });
+  }
 
   closeModal() {
     this.showModal = false;
     this.renderMap = true;
+    this.dataStoreService.setIsInitialized(true);
   }
 
   selectMode(mode: number) {
     this.showModeSelect = false;
-    // Add your logic here to handle the selected mode
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -28,15 +42,7 @@ export class AppComponent {
     }
   }
 
-  explore() {
-    // Add your logic here
-  }
-
-  theorize() {
-    // Add your logic here
-  }
-
-  calculate() {
-    // Add your logic here
+  ngOnDestroy(): void {
+    this.showLoadingScreenSubscription.unsubscribe();
   }
 }

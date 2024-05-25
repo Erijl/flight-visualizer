@@ -5,7 +5,7 @@
   transform: translate(-50%, -50%);
   background: #333;
   padding: 20px;
-  z-index: 1000;
+  z-index: var(--liability-modal-content-z-index);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,12 +14,12 @@
   color: #ddd;
 
   min-width: 200px;
-  max-width: 30%; /* or any other percentage that suits your design */
-  width: auto; /* this will make the width dynamic */
+  max-width: 30%;
+  width: auto;
   min-height: 200px;
-  max-height: 90%; /* or any other percentage that suits your design */
-  height: auto; /* this will make the height dynamic */
-  overflow: auto; /* this will add a scrollbar if the content is larger than the max-height */
+  max-height: 90%;
+  height: auto;
+  overflow: auto;
 }
 
 body.modal-open {
@@ -38,7 +38,7 @@ body.modal-open::before {
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(2em);
   filter: blur(5px);
-  z-index: 999;
+  z-index: var(--liability-modal-background-z-index);
 }
 
 .backdrop {
@@ -49,7 +49,7 @@ body.modal-open::before {
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
-  z-index: 999;
+  z-index: var(--liability-modal-background-z-index);
 }
 
 .modal-title {

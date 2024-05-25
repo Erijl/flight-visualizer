@@ -21,8 +21,8 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.defaultContentType(MediaType.APPLICATION_JSON); // Set default but...
-        configurer.mediaType("protobuf", new MediaType("application", "x-protobuf")); // ...register protobuf explicitly
+        configurer.defaultContentType(MediaType.APPLICATION_JSON);
+        configurer.mediaType("protobuf", new MediaType("application", "x-protobuf"));
     }
 
     @Bean

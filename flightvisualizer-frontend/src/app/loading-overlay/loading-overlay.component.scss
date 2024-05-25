@@ -1,0 +1,139 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: var(--loading-overlay-z-index);
+}
+
+.backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.loading-text {
+  font-size: 24px;
+  color: white;
+  z-index: var(--loading-overlay-z-index);
+}
+
+.overlay-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--loading-overlay-z-index);
+}
+
+.airplane {
+  color: #dddddd;
+  transform: scale(2);
+}
+
+/* All credit for this animation goes to 'aaroniker' from codepen: https://codepen.io/aaroniker/pen/MzoXaZ */
+.infinityChrome {
+  position: absolute;
+  top: 40%;
+  left: 40%;
+  transform: translate(-50%, -50%);
+  div {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    color: white;
+    animation: moveSvg 6.9s linear infinite;
+    transform: rotate(90deg);
+    offset-path: path("M 257.4545 117.6257 C 311.5636 174.0813 337.7455 224 394.1818 224 C 450.6182 224 496 177.647 496 120.0028 C 496 62.3586 450.6182 15.4113 394.1818 16.0056 C 337.7455 16.5999 318 59 265.6 117.6257 C 213.8182 169.9215 174.2545 224 117.8182 224 C 61.3818 224 16 177.647 16 120.0028 C 16 62.3586 61.3818 16.0056 117.8182 16.0056 C 174.2545 16.0056 212.6545 71.2727 257.4545 117.6257 Z");
+    &:before,
+    &:after {
+      content: '';
+      position: absolute;
+      display: block;
+      border-radius: 50%;
+      width: 14px;
+      height: 14px;
+      background: inherit;
+      top: 50%;
+      left: 50%;
+      margin: -7px 0 0 -7px;
+      box-shadow: inherit;
+    }
+    &:before {
+      animation: drop1 .8s linear infinite;
+    }
+    &:after {
+      animation: drop2 .8s linear infinite .4s;
+    }
+    &:nth-child(2) {
+      animation-delay: -0.5s;
+    }
+    &:nth-child(3) {
+      animation-delay: -1s;
+    }
+    &:nth-child(4) {
+      animation-delay: -1.5s;
+    }
+    &:nth-child(5) {
+      animation-delay: -2s;
+    }
+    &:nth-child(6) {
+      animation-delay: -2.5s;
+    }
+    &:nth-child(7) {
+      animation-delay: -3s;
+    }
+  }
+}
+
+@keyframes moveSvg {
+  0% {
+    offset-distance: 0%;
+  }
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes rotate {
+  50% {
+    transform: rotate(360deg);
+    margin-left: 0;
+  }
+  50.0001%,
+  100% {
+    margin-left: -60px;
+  }
+}
+
+@keyframes move {
+  0%,50% {
+    left: -8px;
+  }
+  50.0001%,
+  100% {
+    left: auto;
+    right: -8px;
+  }
+}
+
+@keyframes drop1 {
+  100% {
+    transform: translate(32px, 8px) scale(0);
+  }
+}
+
+@keyframes drop2 {
+  0% {
+    transform: translate(0, 0) scale(.9);
+  }
+  100% {
+    transform: translate(32px, -8px) scale(0);
+  }
+}

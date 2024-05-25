@@ -6,9 +6,8 @@
   </mat-expansion-panel-header>
 
 <div class="selection-container">
-    <span class="custom-header">Select:</span>
     <mat-button-toggle-group [(ngModel)]="selectionType" (change)="onSelectionTypeChange()" name="fontStyle"
-                             aria-label="Font Style">
+                             aria-label="Select selection type">
       <mat-button-toggle value="airport">Airport</mat-button-toggle>
       <mat-button-toggle value="route">Route</mat-button-toggle>
     </mat-button-toggle-group>

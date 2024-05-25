@@ -1,4 +1,4 @@
-package com.erijl.flightvisualizer.backend.model.entities;
+package com.erijl.flightvisualizer.backend.model.internal;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,17 +13,11 @@ import java.util.Date;
 public class WeekRepresentation {
 
     private boolean monday;
-
     private boolean tuesday;
-
     private boolean wednesday;
-
     private boolean thursday;
-
     private boolean friday;
-
     private boolean saturday;
-
     private boolean sunday;
 
     /**
@@ -49,6 +43,18 @@ public class WeekRepresentation {
     public WeekRepresentation(Date date) {
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         DayOfWeek currentDayOfWeek = localDate.getDayOfWeek();
+
+        this.monday = currentDayOfWeek == DayOfWeek.MONDAY;
+        this.tuesday = currentDayOfWeek == DayOfWeek.TUESDAY;
+        this.wednesday = currentDayOfWeek == DayOfWeek.WEDNESDAY;
+        this.thursday = currentDayOfWeek == DayOfWeek.THURSDAY;
+        this.friday = currentDayOfWeek == DayOfWeek.FRIDAY;
+        this.saturday = currentDayOfWeek == DayOfWeek.SATURDAY;
+        this.sunday = currentDayOfWeek == DayOfWeek.SUNDAY;
+    }
+
+    public WeekRepresentation(LocalDate date) {
+        DayOfWeek currentDayOfWeek = date.getDayOfWeek();
 
         this.monday = currentDayOfWeek == DayOfWeek.MONDAY;
         this.tuesday = currentDayOfWeek == DayOfWeek.TUESDAY;

@@ -12,7 +12,8 @@ import lombok.Setter;
 public class FlightSchedule {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "flight_schedule_generator")
+    @TableGenerator(name = "flight_schedule_generator", table = "flight_schedule_hibernate_sequences", pkColumnName = "sequence_name", valueColumnName = "next_val")
     @Column(name = "id")
     private Integer flightScheduleId;
 

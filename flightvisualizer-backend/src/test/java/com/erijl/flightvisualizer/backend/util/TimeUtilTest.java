@@ -5,6 +5,7 @@ import com.erijl.flightvisualizer.backend.model.entities.FlightScheduleLeg;
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -31,6 +32,27 @@ public class TimeUtilTest {
                         Calendar.DECEMBER,
                         1
                 ).getTime()
+        ));
+    }
+
+    @Test
+    void testConvertDateToDDMMMYYLocalDate() {
+        TimeUtil timeUtil = new TimeUtil();
+
+        assertEquals("11AUG23", timeUtil.convertDateToDDMMMYY(
+                LocalDate.of(
+                        2023,
+                        8,
+                        11
+                )
+        ));
+
+        assertEquals("01DEC24", timeUtil.convertDateToDDMMMYY(
+                LocalDate.of(
+                        2024,
+                        12,
+                        1
+                )
         ));
     }
 
