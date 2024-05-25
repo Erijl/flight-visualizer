@@ -1,0 +1,11 @@
+<div class="toast" [ngClass]="type" [@fadeInOut]>
+  <div class="message">
+    <span class="icon" *ngIf="icon">
+      <mat-icon>{{ icon }}</mat-icon>
+    </span>
+    {{ message }}
+  </div>
+  <button class="close-button" (click)="close()" *ngIf="showCloseButton">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
