@@ -63,6 +63,7 @@ body.modal-open::before {
   padding: 0 20px;
   margin: 0;
   text-align: left;
+  margin-top: 20px;
 }
 
 .keypoints li {
@@ -81,6 +82,7 @@ body.modal-open::before {
   color: #fff;
   border: none;
   transition: background-color 0.3s ease;
+  width: 25%;
 }
 
 .understand-button:hover {
@@ -116,4 +118,28 @@ body.modal-open::before {
 
 .sublink:hover {
   color: darkblue;
+}
+
+.centered-content {
+  font-size: 1rem;
+}
+
+h1 {
+  font-size: 2em;
+  font-weight: 600;
+}
+
+.spacing-top {
+  margin-top: 20px;
+}
+
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.full-width {
+  width: 100%;
 }
