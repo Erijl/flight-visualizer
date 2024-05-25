@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { filter, map, Observable, of } from "rxjs";
+import {catchError, filter, map, Observable, of} from "rxjs";
 import {HttpClient, HttpEventType, HttpHeaders, HttpRequest} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
 import {
   AirportDetails,
   AirportRender,
-  AirportRenders,
+  AirportRenders, DetailedLegInformation,
   DetailedLegInformations,
   FlightDateFrequencies,
   LegRender
@@ -18,6 +18,7 @@ import {
   TimeFilter
 } from "../../protos/filters";
 import {SandboxModeResponseObject} from "../../protos/dtos";
+import {ToastService} from "./toast.service";
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ import {SandboxModeResponseObject} from "../../protos/dtos";
 export class DataService {
 
   private apiEndpoint = environment.apiEndpoint;
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private toastService: ToastService) { }
 
   getAirports() {
     const headers = new HttpHeaders({ 'Accept': 'application/x-protobuf' });
@@ -36,6 +37,11 @@ export class DataService {
       map(arrayBuffer => {
         const airportRendersMessage = AirportRenders.decode(new Uint8Array(arrayBuffer));
         return airportRendersMessage.airports;
+      }),
+      catchError((error, caught) => {
+        this.toastService.showToast('Error while requesting backend, please try again later.', 'error');
+        console.error('Error fetching getAirports:', error);
+        return of([AirportRender.create()]);
       })
     );
   }
@@ -49,6 +55,11 @@ export class DataService {
       map(arrayBuffer => {
         const flightDateFrequencies = FlightDateFrequencies.decode(new Uint8Array(arrayBuffer));
         return flightDateFrequencies.frequencies;
+      }),
+      catchError((error, caught) => {
+        this.toastService.showToast('Error while requesting backend, please try again later.', 'error');
+        console.error('Error fetching getFlightDateFrequencies:', error);
+        return of(FlightDateFrequencies.create().frequencies);
       })
     );
   }
@@ -68,6 +79,11 @@ export class DataService {
       map((event) => {
         // @ts-ignore
         return DetailedLegInformations.decode(new Uint8Array(event.body)).detailedLegs;
+      }),
+      catchError((error, caught) => {
+        this.toastService.showToast('Error while requesting backend, please try again later.', 'error');
+        console.error('Error fetching getAllLegsForSpecificRoute', error);
+        return of([DetailedLegInformation.create()]);
       })
     );
   }
@@ -87,6 +103,11 @@ export class DataService {
       map((event) => {
         // @ts-ignore
         return SandboxModeResponseObject.decode(new Uint8Array(event.body));
+      }),
+      catchError((error, caught) => {
+        this.toastService.showToast('Error while requesting backend, please try again later.', 'error');
+        console.error('Error fetching getDistinctFlightScheduleLegsForRendering:', error);
+        return of(SandboxModeResponseObject.create());
       })
     );
   }
@@ -105,32 +126,12 @@ export class DataService {
       map((event) => {
         // @ts-ignore
         return AirportDetails.decode(new Uint8Array(event.body));
+      }),
+      catchError((error, caught) => {
+        this.toastService.showToast('Error while requesting backend, please try again later.', 'error');
+        console.error('Error fetching getAirportDetails:', error);
+        return of(AirportDetails.create());
       })
     );
-  }
-
-
-
-  /**
-   * Handle a Http operation that failed, without crashing the app.
-   *
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      // TODO refactor
-      console.error(error); // log to console instead
-
-      // TODO refactor
-      this.log(`${operation} failed: ${error.message}`);
-
-      return of(result as T);
-    };
-  }
-
-  private log(message: string) {
-    console.log(`DEBUG: ${message}`);
   }
 }

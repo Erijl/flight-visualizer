@@ -1,6 +1,7 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
 import {DataStoreService} from "./core/service/data-store.service";
+import {ToastService} from "./core/service/toast.service";
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   showLoadingScreenSubscription!: Subscription;
 
-  constructor(private dataStoreService: DataStoreService) {
+  constructor(private dataStoreService: DataStoreService, public toastService: ToastService) {
   }
 
   ngOnInit(): void {

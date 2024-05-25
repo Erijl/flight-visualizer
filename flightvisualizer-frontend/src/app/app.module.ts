@@ -39,6 +39,7 @@ import {MatCardModule} from "@angular/material/card";
 import { LiabilityModalComponent } from './liability-modal/liability-modal.component';
 import { IntToTimeofdayPipe } from './pipes/int-to-timeofday.pipe';
 import { LoadingOverlayComponent } from './loading-overlay/loading-overlay.component';
+import { ToastComponent } from './toast/toast.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { LoadingOverlayComponent } from './loading-overlay/loading-overlay.compo
     DetailPanelComponent,
     LiabilityModalComponent,
     IntToTimeofdayPipe,
-    LoadingOverlayComponent
+    LoadingOverlayComponent,
+    ToastComponent
   ],
     imports: [
         BrowserModule,
