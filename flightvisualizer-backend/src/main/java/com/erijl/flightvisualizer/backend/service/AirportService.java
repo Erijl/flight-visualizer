@@ -64,7 +64,7 @@ public class AirportService {
 
         List<AirportRenderDataProjection> airportProjections = this.airportRepository.findAllAirportRenders();
 
-        if (generalFilter.getAirportDisplayType() == AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES) {
+        if (generalFilter.getAirportDisplayType() == AirportDisplayType.AIRPORTDISPLAYTYPE_WITHROUTES && !legRenders.isEmpty()) {
             HashSet<String> airportCodes = new HashSet<>();
             for (LegRender legRender : legRenders) {
                 airportCodes.add(legRender.getOriginAirportIataCode());
