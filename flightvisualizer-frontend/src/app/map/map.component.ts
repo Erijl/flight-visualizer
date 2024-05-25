@@ -84,6 +84,9 @@ export class MapComponent implements OnInit, OnDestroy {
       zoom: 3
     });
 
+    this.map.dragRotate.disable();
+    this.map.touchZoomRotate.disableRotation();
+
     this.map.on('load', () => {
       this.dataStoreService.reRenderRoutes();
 
