@@ -4,6 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: var(--loading-overlay-z-index);
 }
 
 .backdrop {
@@ -19,7 +20,7 @@
 .loading-text {
   font-size: 24px;
   color: white;
-  z-index: 2000;
+  z-index: var(--loading-overlay-z-index);
 }
 
 .overlay-content {
@@ -27,7 +28,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2000;
+  z-index: var(--loading-overlay-z-index);
 }
 
 .airplane {

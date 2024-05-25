@@ -10,6 +10,7 @@ export class AppComponent {
   showModal = true;
   renderMap = false;
   showModeSelect = true;
+  isLoading = false;
 
   closeModal() {
     this.showModal = false;
@@ -18,7 +19,6 @@ export class AppComponent {
 
   selectMode(mode: number) {
     this.showModeSelect = false;
-    // Add your logic here to handle the selected mode
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -26,17 +26,5 @@ export class AppComponent {
     if (event.key === 'Escape' && !this.showModeSelect) {
       this.showModeSelect = true;
     }
-  }
-
-  explore() {
-    // Add your logic here
-  }
-
-  theorize() {
-    // Add your logic here
-  }
-
-  calculate() {
-    // Add your logic here
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-loading-overlay',
@@ -6,6 +6,6 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./loading-overlay.component.scss']
 })
 export class LoadingOverlayComponent {
-  @Input() zIndex = 50;
+  zIndex = 10000;
 
 }
