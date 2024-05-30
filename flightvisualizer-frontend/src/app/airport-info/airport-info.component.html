@@ -84,7 +84,7 @@
 
 </div>
 
-<div [hidden]="selectedAirportFilter.iataCode != '' || airportDetails.iataCode == ''" class="error-message">
+<div [hidden]="!(selectedAirportFilter.iataCode == '' || airportDetails.iataCode == '')" class="error-message">
   <p>No Airport Selected</p>
   <p>Please select an airport from the map</p>
 </div>
