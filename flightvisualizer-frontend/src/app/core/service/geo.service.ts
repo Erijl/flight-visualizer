@@ -69,6 +69,7 @@ export class GeoService {
         },
         'properties': {
           'iataAirportCode': airport.iataCode,
+          'airportName': 'ThisIsAnEnormousNameToCheckWhetherTheMaxWidthIsWorking',
         }
       });
     });
