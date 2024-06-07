@@ -8,6 +8,7 @@ import com.erijl.flightvisualizer.backend.util.RestUtil;
 import com.erijl.flightvisualizer.backend.builder.UrlBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @Service
 public class AircraftService {
 
@@ -99,9 +101,7 @@ public class AircraftService {
                         )
                 );
             } else {
-                //TODO add proper error handling
-                System.out.println("Request Failed");
-                System.out.println(e.getStatusCode());
+                log.error("Failed to fetch aircraft with IATA code: " + iataAircraftCode + " ERROR: " + e.getStatusCode());
             }
         }
     }

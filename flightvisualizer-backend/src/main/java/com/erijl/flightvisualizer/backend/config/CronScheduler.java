@@ -76,44 +76,44 @@ public class CronScheduler {
     }
 
     //@Scheduled(initialDelay = 1000)
-    //public void fetchOldFlightSchedules() {
-    //    LocalDate startDate = LocalDate.of(2024, 4, 6);
-    //    LocalDate endDate = LocalDate.of(2024, 5, 10);
-    //    LocalDate currentDate = startDate;
-    //    while (!currentDate.isAfter(endDate)) {
-    //        try {
-    //            log.info("[{}]: Fetching flight schedule for {}", LocalDate.now(), currentDate);
-    //            fetchTodaysFlightSchedule(currentDate);
-    //        } catch (Exception e) {
-    //            log.error("Error fetching flight schedule for {}", currentDate, e); // Log the error
-    //        }
-    //        try {
-    //            Thread.sleep(60 * 1000);
-    //        } catch (InterruptedException e) {
-    //            log.warn("Delay interrupted", e);
-    //        }
-    //        currentDate = currentDate.plusDays(1);
-    //    }
-    //}
-
-    @Scheduled(fixedRate = 1000 * 60 * 60)
-    public void fetchCurrentFlightSchedule() {
-        LocalDate currentDate = LocalDate.now(ZoneId.of("UTC"));
-
-        try {
-            log.info("[{}]: Fetching flight schedule for {}", LocalDate.now(), currentDate);
-            performanceTracker.startTracking();
-
-            performanceTracker.addPerformance("Start fetching");
-            fetchFlightSchedule(currentDate);
-            performanceTracker.stop();
-
-            log.info("Flight schedule for {} fetched", currentDate);
-            log.info(performanceTracker.getPerformanceTrackrecordString());
-        } catch (Exception e) {
-            log.error("Error fetching flight schedule for {}", currentDate, e);
+    public void fetchOldFlightSchedules() {
+        LocalDate startDate = LocalDate.of(2024, 6, 1);
+        LocalDate endDate = LocalDate.of(2024, 6, 10);
+        LocalDate currentDate = startDate;
+        while (!currentDate.isAfter(endDate)) {
+            try {
+                log.info("[{}]: Fetching flight schedule for {}", LocalDate.now(), currentDate);
+                fetchFlightSchedule(currentDate);
+            } catch (Exception e) {
+                log.error("Error fetching flight schedule for {}", currentDate, e);
+            }
+            try {
+                Thread.sleep(5 * 1000);
+            } catch (InterruptedException e) {
+                log.warn("Delay interrupted", e);
+            }
+            currentDate = currentDate.plusDays(1);
         }
     }
+
+    //@Scheduled(fixedRate = 1000 * 60 * 60)
+    //public void fetchCurrentFlightSchedule() {
+    //    LocalDate currentDate = LocalDate.now(ZoneId.of("UTC"));
+//
+    //    try {
+    //        log.info("[{}]: Fetching flight schedule for {}", LocalDate.now(), currentDate);
+    //        performanceTracker.startTracking();
+//
+    //        performanceTracker.addPerformance("Start fetching");
+    //        fetchFlightSchedule(currentDate);
+    //        performanceTracker.stop();
+//
+    //        log.info("Flight schedule for {} fetched", currentDate);
+    //        log.info(performanceTracker.getPerformanceTrackrecordString());
+    //    } catch (Exception e) {
+    //        log.error("Error fetching flight schedule for {}", currentDate, e);
+    //    }
+    //}
 
     public void fetchFlightSchedule(LocalDate dateToFetch) {
         FlightScheduleCronRun possibleCronRuns = this.flightScheduleCronRunRepository.
