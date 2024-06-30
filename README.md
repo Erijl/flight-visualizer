@@ -1,10 +1,11 @@
 ![Flight Visualizer](./assets/flight-visualizer_banner.png)
 
-Flight Visualizer is an open-source web application that lets you explore Lufthansa's global flight network in a visually stunning 3D environment. Track flights, discover airport details, and uncover the hidden patterns of air travel through interactive data visualization.
-
-[Image/GIF of your visualizer in action]
+Flight Visualizer is an open-source web application that lets you explore Lufthansa's global flight network in a
+visually stunning 3D environment. Track flights, discover airport details, and uncover the hidden patterns of air travel
+through interactive data visualization.
 
 ## Table of Contents
+
 - [Key Features](#key-features)
 - [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
@@ -19,33 +20,36 @@ Flight Visualizer is an open-source web application that lets you explore Luftha
 
 ## To come
 
+## Highlights
+Some technical highlights, not necessarily unique but definitely uncommon:
 
-## Key Features 🚀
+### Protocol Buffers as SSoT data model with REST API
+I needed a way to have a shared data model between the client and server, from a single source of truth. And for
+that I chose Protocol Buffers in combination with a standard Rest API. Quite the unique combination but this not
+only assures that the data model is consistent between client and server but also allows for a more efficient data
+transfer than typical methods. [More Details](./api-models/README.md)
 
-- **Interactive 3D Globe:** Explore Lufthansa's worldwide flight routes on a beautiful 3D globe.
-- **Airport Details:** Click on airports to view information like name, location, IATA code, and timezone.
-- **Flight Tracking (Experimental):**  See a real-time (simulated) view of Lufthansa flights in the air.
-- **Graph Theory Mode:** Analyze the network of airports and routes using graph theory visualizations.
-- **Sandbox Mode:**  Freely explore and interact with the data without any filters or constraints.
-- **Filtering and Searching:**  Filter flights and airports by various criteria.
-- **Customizable Views:** Adjust the appearance of the globe, routes, and markers.
+### Theoretical Realtime flight visualisation
+The 'theoretical' flight visalisation utilizes parts of the Haversine formula to theoretically calculate the position
+of an aircraft at any given time based on the departure and arrival times as well as an approximated distance time 
+function of an average airplane. [More Details](./flightvisualizer-backend/README.md)
 
-## Screenshots 📸
-
-## Getting Started 🛠️
-
-
-
-
-## Technical Details ⚙️
+### Graph Theory visualisation
+The graph theory visualisation is a unique way to visualize the flight network of Lufthansa. It uses a force directed
+graph layout to show the connections between airports and the number of flights between them. [More Details](./flightvisualizer-frontend/README.md)
 
 
 
-## Project Structure 📂
-The Project is divided into the following main directories, 
+## Getting Started
+
+## Technical Details
+
+## Project Structure
+
+The Project is divided into the following main directories,
 please note that each main directory contains it's own readme for more detailed information:
 
-    /api-models - Contains the Protobuf (.proto) files defining the data models.
+    /api-models - Contains the Protocol Buffer (.proto) files defining the data models.
     /flightvisualizer-backend - Spring Boot backend code
     /flightvisualizer-frontend - Angular frontend code
     /flightvisualizer-database - Scripts for setting up the database
@@ -54,10 +58,9 @@ please note that each main directory contains it's own readme for more detailed 
 
 ## Contributors
 
-> <img src="https://avatars.githubusercontent.com/erijl" height="60px" title="Justus M."/> | <a href="https://github.com/erijl" target="_blank">@erijl</a>
+> <img src="https://avatars.githubusercontent.com/erijl" height="60px" title="Justus M." alt="Portrait"/> | <a href="https://github.com/erijl" target="_blank">@erijl</a>
 
+## License
 
-## License 📄
-
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
 
