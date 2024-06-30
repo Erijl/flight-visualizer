@@ -4,6 +4,7 @@ import com.erijl.flightvisualizer.backend.model.entities.Airport;
 import com.erijl.flightvisualizer.backend.model.internal.CoordinatePair;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 public class MathUtil {
 
@@ -31,6 +32,41 @@ public class MathUtil {
         double haversineFormulaPartC = 2 * Math.atan2(Math.sqrt(haversineFormulaPartA), Math.sqrt(1 - haversineFormulaPartA));
 
         return ((int) Math.floor(EARTH_RADIUS_IN_METRES * haversineFormulaPartC)) / 1000;
+    }
+
+    public static BigDecimal[] calculateIntermediateCoordinates(Airport origin, Airport destination, BigDecimal percentageTraveled) {
+        if (origin == null || destination == null || percentageTraveled == null
+                || percentageTraveled.compareTo(BigDecimal.ZERO) < 0 || percentageTraveled.compareTo(BigDecimal.ONE) > 1) {
+            return null;
+        }
+
+        int totalDistanceInMeters = calculateDistanceBetweenAirports(origin, destination) * 1000;
+        BigDecimal totalDistance = BigDecimal.valueOf(totalDistanceInMeters);
+
+        BigDecimal distanceTraveled = totalDistance.multiply(percentageTraveled);
+
+        double originLatitudeRadians = Math.toRadians(origin.getLatitude().doubleValue());
+        double originLongitudeRadians = Math.toRadians(origin.getLongitude().doubleValue());
+        double destinationLatitudeRadians = Math.toRadians(destination.getLatitude().doubleValue());
+        double destinationLongitudeRadians = Math.toRadians(destination.getLongitude().doubleValue());
+
+        double y = Math.sin(destinationLongitudeRadians - originLongitudeRadians) * Math.cos(destinationLatitudeRadians);
+        double x = Math.cos(originLatitudeRadians) * Math.sin(destinationLatitudeRadians) -
+                Math.sin(originLatitudeRadians) * Math.cos(destinationLatitudeRadians) * Math.cos(destinationLongitudeRadians - originLongitudeRadians);
+        double bearing = Math.atan2(y, x);
+
+        double angularDistance = distanceTraveled.divide(BigDecimal.valueOf(EARTH_RADIUS_IN_METRES), MathContext.DECIMAL128).doubleValue();
+
+        double intermediateLatitudeRadians = Math.asin(Math.sin(originLatitudeRadians) * Math.cos(angularDistance) +
+                Math.cos(originLatitudeRadians) * Math.sin(angularDistance) * Math.cos(bearing));
+
+        double intermediateLongitudeRadians = originLongitudeRadians + Math.atan2(Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(originLatitudeRadians),
+                Math.cos(angularDistance) - Math.sin(originLatitudeRadians) * Math.sin(intermediateLatitudeRadians));
+
+        return new BigDecimal[] {
+                BigDecimal.valueOf(Math.toDegrees(intermediateLatitudeRadians)),
+                BigDecimal.valueOf(Math.toDegrees(intermediateLongitudeRadians))
+        };
     }
 
     /**
