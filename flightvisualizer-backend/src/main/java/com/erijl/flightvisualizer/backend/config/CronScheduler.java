@@ -96,7 +96,7 @@ public class CronScheduler {
         }
     }
 
-    //@Scheduled(fixedRate = 1000 * 60 * 60)
+    //@Scheduled(fixedRate = 1000 * 60 * 60) //TODO fix this mess
     //public void fetchCurrentFlightSchedule() {
     //    LocalDate currentDate = LocalDate.now(ZoneId.of("UTC"));
 //

@@ -17,13 +17,13 @@ export class GeoService {
       'line-join': 'round'
     }, {
       'line-width': 5,
-      'line-color': '#ff0000'
+      'line-color': '#E91E63'
     });
   }
 
   highlightAirportOnMap(map: mapboxgl.Map, sourceId: string, layerId: string, airport: AirportRender): void {
     this.addFeatureCollectionSourceToMap(map, sourceId, this.convertAirportRendersToGeoJson([airport]));
-    this.addLayerTypeCircleToMap(map, layerId, sourceId, 10, '#ff0000');
+    this.addLayerTypeCircleToMap(map, layerId, sourceId, 10, '#E91E63');
   }
 
   addFeatureCollectionSourceToMap(map: mapboxgl.Map, sourceId: string, features: any): void {
