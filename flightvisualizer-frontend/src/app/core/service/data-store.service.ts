@@ -206,7 +206,7 @@ export class DataStoreService {
       this.allLegRenders = sandboxModeResponseObject.legRenders;
 
       this._renderedRoutes.next(sandboxModeResponseObject.legRenders);
-      this._currentlyDisplayedAirports.next(sandboxModeResponseObject.airportRenders);
+      this._currentlyDisplayedAirports.next(sandboxModeResponseObject.airportRenders); //TODO if selected airport isn't in this list, set it to null
       this.setShowLoadingScreen(false);
     });
   }

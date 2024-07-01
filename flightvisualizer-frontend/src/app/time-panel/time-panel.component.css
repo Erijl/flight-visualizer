@@ -58,9 +58,12 @@ button:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 6px;
   background-color: #222;
   border-radius: 5px;
+}
+
+.small-padding {
+  padding: 6px;
 }
 
 .values-container {

@@ -22,6 +22,7 @@ public class AirportRenderBuilder {
     public static AirportRender buildAirportRender(AirportRenderDataProjection airportProjection) {
         return AirportRender.newBuilder()
                 .setIataCode(airportProjection.getIataCode())
+                .setName(airportProjection.getAirportName())
                 .setCoordinate(Coordinate.newBuilder()
                         .setLongitude(airportProjection.getLongitude())
                         .setLatitude(airportProjection.getLatitude())
