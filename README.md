@@ -1,55 +1,50 @@
-![Flight Visualizer](./assets/flight-visualizer_banner.png)
+[![Flight Visualizer](./assets/flight-visualizer_banner.png)](https://flight-visualizer.com)
 
-Flight Visualizer is an open-source web application that lets you explore Lufthansa's global flight network in a
-visually stunning 3D environment. Track flights, discover airport details, and uncover the hidden patterns of air travel
-through interactive data visualization.
+<div align="center">
 
-## Table of Contents
+![Frontend Deployment](https://img.shields.io/github/actions/workflow/status/erijl/flight-visualizer/main.yml)
+![Backend Deployment](https://img.shields.io/github/actions/workflow/status/erijl/flight-visualizer/publish_backend-docker-image.yml)
 
-- [Key Features](#key-features)
-- [Screenshots](#screenshots)
-- [Getting Started](#getting-started)
-- [Usage](#usage)
-- [Technical Details](#technical-details)
-- [Project Structure](#project-structure)
-- [Data Sources](#data-sources)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
-- [Contact](#contact)
+</div>
 
-## To come
+Flight Visualizer is an open-source web application that lets you explore Lufthansa's global flight network.
+Track flights, discover intricate details and enjoy the data. [Check it out here!](https://flight-visualizer.com)
 
 ## Highlights
-Some technical highlights, not necessarily unique but definitely uncommon:
+
+Some technical highlights, not necessarily unique but definitely uncommon and technically interesting
 
 ### Protocol Buffers as SSoT data model with REST API
-I needed a way to have a shared data model between the client and server, from a single source of truth. And for
-that I chose Protocol Buffers in combination with a standard Rest API. Quite the unique combination but this not
-only assures that the data model is consistent between client and server but also allows for a more efficient data
-transfer than typical methods. [More Details](./api-models/README.md)
+
+I needed a shared data model between client and server, from a single source of truth. Instead of going the usual route,
+I chose Protocol Buffers in combination with a standard Rest API. Not to common, but this not only assures that the
+data model is consistent between client and server but also allows for a more efficient data transfer and better
+performance than typical methods. [More Details](./api-models/README.md)
 
 ### Theoretical Realtime flight visualisation
+
 The 'theoretical' flight visalisation utilizes parts of the Haversine formula to theoretically calculate the position
-of an aircraft at any given time based on the departure and arrival times as well as an approximated distance time 
+of an aircraft at any given time based on the departure and arrival times as well as an approximated distance time
 function of an average airplane. [More Details](./flightvisualizer-backend/README.md)
 
 ### Graph Theory visualisation
+
 The graph theory visualisation is a unique way to visualize the flight network of Lufthansa. It uses a force directed
-graph layout to show the connections between airports and the number of flights between them. [More Details](./flightvisualizer-frontend/README.md)
+graph layout to show the connections between airports and the number of flights between
+them. [More Details](./flightvisualizer-frontend/README.md)
 
+## Getting Started / Contributing
 
-
-## Getting Started
-
-## Technical Details
+There is currently no local development setup guide planned since it involves many dependencies, like a Mapbox
+account, which in of itself needs a credit card to be set up. If you however are still interested, open an Issue and
+I will create a fully comprehensive guide for local development including sample data for the database.
 
 ## Project Structure
 
 The Project is divided into the following main directories,
-please note that each main directory contains it's own readme for more detailed information:
+please note that each main directory contains its own readme for more detailed information:
 
-    /api-models - Contains the Protocol Buffer (.proto) files defining the data models.
+    /api-models - Protocol Buffer files for the SSoT data models
     /flightvisualizer-backend - Spring Boot backend code
     /flightvisualizer-frontend - Angular frontend code
     /flightvisualizer-database - Scripts for setting up the database
@@ -64,3 +59,6 @@ please note that each main directory contains it's own readme for more detailed 
 
 This project is licensed under the [MIT License](LICENSE).
 
+Favicon & Icon used with slight color alteration:
+Globe-trotterderivative work: LtPowers, CC BY-SA 3.0 <https://creativecommons.org/licenses/by-sa/3.0>, via Wikimedia
+Commons
