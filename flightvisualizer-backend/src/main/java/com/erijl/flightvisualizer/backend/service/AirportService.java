@@ -17,6 +17,7 @@ import com.erijl.flightvisualizer.protos.objects.AirportRender;
 import com.erijl.flightvisualizer.protos.objects.LegRender;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
@@ -29,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @Service
 public class AirportService {
 
@@ -165,9 +167,7 @@ public class AirportService {
                         )
                 );
             } else {
-                //TODO add proper error handling
-                System.out.println("Request Failed");
-                System.out.println(e.getStatusCode());
+                log.error("Failed to request airport with IATA code: " + iataAirportCode + " ERROR: " + e.getStatusCode());
             }
         }
 

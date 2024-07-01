@@ -69,3 +69,10 @@ table {
 .left-side-panel::-webkit-scrollbar-thumb:hover {
   background: #666;
 }
+
+.mapboxgl-popup {
+  max-width: 50px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

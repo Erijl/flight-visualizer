@@ -11,6 +11,7 @@ public interface AirportRepository extends CrudRepository<Airport, String> {
 
     @Query(value = """
             select a.id as 'iataCode',
+                   a.airport_name as 'airportName',
                    a.longitude as 'longitude',
                    a.latitude as 'latitude'
                    from airport a

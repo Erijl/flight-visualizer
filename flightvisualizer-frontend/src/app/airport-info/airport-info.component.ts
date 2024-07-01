@@ -4,7 +4,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
-import {AirportDetails, LegRender} from "../protos/objects";
+import {AirportDetails, AirportRender, LegRender} from "../protos/objects";
 import {SelectedAirportFilter} from "../protos/filters";
 
 @Component({
@@ -17,12 +17,14 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   selectedAirportSubscription!: Subscription;
   currentlyRenderedRoutesSubscription!: Subscription;
   airportDetailsSubscription!: Subscription;
+  currentlyDisplayedAirportsSubscription!: Subscription;
 
   // UI data
   displayedColumns: string[] = ['originAirportIataCode', 'destinationAirportIataCode', 'distanceKilometers', 'durationMinutes'];
   dataSource = new MatTableDataSource<LegRender>([]);
   selectedAirportFilter: SelectedAirportFilter = SelectedAirportFilter.create();
   airportDetails: AirportDetails = AirportDetails.create();
+  currentlyDisplayedAirports: AirportRender[] = [];
 
   // UI state
   specificAirportRoutesOutgoing: boolean = true;
@@ -48,6 +50,10 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
       this.updateTable();
+    });
+
+    this.currentlyDisplayedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
+      this.currentlyDisplayedAirports = airports;
     });
   }
 
@@ -77,5 +83,7 @@ export class AirportInfoComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.selectedAirportSubscription.unsubscribe();
     this.currentlyRenderedRoutesSubscription.unsubscribe();
+    this.airportDetailsSubscription.unsubscribe();
+    this.currentlyDisplayedAirportsSubscription.unsubscribe();
   }
 }
