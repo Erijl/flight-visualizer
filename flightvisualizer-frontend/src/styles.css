@@ -1,6 +1,7 @@
 @import 'mapbox-gl/dist/mapbox-gl.css';
 
 :root {
+  --home-button-z-index: 50;
   --mode-select-screen-z-index: 100;
   --liability-modal-background-z-index: 999;
   --liability-modal-content-z-index: 1000;

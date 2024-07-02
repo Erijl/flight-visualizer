@@ -72,6 +72,7 @@ main {
 .material-symbols-outlined {
   vertical-align: middle;
 }
+
 .header {
   font-size: 3rem;
   font-weight: 700;
@@ -119,16 +120,36 @@ main {
   right: 16px;
   z-index: var(--toast-message-overlay-z-index);
 }
+
 .link-container {
   margin-top: 20px;
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
 }
+
 .link-item {
   font-size: 1rem;
   color: #ddd;
   text-decoration: none;
   appearance: none;
+  cursor: pointer;
+}
+
+.home-button {
+  position: absolute;
+  bottom: 1.25vh;
+  right: .6vw;
+  z-index: var(--home-button-z-index);
+  color: #E91E63;
+  background-color: #222;
+  transform: scale(1.75);
+  border: none;
+  border-radius: 5px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   cursor: pointer;
 }

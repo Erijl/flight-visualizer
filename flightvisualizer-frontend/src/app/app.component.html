@@ -6,6 +6,12 @@
   </app-toast>
 </div>
 
+<div class="home-button">
+  <button (click)="showModeSelect = true" class="home-button">
+    <mat-icon>home</mat-icon>
+  </button>
+</div>
+
 <app-loading-overlay *ngIf="isLoading"></app-loading-overlay>
 
 <div [class.blur]="showModal">
@@ -13,7 +19,7 @@
   <div *ngIf="showModeSelect" class="mode-select-screen">
     <div class="header-container">
       <h1 class="header">Welcome to Flightvisualizer</h1>
-      <h2 class="subheader">"ESC"-Menu: Please select a mode</h2>
+      <h2 class="subheader">"ESC" Home Menu: Please select a mode</h2>
     </div>
     <div class="cards-container">
       <div class="card" (click)="selectMode(1)">
