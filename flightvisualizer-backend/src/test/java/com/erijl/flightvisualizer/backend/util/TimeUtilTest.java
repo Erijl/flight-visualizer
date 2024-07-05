@@ -6,34 +6,11 @@ import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TimeUtilTest {
-
-    @Test
-    void testConvertDateToDDMMMYY() {
-        TimeUtil timeUtil = new TimeUtil();
-
-        assertEquals("11AUG23", timeUtil.convertDateToDDMMMYY(
-                new GregorianCalendar(
-                        2023,
-                        Calendar.AUGUST,
-                        11
-                ).getTime()
-        ));
-
-        assertEquals("01DEC24", timeUtil.convertDateToDDMMMYY(
-                new GregorianCalendar(
-                        2024,
-                        Calendar.DECEMBER,
-                        1
-                ).getTime()
-        ));
-    }
 
     @Test
     void testConvertDateToDDMMMYYLocalDate() {

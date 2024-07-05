@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,25 +23,6 @@ public class WeekRepresentationTest {
         assertFalse(weekRepresentation.isFriday());
         assertTrue(weekRepresentation.isSaturday());
         assertTrue(weekRepresentation.isSunday());
-    }
-
-    @Test
-    public void testConversionDateToWeekRepresentation() {
-        Date date = new GregorianCalendar(
-                2024,
-                Calendar.JANUARY,
-                1
-        ).getTime();
-
-        WeekRepresentation weekRepresentation = new WeekRepresentation(date);
-
-        assertTrue(weekRepresentation.isMonday());
-        assertFalse(weekRepresentation.isTuesday());
-        assertFalse(weekRepresentation.isWednesday());
-        assertFalse(weekRepresentation.isThursday());
-        assertFalse(weekRepresentation.isFriday());
-        assertFalse(weekRepresentation.isSaturday());
-        assertFalse(weekRepresentation.isSunday());
     }
 
     @Test
