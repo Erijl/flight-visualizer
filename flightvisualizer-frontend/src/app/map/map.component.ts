@@ -42,10 +42,11 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedRoute: LegRender = LegRender.create();
   selectionType: DetailSelectionType = DetailSelectionType.AIRPORT;
 
-  //popup = new mapboxgl.Popup({
-  //  closeButton: false,
-  //  closeOnClick: false
-  //});
+  popup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false,
+    className: "popup-content"
+  });
 
   constructor(private geoService: GeoService, private dataStoreService: DataStoreService) {
   }
@@ -158,19 +159,24 @@ export class MapComponent implements OnInit, OnDestroy {
     this.map.getCanvas().style.cursor = CursorStyles.POINTER;
 
     const coordinates = e.features[0].geometry.coordinates.slice();
+    const properties = e.features[0].properties;
 
     while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
       coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
 
-    const properties = e.features[0].properties;
-    //this.popup.setLngLat(coordinates).setHTML(properties.iataAirportCode + ' - ' + properties.airportName).addTo(this.map);
+    this.popup.setLngLat(coordinates).setHTML(
+      `
+        <h3>${properties.iataAirportCode}</h3>
+      `
+    ).addTo(this.map);
+
   }
 
   // @ts-ignore
   layerMouseLeaveHandler = (e) => {
     this.map.getCanvas().style.cursor = CursorStyles.DEFAULT;
-    //this.popup.remove();
+    this.popup.remove();
   }
 
   highlightSelectedRoute(): void {

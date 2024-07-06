@@ -70,9 +70,6 @@ table {
   background: #666;
 }
 
-.mapboxgl-popup {
-  max-width: 50px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.popup-content .mapboxgl-popup-content {
+  background-color: green;
 }

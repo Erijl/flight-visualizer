@@ -141,7 +141,7 @@ main {
   bottom: 1.25vh;
   right: .6vw;
   z-index: var(--home-button-z-index);
-  color: #E91E63;
+  color: #dddddd;
   background-color: #222;
   transform: scale(1.75);
   border: none;
