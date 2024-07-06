@@ -40,6 +40,7 @@ import { LiabilityModalComponent } from './liability-modal/liability-modal.compo
 import { IntToTimeofdayPipe } from './pipes/int-to-timeofday.pipe';
 import { LoadingOverlayComponent } from './loading-overlay/loading-overlay.component';
 import { ToastComponent } from './toast/toast.component';
+import { GraphPanelComponent } from './graph-panel/graph-panel.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { ToastComponent } from './toast/toast.component';
     LiabilityModalComponent,
     IntToTimeofdayPipe,
     LoadingOverlayComponent,
-    ToastComponent
+    ToastComponent,
+    GraphPanelComponent
   ],
     imports: [
         BrowserModule,

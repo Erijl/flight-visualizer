@@ -1,0 +1,12 @@
+<div style="display:flex; justify-content:center; ">
+
+    <div #treeContainer style="flex:4">
+    </div>
+    <div style="flex:1">
+        <h1 *ngIf="selectNode"> Selected node</h1>
+        <div>{{selectNode| json}} </div>
+    </div>
+
+</div>
+
+<button (click)="onButtonClick()">CLICK ME</button>

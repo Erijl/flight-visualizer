@@ -13,6 +13,7 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'Flightvisualizer';
   showModal = true;
   renderMap = false;
+  renderGraph = true;
   showModeSelect = true;
   isLoading = false;
 
