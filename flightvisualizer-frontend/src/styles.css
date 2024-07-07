@@ -1,4 +1,5 @@
 @import 'mapbox-gl/dist/mapbox-gl.css';
+@import "@pqina/flip/dist/flip.min.css";
 
 :root {
   --mode-select-screen-z-index: 100;
