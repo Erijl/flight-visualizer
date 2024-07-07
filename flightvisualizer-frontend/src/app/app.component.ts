@@ -3,6 +3,7 @@ import {Subscription} from "rxjs";
 import {DataStoreService} from "./core/service/data-store.service";
 import {ToastService} from "./core/service/toast.service";
 import {environment} from "../environments/environment";
+import {ModeSelection} from "./core/enum";
 
 @Component({
   selector: 'app-root',
@@ -36,7 +37,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.dataStoreService.setIsInitialized(true);
   }
 
-  selectMode(mode: number) {
+  selectMode(mode: ModeSelection) {
+    this.dataStoreService.setModeSelection(mode);
     this.showModeSelect = false;
   }
 
@@ -50,4 +52,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.showLoadingScreenSubscription.unsubscribe();
   }
+
+  protected readonly ModeSelection = ModeSelection;
 }

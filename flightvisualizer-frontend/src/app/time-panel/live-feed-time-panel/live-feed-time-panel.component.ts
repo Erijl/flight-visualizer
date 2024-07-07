@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {LiveFeedSpeedModifier} from "../../core/enum";
 
 @Component({
   selector: 'app-live-feed-time-panel',
@@ -7,4 +8,9 @@ import { Component } from '@angular/core';
 })
 export class LiveFeedTimePanelComponent {
 
+  selectionType: LiveFeedSpeedModifier = LiveFeedSpeedModifier.ONE_X;
+
+  onSpeedModifierChange() {
+
+  }
 }

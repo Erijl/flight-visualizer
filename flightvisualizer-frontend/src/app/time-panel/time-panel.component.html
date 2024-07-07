@@ -5,5 +5,11 @@
     </mat-panel-title>
   </mat-expansion-panel-header>
 
-  <app-sandbox-time-panel />
+  <div *ngIf="modeSelection == ModeSelection.SANDBOX">
+    <app-sandbox-time-panel />
+  </div>
+
+  <div *ngIf="modeSelection == ModeSelection.LIVE_FEED">
+    <app-live-feed-time-panel />
+  </div>
 </mat-expansion-panel>

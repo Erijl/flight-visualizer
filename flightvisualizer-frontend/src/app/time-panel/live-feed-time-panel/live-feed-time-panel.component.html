@@ -1,1 +1,13 @@
-<p>live-feed-time-panel works!</p>
+
+
+
+
+<div class="selection-container">
+  <mat-button-toggle-group [(ngModel)]="selectionType" (change)="onSpeedModifierChange()" name="fontStyle"
+                           aria-label="Select selection type">
+    <mat-button-toggle value="oneX">1x</mat-button-toggle>
+    <mat-button-toggle value="twoX">2x</mat-button-toggle>
+    <mat-button-toggle value="fourX">4x</mat-button-toggle>
+    <mat-button-toggle value="sixX">6x</mat-button-toggle>
+  </mat-button-toggle-group>
+</div>

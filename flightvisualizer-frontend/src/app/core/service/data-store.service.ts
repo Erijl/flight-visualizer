@@ -1,10 +1,13 @@
 import {Injectable} from '@angular/core';
 import {
-  DefaultGeneralFilter, DefaultRouteFilter, DefaultSelectedAirportFilter, DefaultTimeFilter
+  DefaultGeneralFilter,
+  DefaultRouteFilter,
+  DefaultSelectedAirportFilter,
+  DefaultTimeFilter
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
-import {DetailSelectionType} from "../enum";
+import {DetailSelectionType, ModeSelection} from "../enum";
 import {GeneralFilter, RouteFilter, SelectedAirportFilter, TimeFilter} from "../../protos/filters";
 import {
   AirportDetails,
@@ -71,6 +74,9 @@ export class DataStoreService {
   // UI state
   private _showLoadingScreen: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   showLoadingScreen = this._showLoadingScreen.asObservable();
+
+  private _modeSelection: BehaviorSubject<ModeSelection> = new BehaviorSubject<ModeSelection>(ModeSelection.NONE);
+  modeSelection = this._modeSelection.asObservable();
 
 
   constructor(private dataService: DataService) {
@@ -192,6 +198,10 @@ export class DataStoreService {
 
   setIsInitialized(isInitialized: boolean): void {
     this.isInitialized = isInitialized;
+  }
+
+  setModeSelection(modeSelection: ModeSelection): void {
+    this._modeSelection.next(modeSelection);
   }
 
   // FETCHING DATA

@@ -29,6 +29,20 @@ export const AircraftTimeFilterTypeLabels: { [key in AircraftTimeFilterType]: st
   [AircraftTimeFilterType.UNRECOGNIZED]: 'TECHNICAL VALUE'
 };
 
+export enum ModeSelection {
+  NONE,
+  SANDBOX,
+  LIVE_FEED,
+  GRAPH_THEORY
+}
+
+export enum LiveFeedSpeedModifier {
+  ONE_X = "oneX",
+  TWO_X = "twoX",
+  FOUR_X = "fourX",
+  SIX_X = "sixX"
+}
+
 export enum DetailSelectionType {
   AIRPORT = "airport",
   ROUTE = "route",

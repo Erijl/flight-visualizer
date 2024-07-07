@@ -1,11 +1,8 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DataStoreService} from "../core/service/data-store.service";
-import {DefaultTimeFilter} from "../core/dto/airport";
 import {state, style, trigger} from "@angular/animations";
 import {Subscription} from "rxjs";
-import {AircraftTimeFilterType} from "../protos/enums";
-import {TimeFilter} from "../protos/filters";
-import {AircraftTimeFilterTypeLabels} from "../core/enum";
+import {ModeSelection} from "../core/enum";
 
 @Component({
   selector: 'app-time-panel',
@@ -25,7 +22,25 @@ import {AircraftTimeFilterTypeLabels} from "../core/enum";
   templateUrl: './time-panel.component.html',
   styleUrl: './time-panel.component.css'
 })
-export class TimePanelComponent {
+export class TimePanelComponent implements OnInit, OnDestroy{
+
+  modeSelectionSubscription!: Subscription;
 
   expanded: boolean = true;
+  modeSelection: ModeSelection = ModeSelection.NONE;
+
+  constructor(private dataStoreService: DataStoreService) {
+  }
+
+  ngOnInit() {
+    this.modeSelectionSubscription = this.dataStoreService.modeSelection.subscribe(modeSelection => {
+      this.modeSelection = modeSelection;
+    })
+  }
+
+  ngOnDestroy() {
+    this.modeSelectionSubscription.unsubscribe();
+  }
+
+  protected readonly ModeSelection = ModeSelection;
 }
