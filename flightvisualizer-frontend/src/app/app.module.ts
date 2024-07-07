@@ -31,15 +31,16 @@ import { RouteInfoComponent } from './route-info/route-info.component';
 import {MatExpansionModule} from "@angular/material/expansion";
 import {MatIcon} from "@angular/material/icon";
 import {BrowserAnimationsModule, provideAnimations} from "@angular/platform-browser/animations";
-import { TimePanelComponent } from './time-panel/time-panel.component';
+import {TimePanelComponent} from "./time-panel/time-panel.component";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import { FilterPanelComponent } from './filter-panel/filter-panel.component';
 import { DetailPanelComponent } from './detail-panel/detail-panel.component';
 import {MatCardModule} from "@angular/material/card";
 import { LiabilityModalComponent } from './liability-modal/liability-modal.component';
-import { IntToTimeofdayPipe } from './pipes/int-to-timeofday.pipe';
 import { LoadingOverlayComponent } from './loading-overlay/loading-overlay.component';
 import { ToastComponent } from './toast/toast.component';
+import {TimePanelModule} from "./time-panel/time-panel.module";
+import {PipesModule} from "./pipes/pipes.module";
 
 @NgModule({
   declarations: [
@@ -51,45 +52,46 @@ import { ToastComponent } from './toast/toast.component';
     FilterPanelComponent,
     DetailPanelComponent,
     LiabilityModalComponent,
-    IntToTimeofdayPipe,
     LoadingOverlayComponent,
     ToastComponent
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        HttpClientModule,
-        FormsModule,
-        MatSlider,
-        MatSliderRangeThumb,
-        MatTable,
-        MatColumnDef,
-        MatHeaderCell,
-        MatCell,
-        MatPaginator,
-        MatHeaderCellDef,
-        MatCellDef,
-        MatHeaderRowDef,
-        MatRowDef,
-        MatHeaderRow,
-        MatRow,
-        MatButtonToggleGroup,
-        MatButtonToggle,
-        MatSort,
-        MatSortModule,
-        CommonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatDatepickerModule,
-        MatSlideToggle,
-        MatExpansionModule,
-        MatIcon,
-        MatCheckboxModule,
-        MatSlideToggleModule,
-        MatCardModule,
-        NgOptimizedImage
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    MatSlider,
+    MatSliderRangeThumb,
+    MatTable,
+    MatColumnDef,
+    MatHeaderCell,
+    MatCell,
+    MatPaginator,
+    MatHeaderCellDef,
+    MatCellDef,
+    MatHeaderRowDef,
+    MatRowDef,
+    MatHeaderRow,
+    MatRow,
+    MatButtonToggleGroup,
+    MatButtonToggle,
+    MatSort,
+    MatSortModule,
+    CommonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatSlideToggle,
+    MatExpansionModule,
+    MatIcon,
+    MatCheckboxModule,
+    MatSlideToggleModule,
+    MatCardModule,
+    NgOptimizedImage,
+    TimePanelModule,
+    PipesModule
+  ],
   providers: [
     provideAnimationsAsync('noop'),
     provideNativeDateAdapter(),
