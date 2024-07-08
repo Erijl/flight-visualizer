@@ -1,15 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import mapboxgl from 'mapbox-gl';
 import {DefaultGeneralFilter, DefaultSelectedAirportFilter} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
-import {
-  CursorStyles,
-  DetailSelectionType,
-  LayerType,
-  MapEventType,
-  SourceType
-} from "../core/enum";
+import {CursorStyles, DetailSelectionType, LayerType, MapEventType, ModeSelection, SourceType} from "../core/enum";
 import {DataStoreService} from "../core/service/data-store.service";
 import {Subscription} from "rxjs";
 import {environment} from "../../environments/environment";
@@ -209,23 +203,35 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   replaceCurrentlyRenderedRoutes(newRoutes: LegRender[]): void {
-    let routesGeoJson = this.geoService.convertLegRendersToGeoJson(newRoutes);
-    if(!this.map) return;
+    if(this.dataStoreService.getModeSelection() == ModeSelection.SANDBOX) { //TODO refactor, to complex method
+      let routesGeoJson = this.geoService.convertLegRendersToGeoJson(newRoutes);
+      if(!this.map) return;
 
-    if(this.map.getSource(SourceType.ROUTESOURCE)) {
-      this.geoService.updateMapSourceData(this.map, SourceType.ROUTESOURCE, routesGeoJson);
-    } else {
-      this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.ROUTESOURCE, routesGeoJson);
-      this.geoService.addLayerTypeLineToMap(this.map, LayerType.ROUTELAYER, SourceType.ROUTESOURCE, {}, {
-        'line-color': '#ffffff',
-        'line-width': 2,
-        'line-opacity': 0.9,
-        //'line-dasharray': [2, 2]
-      });
-    }
+      if(this.map.getSource(SourceType.ROUTESOURCE)) {
+        this.geoService.updateMapSourceData(this.map, SourceType.ROUTESOURCE, routesGeoJson);
+      } else {
+        this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.ROUTESOURCE, routesGeoJson);
+        this.geoService.addLayerTypeLineToMap(this.map, LayerType.ROUTELAYER, SourceType.ROUTESOURCE, {}, {
+          'line-color': '#ffffff',
+          'line-width': 2,
+          'line-opacity': 0.9,
+          //'line-dasharray': [2, 2]
+        });
+      }
 
-    if (this.selectionType === DetailSelectionType.ROUTE) {
-      this.enableRouteLayerSelection();
+      if (this.selectionType === DetailSelectionType.ROUTE) {
+        this.enableRouteLayerSelection();
+      }
+    } else if(this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) {
+      let airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(newRoutes);
+      if(!this.map) return;
+
+      if(this.map.getSource(SourceType.ROUTESOURCE)) {
+        this.geoService.updateMapSourceData(this.map, SourceType.ROUTESOURCE, airplanesGeoJson);
+      } else {
+        this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.ROUTESOURCE, airplanesGeoJson);
+        this.geoService.addLayerTypeAirplane(this.map, LayerType.ROUTELAYER, SourceType.ROUTESOURCE);
+      }
     }
   }
 

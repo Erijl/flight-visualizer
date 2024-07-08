@@ -58,6 +58,22 @@ export class GeoService {
     });
   }
 
+  addLayerTypeAirplane(map: mapboxgl.Map, layerId: string, sourceId: string): void {
+    map.addLayer({
+      'id': layerId,
+      'type': 'symbol',
+      'source': sourceId,
+      'layout': {
+        'icon-image': 'airport',
+        'icon-size': 1.5,
+        'icon-rotate': ['get', 'bearing'],
+        'icon-rotation-alignment': 'map',
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true
+      }
+    });
+  }
+
   convertAirportRendersToGeoJson(airports: AirportRender[]): any[] {
     const airportGeoFeatures: any[] = [];
     airports.forEach(airport => {
@@ -95,6 +111,27 @@ export class GeoService {
       });
     });
     return airportGeoRoutes;
+  }
+
+  convertLegRendersToLiveFeedGeoJson(legRenders: LegRender[]): any[] {
+    const liveFeedAirplanePositions: any[] = []; //TODO move filtering to other file / function & add minute comparison
+    legRenders.filter(leg => Math.floor(leg.details!.departureTimeUtc/60) <= new Date().getHours() && Math.floor(leg.details!.arrivalTimeUtc/60) >= new Date().getHours()).forEach(legRender => {
+      liveFeedAirplanePositions.push({
+        'type': 'Feature',
+        'geometry': {
+          'type': 'Point',
+          'coordinates': [
+            legRender.coordinates[0].longitude,
+            legRender.coordinates[0].latitude
+          ]
+        },
+        'properties': {
+          'originAirport': legRender.originAirportIataCode,
+          'destinationAirport': legRender.destinationAirportIataCode
+        }
+      });
+    });
+    return liveFeedAirplanePositions;
   }
 
   removeLayerFromMap(map: mapboxgl.Map, layerId: string): void {

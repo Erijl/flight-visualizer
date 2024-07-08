@@ -138,6 +138,10 @@ export class DataStoreService {
     return this.allLegRenders.filter(leg => leg.originAirportIataCode == selectedLeg.originAirportIataCode && leg.destinationAirportIataCode == selectedLeg.destinationAirportIataCode);
   }
 
+  getModeSelection(): ModeSelection {
+    return this._modeSelection.getValue();
+  }
+
   // SETTERS
 
   setSelectedAirportFilter(selectedAirportFilter: SelectedAirportFilter): void {

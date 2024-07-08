@@ -98,6 +98,7 @@ export class SandboxTimePanelComponent implements OnInit, OnDestroy{
 
   ngOnDestroy(): void {
     this.flightDateFrequenciesSubscription.unsubscribe();
+    this.timeFilterSubscription.unsubscribe();
   }
 
   protected readonly AircraftTimeFilterTypeLabels = AircraftTimeFilterTypeLabels;
