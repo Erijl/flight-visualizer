@@ -194,7 +194,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.geoService.updateMapSourceData(this.map, SourceType.AIRPORTSOURCE, airportsGeoJson);
     } else {
       this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.AIRPORTSOURCE, airportsGeoJson);
-      this.geoService.addLayerTypeCircleToMap(this.map, LayerType.AIRPORTLAYER, SourceType.AIRPORTSOURCE, 8, '#eea719');
+      this.geoService.addLayerTypeCircleToMap(this.map, LayerType.AIRPORTLAYER, SourceType.AIRPORTSOURCE, this.dataStoreService.getModeSelection() == ModeSelection.SANDBOX ? 8 : 5, '#eea719'); //TODO replace shitty if with proper mode objects that store such things
     }
 
     if (this.selectionType === DetailSelectionType.AIRPORT) {

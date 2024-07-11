@@ -69,7 +69,7 @@ export class GeoService {
       'layout': {
         'icon-image': 'airport',
         'icon-size': 1.5,
-        'icon-rotate': ['get', 'bearing'],
+        'icon-rotate': ['get', 'rotation'],
         'icon-rotation-alignment': 'map',
         'icon-allow-overlap': true,
         'icon-ignore-placement': true
@@ -118,17 +118,22 @@ export class GeoService {
 
   convertLegRendersToLiveFeedGeoJson(legRenders: LegRender[]): any[] {
     const liveFeedAirplanePositions: any[] = []; //TODO move filtering to other file / function & add minute comparison
-    const currentDate = new Date(); // .filter(leg => Math.floor(leg.details!.departureTimeUtc/60) <= currentDate.getHours() && Math.floor(leg.details!.arrivalTimeUtc/60) >= currentDate.getHours())
-    legRenders.forEach(legRender => {
+    const currentDate = new Date(new Date().getUTCDate()); //
+    legRenders.filter(leg => Math.floor(leg.details!.departureTimeUtc/60) <= currentDate.getHours() && Math.floor(leg.details!.arrivalTimeUtc/60) >= currentDate.getHours()).forEach(legRender => {
+      const coordsAndRot = this.calculateIntermediateCoordinates(legRender, .5);
       liveFeedAirplanePositions.push({
         'type': 'Feature',
         'geometry': {
           'type': 'Point',
-          'coordinates': this.calculateIntermediateCoordinates(legRender, .01)
+          'coordinates': [
+            coordsAndRot[0],
+            coordsAndRot[1]
+          ]
         },
         'properties': {
           'originAirport': legRender.originAirportIataCode,
-          'destinationAirport': legRender.destinationAirportIataCode
+          'destinationAirport': legRender.destinationAirportIataCode,
+          'rotation': coordsAndRot[2]
         }
       });
     });
@@ -158,16 +163,17 @@ export class GeoService {
   }
 
   //It really hurts implementing this into the frontend, but there is no other option while keeping up the performance and allowing speed modifiers
-  private calculateIntermediateCoordinates(legRender: LegRender, percentageTraveled: number): [number, number] | null {
+  private calculateIntermediateCoordinates(legRender: LegRender, percentageTraveled: number): [number, number, number] | [null, null, null] {
     const origin = this.dataStoreService.getAllAirports().find(airport => airport.iataCode == legRender.originAirportIataCode);
     const destination = this.dataStoreService.getAllAirports().find(airport => airport.iataCode == legRender.destinationAirportIataCode);
 
-    if (!origin || !destination || !percentageTraveled || percentageTraveled < 0 || percentageTraveled > 1) {
-      return null;
+    if (!origin || !destination || percentageTraveled < 0 || percentageTraveled > 1) {
+      return [null, null, null];
     }
 
     // 1. Calculate total distance in meters
     const totalDistance = legRender.distanceKilometers * 1000;
+    console.log(totalDistance);
 
     // 2. Calculate distance traveled
     const distanceTraveled = totalDistance * percentageTraveled;
@@ -177,6 +183,9 @@ export class GeoService {
     const originLongitudeRadians = (origin.coordinate!.longitude * Math.PI) / 180;
     const destinationLatitudeRadians = (destination.coordinate!.latitude * Math.PI) / 180;
     const destinationLongitudeRadians = (destination.coordinate!.longitude * Math.PI) / 180;
+
+    console.log(origin.coordinate!.latitude, origin.coordinate!.longitude)
+    console.log(destination.coordinate!.latitude, destination.coordinate!.longitude)
 
     const y = Math.sin(destinationLongitudeRadians - originLongitudeRadians) * Math.cos(destinationLatitudeRadians);
     const x = Math.cos(originLatitudeRadians) * Math.sin(destinationLatitudeRadians) -
@@ -192,7 +201,16 @@ export class GeoService {
     const intermediateLongitudeRadians = originLongitudeRadians + Math.atan2(Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(originLatitudeRadians),
       Math.cos(angularDistance) - Math.sin(originLatitudeRadians) * Math.sin(intermediateLatitudeRadians));
 
-    // 5. Convert back to degrees and return as a tuple
-    return [intermediateLatitudeRadians * (180 / Math.PI), intermediateLongitudeRadians * (180 / Math.PI)];
+    // 5. Calculate rotation angle (bearing to destination from intermediate point)
+    const y2 = Math.sin(destinationLongitudeRadians - intermediateLongitudeRadians) * Math.cos(destinationLatitudeRadians);
+    const x2 = Math.cos(intermediateLatitudeRadians) * Math.sin(destinationLatitudeRadians) - Math.sin(intermediateLatitudeRadians) * Math.cos(destinationLatitudeRadians) * Math.cos(destinationLongitudeRadians - intermediateLongitudeRadians);
+    let rotationAngle = Math.atan2(y2, x2) * (180 / Math.PI);
+
+    // Normalize rotation angle to be between 0 and 360 degrees
+    rotationAngle = (rotationAngle + 360) % 360;
+
+    // 6. Convert back to degrees and return as a tuple
+    console.log(rotationAngle)
+    return [intermediateLongitudeRadians * (180 / Math.PI), intermediateLatitudeRadians * (180 / Math.PI), rotationAngle];
   }
 }
