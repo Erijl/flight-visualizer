@@ -116,11 +116,11 @@ export class GeoService {
     return airportGeoRoutes;
   }
 
-  convertLegRendersToLiveFeedGeoJson(legRenders: LegRender[]): any[] {
+  convertLegRendersToLiveFeedGeoJson(legRenders: LegRender[], currentDate: Date): any[] {
     const liveFeedAirplanePositions: any[] = []; //TODO move filtering to other file / function & add minute comparison
-    const currentDate = new Date(new Date().getUTCDate()); //
+    console.log(currentDate);
     legRenders.filter(leg => Math.floor(leg.details!.departureTimeUtc/60) <= currentDate.getHours() && Math.floor(leg.details!.arrivalTimeUtc/60) >= currentDate.getHours()).forEach(legRender => {
-      const coordsAndRot = this.calculateIntermediateCoordinates(legRender, .5);
+      const coordsAndRot = this.calculateIntermediateCoordinates(legRender, ((((currentDate.getMinutes() * 60) + (currentDate.getHours() * 3600) + currentDate.getSeconds()) - (legRender.details!.departureTimeUtc * 60)) / (legRender.durationMinutes * 60)));
       liveFeedAirplanePositions.push({
         'type': 'Feature',
         'geometry': {
@@ -173,7 +173,6 @@ export class GeoService {
 
     // 1. Calculate total distance in meters
     const totalDistance = legRender.distanceKilometers * 1000;
-    console.log(totalDistance);
 
     // 2. Calculate distance traveled
     const distanceTraveled = totalDistance * percentageTraveled;
@@ -183,9 +182,6 @@ export class GeoService {
     const originLongitudeRadians = (origin.coordinate!.longitude * Math.PI) / 180;
     const destinationLatitudeRadians = (destination.coordinate!.latitude * Math.PI) / 180;
     const destinationLongitudeRadians = (destination.coordinate!.longitude * Math.PI) / 180;
-
-    console.log(origin.coordinate!.latitude, origin.coordinate!.longitude)
-    console.log(destination.coordinate!.latitude, destination.coordinate!.longitude)
 
     const y = Math.sin(destinationLongitudeRadians - originLongitudeRadians) * Math.cos(destinationLatitudeRadians);
     const x = Math.cos(originLatitudeRadians) * Math.sin(destinationLatitudeRadians) -
@@ -210,7 +206,6 @@ export class GeoService {
     rotationAngle = (rotationAngle + 360) % 360;
 
     // 6. Convert back to degrees and return as a tuple
-    console.log(rotationAngle)
     return [intermediateLongitudeRadians * (180 / Math.PI), intermediateLatitudeRadians * (180 / Math.PI), rotationAngle];
   }
 }

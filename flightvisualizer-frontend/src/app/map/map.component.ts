@@ -36,6 +36,8 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedRoute: LegRender = LegRender.create();
   selectionType: DetailSelectionType = DetailSelectionType.AIRPORT;
 
+  intervalCount = 0;
+
   //popup = new mapboxgl.Popup({
   //  closeButton: false,
   //  closeOnClick: false
@@ -222,16 +224,22 @@ export class MapComponent implements OnInit, OnDestroy {
       if (this.selectionType === DetailSelectionType.ROUTE) {
         this.enableRouteLayerSelection();
       }
-    } else if(this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) {
-      let airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(newRoutes);
-      if(!this.map) return;
+    } else if(this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) { //TODO (possibly) base the speed (interval timeout & time multiplier) on the zoom level
+      let date = new Date();
+      setInterval(() => {
+        var newDateObj = new Date(date.getTime() + this.intervalCount*100);
+        let airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(newRoutes, newDateObj);
+        if(!this.map) return;
 
-      if(this.map.getSource(SourceType.ROUTESOURCE)) {
-        this.geoService.updateMapSourceData(this.map, SourceType.ROUTESOURCE, airplanesGeoJson);
-      } else {
-        this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.ROUTESOURCE, airplanesGeoJson);
-        this.geoService.addLayerTypeAirplane(this.map, LayerType.ROUTELAYER, SourceType.ROUTESOURCE);
-      }
+        if(this.map.getSource(SourceType.ROUTESOURCE)) {
+          this.geoService.updateMapSourceData(this.map, SourceType.ROUTESOURCE, airplanesGeoJson);
+        } else {
+          this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.ROUTESOURCE, airplanesGeoJson);
+          this.geoService.addLayerTypeAirplane(this.map, LayerType.ROUTELAYER, SourceType.ROUTESOURCE);
+        }
+
+        this.intervalCount++;
+      }, 100)
     }
   }
 
