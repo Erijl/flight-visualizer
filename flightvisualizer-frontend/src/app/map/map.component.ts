@@ -186,6 +186,9 @@ export class MapComponent implements OnInit, OnDestroy {
     if (selectedAirplane && selectedAirplane.legId && selectedAirplane.legId > 0) {
 
       this.dataStoreService.setSelectedAirplane(selectedAirplane);
+
+      this.selectedRoute = selectedAirplane;
+      this.dataStoreService.setSelectedRoute(this.selectedRoute);
     }
   };
 
@@ -210,6 +213,8 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   highlightSelectedRoute(): void {
+    if(this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) return; // No route highlighting in live feed mode since archs are off
+
     this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
     this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
 

@@ -170,7 +170,7 @@ export class DataStoreService {
     const originRender = this.getAirportRenderByIataCode(route.originAirportIataCode);
     const destinationRender = this.getAirportRenderByIataCode(route.destinationAirportIataCode);
     if (originRender && destinationRender) {
-      this.getAllLegsForSpecificRoute(route);
+      this.getAllLegDetailsForSpecificRoute(route);
     }
   }
 
@@ -242,7 +242,7 @@ export class DataStoreService {
     });
   }
 
-  private getAllLegsForSpecificRoute(leg: LegRender): void {
+  private getAllLegDetailsForSpecificRoute(leg: LegRender): void {
     this.dataService.getAllLegsForSpecificRoute(leg, this.getTimeFilter()).subscribe(routeDetails => {
       this.setRouteDetails(routeDetails);
     });

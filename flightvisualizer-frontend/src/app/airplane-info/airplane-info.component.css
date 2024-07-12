@@ -147,3 +147,43 @@ button:hover {
 .table-header {
   height: 40px !important;
 }
+
+
+
+.mat-card-subtitle {
+  width: 100% !important;
+  padding-bottom: 7px;
+}
+
+
+.route-subtitle {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  width: 100% !important;
+  padding-bottom: 12px;
+}
+
+.route-origin,
+.route-destination {
+  width: 45%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.route-origin {
+  text-align: left;
+}
+
+.route-destination {
+  text-align: right;
+}
+
+.route-icon {
+  transform: rotate(90deg);
+}
+
+.route-splitter {
+  left: 50%;
+}
