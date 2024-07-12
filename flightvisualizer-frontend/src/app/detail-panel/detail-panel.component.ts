@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {DetailSelectionType} from "../core/enum";
+import {DetailSelectionType, ModeSelection} from "../core/enum";
 import {Subscription} from "rxjs";
 import {DataStoreService} from "../core/service/data-store.service";
 
@@ -13,10 +13,12 @@ export class DetailPanelComponent implements OnInit, OnDestroy{
   detailSelectionTypeSubscription!: Subscription;
   selectedAirportSubscription!: Subscription;
   selectedRouteSubscription!: Subscription;
+  modeSelectionSubscription!: Subscription;
 
   selectionType: DetailSelectionType = DetailSelectionType.AIRPORT;
 
   expanded: boolean = false;
+  modeSelection: ModeSelection = ModeSelection.NONE;
 
   constructor(private dataStoreService: DataStoreService) {
   }
@@ -37,6 +39,14 @@ export class DetailPanelComponent implements OnInit, OnDestroy{
         this.expanded = true;
       }
     });
+
+    this.modeSelectionSubscription = this.dataStoreService.modeSelection.subscribe(modeSelection => {
+      this.modeSelection = modeSelection;
+
+      if(this.modeSelection == ModeSelection.LIVE_FEED) {
+        this.selectionType = DetailSelectionType.AIRPLANE;
+      }
+    });
   }
 
   onSelectionTypeChange(): void {
@@ -47,5 +57,9 @@ export class DetailPanelComponent implements OnInit, OnDestroy{
     this.detailSelectionTypeSubscription.unsubscribe();
     this.selectedAirportSubscription.unsubscribe();
     this.selectedRouteSubscription.unsubscribe();
+    this.modeSelectionSubscription.unsubscribe();
   }
+
+  protected readonly ModeSelection = ModeSelection;
+  protected readonly DetailSelectionType = DetailSelectionType;
 }

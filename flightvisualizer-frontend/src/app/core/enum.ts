@@ -46,6 +46,7 @@ export enum LiveFeedSpeedModifier {
 export enum DetailSelectionType {
   AIRPORT = "airport",
   ROUTE = "route",
+  AIRPLANE = "airplane",
 }
 
 export enum LayerType {

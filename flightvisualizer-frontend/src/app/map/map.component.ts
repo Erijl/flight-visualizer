@@ -27,6 +27,7 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedAirportSubscription!: Subscription;
   generalFilterSubscription!: Subscription;
   detailSelectionTypeSubscription!: Subscription;
+  selectionModeSubscription!: Subscription;
 
   // UI data
   generalFilter: GeneralFilter = GeneralFilter.create(DefaultGeneralFilter);
@@ -37,6 +38,7 @@ export class MapComponent implements OnInit, OnDestroy {
   selectionType: DetailSelectionType = DetailSelectionType.AIRPORT;
 
   intervalCount = 0;
+  liveFeedInterval: any;
 
   //popup = new mapboxgl.Popup({
   //  closeButton: false,
@@ -75,6 +77,14 @@ export class MapComponent implements OnInit, OnDestroy {
       this.selectionType = type;
       this.onSelectionTypeChange();
     });
+
+    //this.selectionModeSubscription = this.dataStoreService.modeSelection.subscribe(mode => {
+    //  if(mode == ModeSelection.LIVE_FEED) {
+    //    this.intervalCount = 0;
+    //  } else {
+    //    clearInterval(this.liveFeedInterval);
+    //  }
+    //});
 
 
     mapboxgl.accessToken = environment.mapboxAccessToken;
@@ -226,8 +236,8 @@ export class MapComponent implements OnInit, OnDestroy {
       }
     } else if(this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) { //TODO (possibly) base the speed (interval timeout & time multiplier) on the zoom level
       let date = new Date();
-      setInterval(() => {
-        var newDateObj = new Date(date.getTime() + this.intervalCount*100);
+      this.liveFeedInterval = setInterval(() => {
+        var newDateObj = new Date(date.getTime() + this.intervalCount*30000);
         let airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(newRoutes, newDateObj);
         if(!this.map) return;
 
@@ -239,7 +249,7 @@ export class MapComponent implements OnInit, OnDestroy {
         }
 
         this.intervalCount++;
-      }, 100)
+      }, 10)
     }
   }
 
@@ -277,5 +287,6 @@ export class MapComponent implements OnInit, OnDestroy {
     this.selectedAirportSubscription.unsubscribe();
     this.generalFilterSubscription.unsubscribe();
     this.detailSelectionTypeSubscription.unsubscribe();
+    this.selectionModeSubscription.unsubscribe();
   }
 }

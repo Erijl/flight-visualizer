@@ -41,6 +41,7 @@ import { LoadingOverlayComponent } from './loading-overlay/loading-overlay.compo
 import { ToastComponent } from './toast/toast.component';
 import {TimePanelModule} from "./time-panel/time-panel.module";
 import {PipesModule} from "./pipes/pipes.module";
+import { AirplaneInfoComponent } from './airplane-info/airplane-info.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import {PipesModule} from "./pipes/pipes.module";
     DetailPanelComponent,
     LiabilityModalComponent,
     LoadingOverlayComponent,
-    ToastComponent
+    ToastComponent,
+    AirplaneInfoComponent
   ],
   imports: [
     BrowserModule,
