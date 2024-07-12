@@ -64,6 +64,9 @@ export class DataStoreService {
   private _selectedRoute: BehaviorSubject<LegRender> = new BehaviorSubject<LegRender>(LegRender.create());
   selectedRoute = this._selectedRoute.asObservable();
 
+  private _selectedAirplane: BehaviorSubject<LegRender> = new BehaviorSubject<LegRender>(LegRender.create());
+  selectedAirplane = this._selectedAirplane.asObservable();
+
   // details
   private _airportDetails: BehaviorSubject<AirportDetails> = new BehaviorSubject<AirportDetails>(AirportDetails.create());
   airportDetails = this._airportDetails.asObservable();
@@ -142,6 +145,10 @@ export class DataStoreService {
     return this._modeSelection.getValue();
   }
 
+  getSelectedAirplane(): LegRender {
+    return this._selectedAirplane.getValue();
+  }
+
   // SETTERS
 
   setSelectedAirportFilter(selectedAirportFilter: SelectedAirportFilter): void {
@@ -206,6 +213,10 @@ export class DataStoreService {
 
   setModeSelection(modeSelection: ModeSelection): void {
     this._modeSelection.next(modeSelection);
+  }
+
+  setSelectedAirplane(selectedAirplane: LegRender): void {
+    this._selectedAirplane.next(selectedAirplane);
   }
 
   // FETCHING DATA

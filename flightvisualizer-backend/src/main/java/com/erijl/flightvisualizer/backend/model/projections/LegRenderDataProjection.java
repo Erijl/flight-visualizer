@@ -1,6 +1,7 @@
 package com.erijl.flightvisualizer.backend.model.projections;
 
 public interface LegRenderDataProjection {
+    Integer getLegId();
     String getOriginAirportIataCode();
     String getDestinationAirportIataCode();
     Double getOriginLongitude();

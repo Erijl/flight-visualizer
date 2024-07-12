@@ -1,1 +1,48 @@
-<p>airplane-info works!</p>
+<div [hidden]="!selectedAirplane.legId || selectedAirplane.legId <= 0">
+
+  <mat-card class="airport-card">
+    <mat-card-header>
+      <mat-card-title>{{ selectedAirplane.legId }}</mat-card-title>
+      <mat-card-subtitle>{{ selectedAirplane.originAirportIataCode }} - {{ selectedAirplane.destinationAirportIataCode }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="airport-card-content">
+      <div class="info-row">
+        <div class="info-pair">
+          <span class="info-title">Origin:</span>
+          <span class="info-value">{{ selectedAirplane.details?.originAirportName}}</span>
+        </div>
+        <div class="info-pair">
+          <span class="info-title">Destination:</span>
+          <span class="info-value">{{ selectedAirplane.details?.destinationAirportName }}</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-pair">
+          <span class="info-title">Departure:</span>
+          <span class="info-value">{{ selectedAirplane.details?.departureTimeUtc }}</span>
+        </div>
+        <div class="info-pair">
+          <span class="info-title">Arrival:</span>
+          <span class="info-value">{{ selectedAirplane.details?.arrivalTimeUtc }}</span>
+        </div>
+      </div>
+      <div class="info-row">
+        <div class="info-pair">
+          <span class="info-title">Duration:</span>
+          <span class="info-value">{{ selectedAirplane.durationMinutes }}</span>
+        </div>
+        <div class="info-pair">
+          <span class="info-title">Distance:</span>
+          <span class="info-value">{{ selectedAirplane.distanceKilometers }}h</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</div>
+
+<div [hidden]="!(!selectedAirplane.legId || selectedAirplane.legId <= 0)" class="error-message">
+  <p>No Airplane Selected</p>
+  <p>Please select an airplane from the map</p>
+</div>

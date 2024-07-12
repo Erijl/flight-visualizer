@@ -45,6 +45,7 @@ export class DetailPanelComponent implements OnInit, OnDestroy{
 
       if(this.modeSelection == ModeSelection.LIVE_FEED) {
         this.selectionType = DetailSelectionType.AIRPLANE;
+        this.onSelectionTypeChange();
       }
     });
   }

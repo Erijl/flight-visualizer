@@ -52,6 +52,7 @@ export enum DetailSelectionType {
 export enum LayerType {
   AIRPORTLAYER = "airportLayer",
   ROUTELAYER = "routeLayer",
+  AIRPLANELAYER = "airplaneLayer",
   AIRPORTHIGHLIGHTLAYER = "airportHighlightLayer",
   ROUTEHIGHLIGHTLAYER = "routeHighlightLayer",
 }
@@ -59,6 +60,7 @@ export enum LayerType {
 export enum SourceType {
   AIRPORTSOURCE = "airportSource",
   ROUTESOURCE = "routeSource",
+  AIRPLANESOURCE = "airplaneSource",
   AIRPORTHIGHLIGHTSOURCE = "airportHighlightSource",
   ROUTEHIGHLIGHTSOURCE = "routeHighlightSource",
 }
