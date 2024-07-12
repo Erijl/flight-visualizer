@@ -8,9 +8,11 @@
 <div class="selection-container">
   <mat-button-toggle-group [(ngModel)]="selectionType" (change)="onSpeedModifierChange()" name="fontStyle"
                            aria-label="Select selection type">
-    <mat-button-toggle value="oneX">1x</mat-button-toggle>
-    <mat-button-toggle value="twoX">2x</mat-button-toggle>
-    <mat-button-toggle value="fourX">4x</mat-button-toggle>
-    <mat-button-toggle value="sixX">6x</mat-button-toggle>
+    <mat-button-toggle value="1">1x</mat-button-toggle>
+    <mat-button-toggle value="8">8x</mat-button-toggle>
+    <mat-button-toggle value="16">16x</mat-button-toggle>
+    <mat-button-toggle value="32">32x</mat-button-toggle>
+    <mat-button-toggle value="64">64x</mat-button-toggle>
+    <mat-button-toggle value="96">96x</mat-button-toggle>
   </mat-button-toggle-group>
 </div>

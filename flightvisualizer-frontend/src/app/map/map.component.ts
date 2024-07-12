@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import mapboxgl from 'mapbox-gl';
-import {DefaultGeneralFilter, DefaultSelectedAirportFilter} from "../core/dto/airport";
+import {DefaultGeneralFilter, DefaultSelectedAirportFilter, TimeModifier} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
 import {CursorStyles, DetailSelectionType, LayerType, MapEventType, ModeSelection, SourceType} from "../core/enum";
@@ -28,6 +28,7 @@ export class MapComponent implements OnInit, OnDestroy {
   generalFilterSubscription!: Subscription;
   detailSelectionTypeSubscription!: Subscription;
   selectionModeSubscription!: Subscription;
+  timeModifierSubscription!: Subscription;
 
   // UI data
   generalFilter: GeneralFilter = GeneralFilter.create(DefaultGeneralFilter);
@@ -40,6 +41,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   intervalCount = 0;
   liveFeedInterval: any;
+  timeModifier: TimeModifier = new TimeModifier(new Date(), 1);
 
   //popup = new mapboxgl.Popup({
   //  closeButton: false,
@@ -77,6 +79,14 @@ export class MapComponent implements OnInit, OnDestroy {
     this.detailSelectionTypeSubscription = this.dataStoreService.detailSelectionType.subscribe((type: DetailSelectionType) => {
       this.selectionType = type;
       this.onSelectionTypeChange();
+    });
+
+    this.timeModifierSubscription = this.dataStoreService.timeModifier.subscribe(timeModifier => {
+      this.timeModifier = timeModifier;
+
+      if(this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) {
+        this.runLiveFeed();
+      }
     });
 
     //this.selectionModeSubscription = this.dataStoreService.modeSelection.subscribe(mode => {
@@ -270,25 +280,31 @@ export class MapComponent implements OnInit, OnDestroy {
         this.enableRouteLayerSelection();
       }
     } else if(this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) { //TODO (possibly) base the speed (interval timeout & time multiplier) on the zoom level
-      let date = new Date();
-      this.liveFeedInterval = setInterval(() => {
-        var newDateObj = new Date(date.getTime() + this.intervalCount*100);
-        let airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(newRoutes, newDateObj);
-        if(!this.map) return;
+      this.runLiveFeed();
+    }
+  }
 
-        if(this.map.getSource(SourceType.AIRPLANESOURCE)) {
-          this.geoService.updateMapSourceData(this.map, SourceType.AIRPLANESOURCE, airplanesGeoJson);
-        } else {
-          this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.AIRPLANESOURCE, airplanesGeoJson);
-          this.geoService.addLayerTypeAirplane(this.map, LayerType.AIRPLANELAYER, SourceType.AIRPLANESOURCE);
-        }
+  runLiveFeed() {
+    let date = new Date();
+    this.intervalCount = 0;
+    clearInterval(this.liveFeedInterval);
+    this.liveFeedInterval = setInterval(() => {
+      var newDateObj = new Date(this.timeModifier.dateTime.getTime() + this.intervalCount * this.timeModifier.speedMultiplier * 1000);
+      let airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(this.dataStoreService.getAllLegRenders(), newDateObj);
+      if(!this.map) return;
 
-        this.intervalCount++;
-      }, 100);
-
-      if (this.selectionType === DetailSelectionType.AIRPLANE) {
-        this.enableAirplaneLayerSelection();
+      if(this.map.getSource(SourceType.AIRPLANESOURCE)) {
+        this.geoService.updateMapSourceData(this.map, SourceType.AIRPLANESOURCE, airplanesGeoJson);
+      } else {
+        this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.AIRPLANESOURCE, airplanesGeoJson);
+        this.geoService.addLayerTypeAirplane(this.map, LayerType.AIRPLANELAYER, SourceType.AIRPLANESOURCE);
       }
+
+      this.intervalCount++;
+    }, (1000 / (this.timeModifier.speedMultiplier * 1.5)));
+
+    if (this.selectionType === DetailSelectionType.AIRPLANE) {
+      this.enableAirplaneLayerSelection();
     }
   }
 

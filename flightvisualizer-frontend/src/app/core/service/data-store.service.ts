@@ -3,7 +3,7 @@ import {
   DefaultGeneralFilter,
   DefaultRouteFilter,
   DefaultSelectedAirportFilter,
-  DefaultTimeFilter
+  DefaultTimeFilter, TimeModifier
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
@@ -67,6 +67,7 @@ export class DataStoreService {
   private _selectedAirplane: BehaviorSubject<LegRender> = new BehaviorSubject<LegRender>(LegRender.create());
   selectedAirplane = this._selectedAirplane.asObservable();
 
+
   // details
   private _airportDetails: BehaviorSubject<AirportDetails> = new BehaviorSubject<AirportDetails>(AirportDetails.create());
   airportDetails = this._airportDetails.asObservable();
@@ -74,12 +75,16 @@ export class DataStoreService {
   private _routeDetails: BehaviorSubject<DetailedLegInformation[]> = new BehaviorSubject<DetailedLegInformation[]>([]);
   routeDetails = this._routeDetails.asObservable();
 
+
   // UI state
   private _showLoadingScreen: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   showLoadingScreen = this._showLoadingScreen.asObservable();
 
   private _modeSelection: BehaviorSubject<ModeSelection> = new BehaviorSubject<ModeSelection>(ModeSelection.NONE);
   modeSelection = this._modeSelection.asObservable();
+
+  private _timeModifier: BehaviorSubject<TimeModifier> = new BehaviorSubject<TimeModifier>(new TimeModifier(new Date(), 1));
+  timeModifier = this._timeModifier.asObservable();
 
 
   constructor(private dataService: DataService) {
@@ -147,6 +152,10 @@ export class DataStoreService {
 
   getSelectedAirplane(): LegRender {
     return this._selectedAirplane.getValue();
+  }
+
+  getTimeModifier(): TimeModifier {
+    return this._timeModifier.getValue();
   }
 
   // SETTERS
@@ -217,6 +226,10 @@ export class DataStoreService {
 
   setSelectedAirplane(selectedAirplane: LegRender): void {
     this._selectedAirplane.next(selectedAirplane);
+  }
+
+  setTimeModifier(timeModifier: TimeModifier): void {
+    this._timeModifier.next(timeModifier);
   }
 
   // FETCHING DATA

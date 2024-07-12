@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LiveFeedSpeedModifier} from "../../core/enum";
 import {Subscription} from "rxjs";
 import {TimeFilter} from "../../protos/filters";
-import {DefaultTimeFilter} from "../../core/dto/airport";
+import {DefaultTimeFilter, TimeModifier} from "../../core/dto/airport";
 import {DataStoreService} from "../../core/service/data-store.service";
 
 @Component({
@@ -13,11 +13,13 @@ import {DataStoreService} from "../../core/service/data-store.service";
 export class LiveFeedTimePanelComponent implements OnInit, OnDestroy {
 
   timeFilterSubscription!: Subscription;
+  timeModifierSubscription!: Subscription;
 
   selectionType: LiveFeedSpeedModifier = LiveFeedSpeedModifier.ONE_X;
   currentTIme = new Date();
 
   timeFilter: TimeFilter = TimeFilter.create(DefaultTimeFilter);
+  timeModifier: TimeModifier = new TimeModifier(new Date(), LiveFeedSpeedModifier.ONE_X);
 
   constructor(private dataStoreService: DataStoreService) {
   }
@@ -30,13 +32,18 @@ export class LiveFeedTimePanelComponent implements OnInit, OnDestroy {
     this.timeFilterSubscription = this.dataStoreService.timeFilter.subscribe(timeFilter => {
       this.timeFilter = timeFilter;
     });
+
+    this.timeModifierSubscription = this.dataStoreService.timeModifier.subscribe(timeModifier => {
+      this.timeModifier = timeModifier;
+    });
   }
 
   onSpeedModifierChange() {
-
+    this.dataStoreService.setTimeModifier(new TimeModifier(this.timeModifier.dateTime, this.selectionType));
   }
 
   ngOnDestroy(): void {
     this.timeFilterSubscription.unsubscribe();
+    this.timeModifierSubscription.unsubscribe();
   }
 }

@@ -37,10 +37,12 @@ export enum ModeSelection {
 }
 
 export enum LiveFeedSpeedModifier {
-  ONE_X = "oneX",
-  TWO_X = "twoX",
-  FOUR_X = "fourX",
-  SIX_X = "sixX"
+  ONE_X = 1,
+  EIGHT_X = 8,
+  SIXTEEN_X = 16,
+  THIRTYTWO_X = 32,
+  SIXTYFOUR_X = 64,
+  NINETYSIX_X = 96,
 }
 
 export enum DetailSelectionType {
