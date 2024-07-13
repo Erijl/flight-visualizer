@@ -28,7 +28,7 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedAirportSubscription!: Subscription;
   generalFilterSubscription!: Subscription;
   detailSelectionTypeSubscription!: Subscription;
-  selectionModeSubscription!: Subscription;
+  modeSelectionSubscription!: Subscription;
 
   // UI data
   generalFilter: GeneralFilter = GeneralFilter.create(DefaultGeneralFilter);
@@ -39,11 +39,8 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedAirplane: LegRender = LegRender.create();
   selectionType: DetailSelectionType = DetailSelectionType.AIRPORT;
 
-  intervalCount = 0;
-  liveFeedInterval: any;
-
-
   currentDate$!: Observable<Date>;
+  currentDateSubscription: Subscription | null = null;
 
 
   //popup = new mapboxgl.Popup({
@@ -55,7 +52,28 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.currentDate$ = this.liveFeedService.getCurrentDate$()
+    this.currentDate$ = this.liveFeedService.getCurrentDate$();
+
+    this.modeSelectionSubscription = this.dataStoreService.modeSelection.subscribe(mode => {
+      console.log('Mode selection changed to: ' + mode)
+      if(mode == ModeSelection.LIVE_FEED) {
+        this.geoService.removeLayerFromMap(this.map, LayerType.ROUTELAYER);
+        this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
+        this.geoService.removeSourceFromMap(this.map, SourceType.ROUTESOURCE);
+        this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
+
+        this.replaceCurrentlyRenderedAirports(this.dataStoreService.getAllAirports(), true);
+        this.runLiveFeed();
+      } else if(mode == ModeSelection.SANDBOX) {
+        this.geoService.removeLayerFromMap(this.map, LayerType.AIRPLANELAYER);
+        this.geoService.removeSourceFromMap(this.map, SourceType.AIRPLANESOURCE);
+
+        this.currentDateSubscription?.unsubscribe();
+
+        this.replaceCurrentlyRenderedAirports(this.dataStoreService.getAllAirports(), true);
+        this.replaceCurrentlyRenderedRoutes(this.dataStoreService.getAllLegRenders());
+      }
+    });
 
     this.currentlyRenderedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
       this.replaceCurrentlyRenderedAirports(airports);
@@ -85,14 +103,6 @@ export class MapComponent implements OnInit, OnDestroy {
       this.selectionType = type;
       this.onSelectionTypeChange();
     });
-
-    //this.selectionModeSubscription = this.dataStoreService.modeSelection.subscribe(mode => {
-    //  if(mode == ModeSelection.LIVE_FEED) {
-    //    this.intervalCount = 0;
-    //  } else {
-    //    clearInterval(this.liveFeedInterval);
-    //  }
-    //});
 
 
     mapboxgl.accessToken = environment.mapboxAccessToken;
@@ -240,13 +250,16 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  replaceCurrentlyRenderedAirports(newAirports: AirportRender[]): void {
+  replaceCurrentlyRenderedAirports(newAirports: AirportRender[], forceRenderSourceAndLayer:boolean = false): void {
     let airportsGeoJson = this.geoService.convertAirportRendersToGeoJson(newAirports);
     if(!this.map) return;
 
-    if(this.map.getSource(SourceType.AIRPORTSOURCE)) {
+    if(this.map.getSource(SourceType.AIRPORTSOURCE) && !forceRenderSourceAndLayer) {
       this.geoService.updateMapSourceData(this.map, SourceType.AIRPORTSOURCE, airportsGeoJson);
     } else {
+      this.geoService.removeLayerFromMap(this.map, LayerType.AIRPORTLAYER);
+      this.geoService.removeSourceFromMap(this.map, SourceType.AIRPORTSOURCE);
+
       this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.AIRPORTSOURCE, airportsGeoJson);
       this.geoService.addLayerTypeCircleToMap(this.map, LayerType.AIRPORTLAYER, SourceType.AIRPORTSOURCE, this.dataStoreService.getModeSelection() == ModeSelection.SANDBOX ? 8 : 5, '#eea719'); //TODO replace shitty if with proper mode objects that store such things
     }
@@ -282,10 +295,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   runLiveFeed() {
-    let date = new Date();
-    this.intervalCount = 0;
-    clearInterval(this.liveFeedInterval);
-    this.currentDate$.subscribe((newDateObj) => {
+    this.currentDateSubscription = this.currentDate$.subscribe((newDateObj) => {
       const airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(this.dataStoreService.getAllLegRenders(), newDateObj);
 
       if (!this.map) return;
@@ -349,6 +359,6 @@ export class MapComponent implements OnInit, OnDestroy {
     this.selectedAirportSubscription.unsubscribe();
     this.generalFilterSubscription.unsubscribe();
     this.detailSelectionTypeSubscription.unsubscribe();
-    this.selectionModeSubscription.unsubscribe();
+    this.modeSelectionSubscription.unsubscribe();
   }
 }

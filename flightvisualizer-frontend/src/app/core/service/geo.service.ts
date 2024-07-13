@@ -118,9 +118,10 @@ export class GeoService {
 
   convertLegRendersToLiveFeedGeoJson(legRenders: LegRender[], currentDate: Date): any[] {
     const liveFeedAirplanePositions: any[] = []; //TODO move filtering to other file / function & add minute comparison
-    //console.log(currentDate);
     legRenders.filter(leg => Math.floor(leg.details!.departureTimeUtc/60) <= currentDate.getHours() && Math.floor(leg.details!.arrivalTimeUtc/60) >= currentDate.getHours()).forEach(legRender => {
       const coordsAndRot = this.calculateIntermediateCoordinates(legRender, ((((currentDate.getMinutes() * 60) + (currentDate.getHours() * 3600) + currentDate.getSeconds()) - (legRender.details!.departureTimeUtc * 60)) / (legRender.durationMinutes * 60)));
+      if(coordsAndRot[0] == null || coordsAndRot[1] == null || coordsAndRot[2] == null) return; //TODO check why some flights are not rendered
+
       liveFeedAirplanePositions.push({
         'type': 'Feature',
         'geometry': {
