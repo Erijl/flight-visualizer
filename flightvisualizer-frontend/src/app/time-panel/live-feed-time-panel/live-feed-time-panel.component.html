@@ -1,16 +1,25 @@
 
 <h1 style="text-align: center">
-  <p>{{currentTime | date:'mediumTime'}}</p>
+  <p>{{currentTime | date:'mediumTime'}} UTC</p>
 </h1>
 
 <div class="selection-container">
   <mat-button-toggle-group [(ngModel)]="selectionType" (change)="onSpeedModifierChange()" name="fontStyle"
                            aria-label="Select selection type">
-    <mat-button-toggle value="1">1x</mat-button-toggle>
-    <mat-button-toggle value="8">8x</mat-button-toggle>
-    <mat-button-toggle value="16">16x</mat-button-toggle>
-    <mat-button-toggle value="32">32x</mat-button-toggle>
-    <mat-button-toggle value="64">64x</mat-button-toggle>
-    <mat-button-toggle value="96">96x</mat-button-toggle>
+    <mat-button-toggle value=1>1x</mat-button-toggle>
+    <mat-button-toggle value=8>8x</mat-button-toggle>
+    <mat-button-toggle value=16>16x</mat-button-toggle>
+    <mat-button-toggle value=32>32x</mat-button-toggle>
+    <mat-button-toggle value=64>64x</mat-button-toggle>
+    <mat-button-toggle value=96>96x</mat-button-toggle>
   </mat-button-toggle-group>
+</div>
+
+<!-- generate a switch that sets reversed true or false, and a button to set the current Date of live-feed.service to new Date() -->
+<div class="selection-container">
+  <mat-slide-toggle [(ngModel)]="reversed" (change)="onReverseChange()" aria-label="Select reversed">
+    Reverse
+  </mat-slide-toggle>
+  <br />
+  <button (click)="onResetDate()">Reset Date</button>
 </div>

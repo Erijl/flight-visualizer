@@ -83,10 +83,6 @@ export class DataStoreService {
   private _modeSelection: BehaviorSubject<ModeSelection> = new BehaviorSubject<ModeSelection>(ModeSelection.NONE);
   modeSelection = this._modeSelection.asObservable();
 
-  private _timeModifier: BehaviorSubject<TimeModifier> = new BehaviorSubject<TimeModifier>(new TimeModifier(new Date(), 1));
-  timeModifier = this._timeModifier.asObservable();
-
-
   constructor(private dataService: DataService) {
     this.getFlightDateFrequencies();
   }
@@ -152,10 +148,6 @@ export class DataStoreService {
 
   getSelectedAirplane(): LegRender {
     return this._selectedAirplane.getValue();
-  }
-
-  getTimeModifier(): TimeModifier {
-    return this._timeModifier.getValue();
   }
 
   // SETTERS
@@ -226,10 +218,6 @@ export class DataStoreService {
 
   setSelectedAirplane(selectedAirplane: LegRender): void {
     this._selectedAirplane.next(selectedAirplane);
-  }
-
-  setTimeModifier(timeModifier: TimeModifier): void {
-    this._timeModifier.next(timeModifier);
   }
 
   // FETCHING DATA

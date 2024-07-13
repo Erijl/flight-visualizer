@@ -14,16 +14,15 @@ import {LiveFeedService} from "../../core/service/live-feed.service";
 export class LiveFeedTimePanelComponent implements OnInit, OnDestroy {
 
   timeFilterSubscription!: Subscription;
-  timeModifierSubscription!: Subscription;
 
-  selectionType: LiveFeedSpeedModifier = LiveFeedSpeedModifier.ONE_X;
+  selectionType: LiveFeedSpeedModifier = LiveFeedSpeedModifier.THIRTYTWO_X;
   currentTime: Date = new Date();
+  reversed = false;
 
   currentDate$!: Observable<Date>;
 
 
   timeFilter: TimeFilter = TimeFilter.create(DefaultTimeFilter);
-  timeModifier: TimeModifier = new TimeModifier(new Date(), LiveFeedSpeedModifier.ONE_X);
 
   constructor(private dataStoreService: DataStoreService, private liveFeedService: LiveFeedService) {
   }
@@ -39,9 +38,6 @@ export class LiveFeedTimePanelComponent implements OnInit, OnDestroy {
       this.timeFilter = timeFilter;
     });
 
-    this.timeModifierSubscription = this.dataStoreService.timeModifier.subscribe(timeModifier => {
-      this.timeModifier = timeModifier;
-    });
   }
 
   onSpeedModifierChange() {
@@ -49,8 +45,16 @@ export class LiveFeedTimePanelComponent implements OnInit, OnDestroy {
     this.liveFeedService.setTimeModifier(this.selectionType);
   }
 
+  onReverseChange() {
+    this.liveFeedService.setReversed(this.reversed);
+  }
+
+  onResetDate() {
+    this.liveFeedService.setBaseDate(new Date());
+  }
+
   ngOnDestroy(): void {
     this.timeFilterSubscription.unsubscribe();
-    this.timeModifierSubscription.unsubscribe();
   }
+
 }
