@@ -5,10 +5,11 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
 import {CursorStyles, DetailSelectionType, LayerType, MapEventType, ModeSelection, SourceType} from "../core/enum";
 import {DataStoreService} from "../core/service/data-store.service";
-import {Subscription} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {environment} from "../../environments/environment";
 import {GeneralFilter, SelectedAirportFilter} from "../protos/filters";
 import {AirportRender, LegRender} from "../protos/objects";
+import {LiveFeedService} from "../core/service/live-feed.service";
 
 @Component({
   selector: 'app-map',
@@ -43,15 +44,21 @@ export class MapComponent implements OnInit, OnDestroy {
   liveFeedInterval: any;
   timeModifier: TimeModifier = new TimeModifier(new Date(), 1);
 
+
+  currentDate$!: Observable<Date>;
+
+
   //popup = new mapboxgl.Popup({
   //  closeButton: false,
   //  closeOnClick: false
   //});
 
-  constructor(private geoService: GeoService, private dataStoreService: DataStoreService) {
+  constructor(private geoService: GeoService, private dataStoreService: DataStoreService, private liveFeedService: LiveFeedService) {
   }
 
   ngOnInit(): void {
+    this.currentDate$ = this.liveFeedService.getCurrentDate$()
+
     this.currentlyRenderedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
       this.replaceCurrentlyRenderedAirports(airports);
     });
@@ -288,20 +295,18 @@ export class MapComponent implements OnInit, OnDestroy {
     let date = new Date();
     this.intervalCount = 0;
     clearInterval(this.liveFeedInterval);
-    this.liveFeedInterval = setInterval(() => {
-      var newDateObj = new Date(this.timeModifier.dateTime.getTime() + this.intervalCount * this.timeModifier.speedMultiplier * 1000);
-      let airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(this.dataStoreService.getAllLegRenders(), newDateObj);
-      if(!this.map) return;
+    this.currentDate$.subscribe((newDateObj) => {
+      const airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(this.dataStoreService.getAllLegRenders(), newDateObj);
 
-      if(this.map.getSource(SourceType.AIRPLANESOURCE)) {
+      if (!this.map) return;
+
+      if (this.map.getSource(SourceType.AIRPLANESOURCE)) {
         this.geoService.updateMapSourceData(this.map, SourceType.AIRPLANESOURCE, airplanesGeoJson);
       } else {
         this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.AIRPLANESOURCE, airplanesGeoJson);
         this.geoService.addLayerTypeAirplane(this.map, LayerType.AIRPLANELAYER, SourceType.AIRPLANESOURCE);
       }
-
-      this.intervalCount++;
-    }, (1000 / (this.timeModifier.speedMultiplier * 1.5)));
+    });
 
     if (this.selectionType === DetailSelectionType.AIRPLANE) {
       this.enableAirplaneLayerSelection();

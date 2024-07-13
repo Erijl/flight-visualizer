@@ -1,9 +1,7 @@
 
-<div>
-  {{ timeFilter.dateRange?.start?.toISOString()}}
-</div>
-
-<p>{{currentTIme | date:'mediumTime'}}</p>
+<h1 style="text-align: center">
+  <p>{{currentTime | date:'mediumTime'}}</p>
+</h1>
 
 <div class="selection-container">
   <mat-button-toggle-group [(ngModel)]="selectionType" (change)="onSpeedModifierChange()" name="fontStyle"

@@ -1,9 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {LiveFeedSpeedModifier} from "../../core/enum";
-import {Subscription} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {TimeFilter} from "../../protos/filters";
 import {DefaultTimeFilter, TimeModifier} from "../../core/dto/airport";
 import {DataStoreService} from "../../core/service/data-store.service";
+import {LiveFeedService} from "../../core/service/live-feed.service";
 
 @Component({
   selector: 'app-live-feed-time-panel',
@@ -16,18 +17,23 @@ export class LiveFeedTimePanelComponent implements OnInit, OnDestroy {
   timeModifierSubscription!: Subscription;
 
   selectionType: LiveFeedSpeedModifier = LiveFeedSpeedModifier.ONE_X;
-  currentTIme = new Date();
+  currentTime: Date = new Date();
+
+  currentDate$!: Observable<Date>;
+
 
   timeFilter: TimeFilter = TimeFilter.create(DefaultTimeFilter);
   timeModifier: TimeModifier = new TimeModifier(new Date(), LiveFeedSpeedModifier.ONE_X);
 
-  constructor(private dataStoreService: DataStoreService) {
+  constructor(private dataStoreService: DataStoreService, private liveFeedService: LiveFeedService) {
   }
 
   ngOnInit(): void {
-    setInterval(() => {
-      this.currentTIme = new Date();
-    }, 1000);
+    this.currentDate$ = this.liveFeedService.getCurrentDate$();
+
+    this.currentDate$.subscribe((newDateObj) => {
+      this.currentTime = newDateObj;
+    });
 
     this.timeFilterSubscription = this.dataStoreService.timeFilter.subscribe(timeFilter => {
       this.timeFilter = timeFilter;
@@ -39,7 +45,8 @@ export class LiveFeedTimePanelComponent implements OnInit, OnDestroy {
   }
 
   onSpeedModifierChange() {
-    this.dataStoreService.setTimeModifier(new TimeModifier(this.timeModifier.dateTime, this.selectionType));
+    //this.dataStoreService.setTimeModifier(new TimeModifier(this.timeModifier.dateTime, this.selectionType));
+    this.liveFeedService.setTimeModifier(this.selectionType);
   }
 
   ngOnDestroy(): void {
