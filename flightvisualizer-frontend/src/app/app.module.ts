@@ -29,7 +29,6 @@ import { MatSlideToggle, MatSlideToggleModule } from "@angular/material/slide-to
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatIcon } from "@angular/material/icon";
 import { BrowserAnimationsModule, provideAnimations } from "@angular/platform-browser/animations";
-import { TimePanelComponent } from "./time-panel/time-panel.component";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { FilterPanelComponent } from './panels/filter-panel/filter-panel.component';
 import { DetailPanelComponent } from './panels/detail-panel/detail-panel.component';
@@ -37,9 +36,10 @@ import { MatCardModule } from "@angular/material/card";
 import { LiabilityModalComponent } from './modals/liability-modal/liability-modal.component';
 import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
 import { ToastComponent } from './components/toast/toast.component';
-import { TimePanelModule } from "./time-panel/time-panel.module";
 import { PipesModule } from "./pipes/pipes.module";
 import { DetailPanelModule } from "./panels/detail-panel/detail-panel.module";
+import { TimePanelComponent } from "./panels/time-panel/time-panel.component";
+import { TimePanelModule } from "./panels/time-panel/time-panel.module";
 
 @NgModule({
   declarations: [

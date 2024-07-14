@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {DataStoreService} from "../core/service/data-store.service";
-import {state, style, trigger} from "@angular/animations";
-import {Subscription} from "rxjs";
-import {ModeSelection} from "../core/enum";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { DataStoreService } from "../../core/service/data-store.service";
+import { state, style, trigger } from "@angular/animations";
+import { Subscription } from "rxjs";
+import { ModeSelection } from "../../core/enum";
 
 @Component({
   selector: 'app-time-panel',
@@ -22,7 +22,7 @@ import {ModeSelection} from "../core/enum";
   templateUrl: './time-panel.component.html',
   styleUrl: './time-panel.component.css'
 })
-export class TimePanelComponent implements OnInit, OnDestroy{
+export class TimePanelComponent implements OnInit, OnDestroy {
 
   modeSelectionSubscription!: Subscription;
 

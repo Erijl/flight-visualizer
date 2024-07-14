@@ -1,10 +1,10 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {LiveFeedSpeedMultiplier, LiveFeedSpeedMultiplierString} from "../../core/enum";
-import {Observable, Subscription} from "rxjs";
-import {TimeFilter} from "../../protos/filters";
-import {DefaultTimeFilter, TimeModifier} from "../../core/dto/airport";
-import {DataStoreService} from "../../core/service/data-store.service";
-import {LiveFeedService} from "../../core/service/live-feed.service";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { LiveFeedSpeedMultiplier, LiveFeedSpeedMultiplierString } from "../../../core/enum";
+import { Observable, Subscription } from "rxjs";
+import { TimeFilter } from "../../../protos/filters";
+import { DefaultTimeFilter, TimeModifier } from "../../../core/dto/airport";
+import { DataStoreService } from "../../../core/service/data-store.service";
+import { LiveFeedService } from "../../../core/service/live-feed.service";
 
 @Component({
   selector: 'app-live-feed-time-panel',
