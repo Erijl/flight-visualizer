@@ -32,6 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   closeModal() {
+    this.dataStoreService.setShowLoadingScreen(true);
     this.showModal = false;
     this.renderMap = true;
     this.dataStoreService.setIsInitialized(true);

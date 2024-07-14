@@ -8,31 +8,57 @@
 
 <app-loading-overlay *ngIf="isLoading"></app-loading-overlay>
 
+
+<div id="airplane-container" *ngIf="showModeSelect">
+  <div id="airplane-pattern"></div>
+  <div id="airplane-gradient-overlay"></div>
+</div>
+
 <div [class.blur]="showModal">
   <app-liability-modal *ngIf="showModal" (closeModalEvent)="closeModal()"></app-liability-modal>
   <div *ngIf="showModeSelect" class="mode-select-screen">
-    <div class="header-container">
-      <h1 class="header">Welcome to Flightvisualizer</h1>
-      <h2 class="subheader">"ESC"-Menu: Please select a mode</h2>
-    </div>
-    <div class="cards-container">
-      <div class="card" (click)="selectMode(ModeSelection.SANDBOX)">
-        <img ngSrc="assets/no-text-side.PNG" alt="" height="1073" width="1070">
-        <div class="card-content">
-          <h2>
-            Sandbox
-          </h2>
+
+    <div id="modal-wrapper">
+      <div id="modal">
+        <div id="modal-background"></div>
+        <div id="modal-content">
+
+          <div class="header-container">
+            <h1 class="header">Welcome to Flightvisualizer</h1>
+            <h2 class="subheader">Choose Mode</h2>
+          </div>
+
+          <div class="cards-container">
+            <div class="card" (click)="selectMode(ModeSelection.LIVE_FEED)">
+              <img unpic src="assets/live-feed.png" alt="">
+              <div class="card-content">
+                <h2>
+                  Live Feed
+                </h2>
+              </div>
+            </div>
+
+            <div class="card" (click)="selectMode(ModeSelection.SANDBOX)">
+              <img unpic src="assets/sandbox.png" alt="">
+              <div class="card-content">
+                <h2>
+                  Sandbox
+                </h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="link-container">
+            <a href="mailto:support@flight-visualizer.com" class="link-item">Contact</a>
+            <a href="/3rdpartylicenses.txt" target="_parent" class="link-item">Licenses</a>
+            <a href="https://github.com/Erijl/flight-visualizer" target="_blank" class="link-item">GitHub</a>
+            <a href="https://github.com/Erijl/flight-visualizer/issues" target="_blank" class="link-item">Suggest Feature</a>
+          </div>
         </div>
       </div>
 
-      <div class="card" (click)="selectMode(ModeSelection.LIVE_FEED)">
-        <img ngSrc="assets/no-text-placeholder.PNG" alt="" height="1073" width="1070"> <!-- //TODO use proper image sizing thing -->
-        <div class="card-content">
-          <h2>
-            Live Feed
-          </h2>
-        </div>
-      </div>
+      <!-- I couldn't find a good library that could generate proper networks, and since I am a lot of things,
+      but definitely not a ui wizard, this will get left out for now
 
       <div class="card disabled-card" (click)="selectMode(ModeSelection.GRAPH_THEORY)">
         <img ngSrc="assets/graph-theory.PNG" alt="" height="1073" width="1070">
@@ -45,13 +71,9 @@
           <p>Work In Progress</p>
         </div>
       </div>
+      -->
     </div>
-    <div class="link-container">
-      <a href="mailto:support@flight-visualizer.com" class="link-item">Contact</a>
-      <a href="/3rdpartylicenses.txt" target="_parent" class="link-item">Licenses</a>
-      <a href="https://github.com/Erijl/flight-visualizer" target="_blank" class="link-item">GitHub</a>
-      <a href="https://github.com/Erijl/flight-visualizer/issues" target="_blank" class="link-item">Suggest Feature</a>
-    </div>
+
   </div>
   <app-map *ngIf="renderMap"></app-map>
 </div>

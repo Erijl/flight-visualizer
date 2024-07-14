@@ -40,6 +40,7 @@ import { PipesModule } from "./core/pipes/pipes.module";
 import { DetailPanelModule } from "./panels/detail-panel/detail-panel.module";
 import { TimePanelComponent } from "./panels/time-panel/time-panel.component";
 import { TimePanelModule } from "./panels/time-panel/time-panel.module";
+import { UnpicModule } from "@unpic/angular";
 
 @NgModule({
   declarations: [
@@ -88,7 +89,8 @@ import { TimePanelModule } from "./panels/time-panel/time-panel.module";
     NgOptimizedImage,
     TimePanelModule,
     PipesModule,
-    DetailPanelModule
+    DetailPanelModule,
+    UnpicModule
   ],
   providers: [
     provideAnimationsAsync('noop'),
