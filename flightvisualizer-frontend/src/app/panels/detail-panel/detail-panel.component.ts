@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {DetailSelectionType, ModeSelection} from "../core/enum";
+import {DetailSelectionType, ModeSelection} from "../../core/enum";
 import {Subscription} from "rxjs";
-import {DataStoreService} from "../core/service/data-store.service";
+import {DataStoreService} from "../../core/service/data-store.service";
 
 @Component({
   selector: 'app-detail-panel',

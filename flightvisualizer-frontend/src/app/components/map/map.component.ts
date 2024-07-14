@@ -1,15 +1,15 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import mapboxgl from 'mapbox-gl';
-import {DefaultGeneralFilter, DefaultSelectedAirportFilter} from "../core/dto/airport";
+import {DefaultGeneralFilter, DefaultSelectedAirportFilter} from "../../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
-import {GeoService} from "../core/service/geo.service";
-import {CursorStyles, DetailSelectionType, LayerType, MapEventType, ModeSelection, SourceType} from "../core/enum";
-import {DataStoreService} from "../core/service/data-store.service";
+import {GeoService} from "../../core/service/geo.service";
+import {CursorStyles, DetailSelectionType, LayerType, MapEventType, ModeSelection, SourceType} from "../../core/enum";
+import {DataStoreService} from "../../core/service/data-store.service";
 import {Observable, Subscription} from "rxjs";
-import {environment} from "../../environments/environment";
-import {GeneralFilter, SelectedAirportFilter} from "../protos/filters";
-import {AirportRender, LegRender} from "../protos/objects";
-import {LiveFeedService} from "../core/service/live-feed.service";
+import {environment} from "../../../environments/environment";
+import {GeneralFilter, SelectedAirportFilter} from "../../protos/filters";
+import {AirportRender, LegRender} from "../../protos/objects";
+import {LiveFeedService} from "../../core/service/live-feed.service";
 
 @Component({
   selector: 'app-map',

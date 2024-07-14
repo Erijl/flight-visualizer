@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {DataStoreService} from "../core/service/data-store.service";
+import {DataStoreService} from "../../core/service/data-store.service";
 import {Subscription} from "rxjs";
-import {DefaultGeneralFilter, DefaultRouteFilter} from "../core/dto/airport";
-import {GeneralFilter, RouteFilter} from "../protos/filters";
-import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../protos/enums";
-import {AirportDisplayTypeLabels, RouteDisplayTypeLabels, RouteFilterTypeLabels} from "../core/enum";
+import {DefaultGeneralFilter, DefaultRouteFilter} from "../../core/dto/airport";
+import {GeneralFilter, RouteFilter} from "../../protos/filters";
+import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../../protos/enums";
+import {AirportDisplayTypeLabels, RouteDisplayTypeLabels, RouteFilterTypeLabels} from "../../core/enum";
 
 @Component({
   selector: 'app-filter-panel',

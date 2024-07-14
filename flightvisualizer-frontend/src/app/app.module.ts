@@ -3,10 +3,10 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MapComponent } from './map/map.component';
-import {HttpClientModule} from "@angular/common/http";
-import {FormsModule} from "@angular/forms";
-import {MatSlider, MatSliderRangeThumb} from "@angular/material/slider";
+import { MapComponent } from './components/map/map.component';
+import { HttpClientModule } from "@angular/common/http";
+import { FormsModule } from "@angular/forms";
+import { MatSlider, MatSliderRangeThumb } from "@angular/material/slider";
 import {
   MatCell,
   MatCellDef,
@@ -16,46 +16,41 @@ import {
   MatHeaderRowDef, MatRow, MatRowDef,
   MatTable
 } from "@angular/material/table";
-import {MatPaginator} from "@angular/material/paginator";
-import {MatButtonToggle, MatButtonToggleGroup} from "@angular/material/button-toggle";
-import {MatSort, MatSortModule} from "@angular/material/sort";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatButtonToggle, MatButtonToggleGroup } from "@angular/material/button-toggle";
+import { MatSort, MatSortModule } from "@angular/material/sort";
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { AirportInfoComponent } from './airport-info/airport-info.component';
-import {CommonModule, NgOptimizedImage} from "@angular/common";
-import {MatDatepickerModule} from "@angular/material/datepicker";
-import {MatInputModule} from "@angular/material/input";
-import {MatFormFieldModule} from "@angular/material/form-field";
-import {provideNativeDateAdapter} from "@angular/material/core";
-import {MatSlideToggle, MatSlideToggleModule} from "@angular/material/slide-toggle";
-import { RouteInfoComponent } from './route-info/route-info.component';
-import {MatExpansionModule} from "@angular/material/expansion";
-import {MatIcon} from "@angular/material/icon";
-import {BrowserAnimationsModule, provideAnimations} from "@angular/platform-browser/animations";
-import {TimePanelComponent} from "./time-panel/time-panel.component";
-import {MatCheckboxModule} from "@angular/material/checkbox";
-import { FilterPanelComponent } from './filter-panel/filter-panel.component';
-import { DetailPanelComponent } from './detail-panel/detail-panel.component';
-import {MatCardModule} from "@angular/material/card";
-import { LiabilityModalComponent } from './liability-modal/liability-modal.component';
-import { LoadingOverlayComponent } from './loading-overlay/loading-overlay.component';
-import { ToastComponent } from './toast/toast.component';
-import {TimePanelModule} from "./time-panel/time-panel.module";
-import {PipesModule} from "./pipes/pipes.module";
-import { AirplaneInfoComponent } from './airplane-info/airplane-info.component';
+import { CommonModule, NgOptimizedImage } from "@angular/common";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatInputModule } from "@angular/material/input";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { provideNativeDateAdapter } from "@angular/material/core";
+import { MatSlideToggle, MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatIcon } from "@angular/material/icon";
+import { BrowserAnimationsModule, provideAnimations } from "@angular/platform-browser/animations";
+import { TimePanelComponent } from "./time-panel/time-panel.component";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { FilterPanelComponent } from './panels/filter-panel/filter-panel.component';
+import { DetailPanelComponent } from './panels/detail-panel/detail-panel.component';
+import { MatCardModule } from "@angular/material/card";
+import { LiabilityModalComponent } from './modals/liability-modal/liability-modal.component';
+import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
+import { ToastComponent } from './components/toast/toast.component';
+import { TimePanelModule } from "./time-panel/time-panel.module";
+import { PipesModule } from "./pipes/pipes.module";
+import { DetailPanelModule } from "./panels/detail-panel/detail-panel.module";
 
 @NgModule({
   declarations: [
     AppComponent,
     MapComponent,
-    AirportInfoComponent,
-    RouteInfoComponent,
     TimePanelComponent,
     FilterPanelComponent,
     DetailPanelComponent,
     LiabilityModalComponent,
     LoadingOverlayComponent,
-    ToastComponent,
-    AirplaneInfoComponent
+    ToastComponent
   ],
   imports: [
     BrowserModule,
@@ -92,7 +87,8 @@ import { AirplaneInfoComponent } from './airplane-info/airplane-info.component';
     MatCardModule,
     NgOptimizedImage,
     TimePanelModule,
-    PipesModule
+    PipesModule,
+    DetailPanelModule
   ],
   providers: [
     provideAnimationsAsync('noop'),
@@ -101,4 +97,5 @@ import { AirplaneInfoComponent } from './airplane-info/airplane-info.component';
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
