@@ -3,8 +3,8 @@ import {
   DefaultGeneralFilter,
   DefaultRouteFilter,
   DefaultSelectedAirportFilter,
-  DefaultTimeFilter, TimeModifier
-} from "../dto/airport";
+  DefaultTimeFilter
+} from "../dto/default-filter";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
 import {DetailSelectionType, ModeSelection} from "../enum";

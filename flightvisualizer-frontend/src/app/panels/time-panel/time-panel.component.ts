@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { DataStoreService } from "../../core/service/data-store.service";
+import { DataStoreService } from "../../core/services/data-store.service";
 import { state, style, trigger } from "@angular/animations";
 import { Subscription } from "rxjs";
 import { ModeSelection } from "../../core/enum";

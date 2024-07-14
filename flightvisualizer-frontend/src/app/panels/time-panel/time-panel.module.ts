@@ -15,7 +15,7 @@ import { MatSlider, MatSliderRangeThumb } from "@angular/material/slider";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { MatButtonToggle, MatButtonToggleGroup } from "@angular/material/button-toggle";
-import { PipesModule } from "../../pipes/pipes.module";
+import { PipesModule } from "../../core/pipes/pipes.module";
 
 
 @NgModule({

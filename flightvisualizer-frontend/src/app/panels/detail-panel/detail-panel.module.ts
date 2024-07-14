@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { AirportInfoComponent } from "./airport-info/airport-info.component";
 import { RouteInfoComponent } from "./route-info/route-info.component";
 import { AirplaneInfoComponent } from "./airplane-info/airplane-info.component";
-import { PipesModule } from "../../pipes/pipes.module";
+import { PipesModule } from "../../core/pipes/pipes.module";
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { AppRoutingModule } from "../../app-routing.module";

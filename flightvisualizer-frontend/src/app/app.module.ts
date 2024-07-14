@@ -36,7 +36,7 @@ import { MatCardModule } from "@angular/material/card";
 import { LiabilityModalComponent } from './modals/liability-modal/liability-modal.component';
 import { LoadingOverlayComponent } from './components/loading-overlay/loading-overlay.component';
 import { ToastComponent } from './components/toast/toast.component';
-import { PipesModule } from "./pipes/pipes.module";
+import { PipesModule } from "./core/pipes/pipes.module";
 import { DetailPanelModule } from "./panels/detail-panel/detail-panel.module";
 import { TimePanelComponent } from "./panels/time-panel/time-panel.component";
 import { TimePanelModule } from "./panels/time-panel/time-panel.module";

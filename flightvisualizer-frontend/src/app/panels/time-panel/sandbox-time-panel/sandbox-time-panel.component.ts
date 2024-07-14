@@ -2,9 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AircraftTimeFilterTypeLabels } from "../../../core/enum";
 import { AircraftTimeFilterType } from "../../../protos/enums";
 import { TimeFilter } from "../../../protos/filters";
-import { DefaultTimeFilter } from "../../../core/dto/airport";
+import { DefaultTimeFilter } from "../../../core/dto/default-filter";
 import { Subscription } from "rxjs";
-import { DataStoreService } from "../../../core/service/data-store.service";
+import { DataStoreService } from "../../../core/services/data-store.service";
 
 @Component({
   selector: 'app-sandbox-time-panel',

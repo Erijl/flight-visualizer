@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {DataStoreService} from "../../core/service/data-store.service";
+import {DataStoreService} from "../../core/services/data-store.service";
 import {Subscription} from "rxjs";
-import {DefaultGeneralFilter, DefaultRouteFilter} from "../../core/dto/airport";
+import {DefaultGeneralFilter, DefaultRouteFilter} from "../../core/dto/default-filter";
 import {GeneralFilter, RouteFilter} from "../../protos/filters";
 import {AirportDisplayType, RouteDisplayType, RouteFilterType} from "../../protos/enums";
 import {AirportDisplayTypeLabels, RouteDisplayTypeLabels, RouteFilterTypeLabels} from "../../core/enum";
