@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {LiveFeedSpeedModifier} from "../../core/enum";
+import {LiveFeedSpeedMultiplier, LiveFeedSpeedMultiplierString} from "../../core/enum";
 import {Observable, Subscription} from "rxjs";
 import {TimeFilter} from "../../protos/filters";
 import {DefaultTimeFilter, TimeModifier} from "../../core/dto/airport";
@@ -15,7 +15,7 @@ export class LiveFeedTimePanelComponent implements OnInit, OnDestroy {
 
   timeFilterSubscription!: Subscription;
 
-  selectionType: LiveFeedSpeedModifier = LiveFeedSpeedModifier.THIRTYTWO_X;
+  selectionType: LiveFeedSpeedMultiplierString = LiveFeedSpeedMultiplierString.THIRTYTWO_X;
   currentTime: Date = new Date();
   reversed = false;
 
@@ -41,8 +41,7 @@ export class LiveFeedTimePanelComponent implements OnInit, OnDestroy {
   }
 
   onSpeedModifierChange() {
-    //this.dataStoreService.setTimeModifier(new TimeModifier(this.timeModifier.dateTime, this.selectionType));
-    this.liveFeedService.setTimeModifier(this.selectionType);
+    this.liveFeedService.setTimeMultiplier(parseInt(LiveFeedSpeedMultiplier[this.selectionType]));
   }
 
   onReverseChange() {

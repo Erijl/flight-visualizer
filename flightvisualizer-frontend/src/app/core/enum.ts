@@ -36,14 +36,23 @@ export enum ModeSelection {
   GRAPH_THEORY
 }
 
-export enum LiveFeedSpeedModifier {
-  ONE_X = 1,
-  EIGHT_X = 8,
-  SIXTEEN_X = 16,
-  THIRTYTWO_X = 32,
-  SIXTYFOUR_X = 64,
-  NINETYSIX_X = 96,
+export enum LiveFeedSpeedMultiplierString {
+  ONE_X = "oneX",
+  EIGHT_X = "eightX",
+  SIXTEEN_X = "sixteenX",
+  THIRTYTWO_X = "thirtytwoX",
+  SIXTYFOUR_X = "sixtyfourX",
+  NINETYSIX_X = "ninetysixX",
 }
+
+export const LiveFeedSpeedMultiplier: { [key in LiveFeedSpeedMultiplierString]: string } = {
+  [LiveFeedSpeedMultiplierString.ONE_X]: '1',
+  [LiveFeedSpeedMultiplierString.EIGHT_X]: '8',
+  [LiveFeedSpeedMultiplierString.SIXTEEN_X]: '16',
+  [LiveFeedSpeedMultiplierString.THIRTYTWO_X]: '32',
+  [LiveFeedSpeedMultiplierString.SIXTYFOUR_X]: '64',
+  [LiveFeedSpeedMultiplierString.NINETYSIX_X]: '96'
+};
 
 export enum DetailSelectionType {
   AIRPORT = "airport",

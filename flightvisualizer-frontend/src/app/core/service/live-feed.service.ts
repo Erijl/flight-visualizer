@@ -1,5 +1,5 @@
 import {Injectable, OnDestroy, OnInit} from '@angular/core';
-import {LiveFeedSpeedModifier, ModeSelection} from "../enum";
+import {LiveFeedSpeedMultiplierString, ModeSelection} from "../enum";
 import {BehaviorSubject, interval, Observable, Subscription, switchMap} from "rxjs";
 import {DataStoreService} from "./data-store.service";
 
@@ -14,12 +14,11 @@ export class LiveFeedService {
   private reversed = false;
   private baseDate = new Date();
 
-  private timeMultiplier$ = new BehaviorSubject<LiveFeedSpeedModifier>(LiveFeedSpeedModifier.THIRTYTWO_X);
+  private timeMultiplier$ = new BehaviorSubject<number>(32);
   private currentDate$ = new BehaviorSubject<Date>(this.baseDate);
 
   constructor(private dataStoreService: DataStoreService) {
     this.modeSelectionSubscription = this.dataStoreService.modeSelection.subscribe(modeSelection => {
-      console.log('live-feed mode selection: ', modeSelection);
       if (modeSelection == ModeSelection.LIVE_FEED) {
         this.startInterval();
       } else {
@@ -29,7 +28,6 @@ export class LiveFeedService {
   }
 
   startInterval(): void {
-    console.log('startInterval');
     this.intervalSubscription = this.timeMultiplier$.pipe(
       switchMap((modifier) =>
         interval(Math.max(1000 / modifier, 10))
@@ -52,7 +50,7 @@ export class LiveFeedService {
     return this.currentDate$.asObservable();
   }
 
-  setTimeModifier(modifier: number) {
+  setTimeMultiplier(modifier: number) {
     this.timeMultiplier$.next(modifier);
   }
 
