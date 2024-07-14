@@ -6,7 +6,7 @@ import {DataStoreService} from "./data-store.service";
 @Injectable({
   providedIn: 'root'
 })
-export class LiveFeedService implements OnInit, OnDestroy {
+export class LiveFeedService {
 
   modeSelectionSubscription!: Subscription;
   intervalSubscription?: Subscription;
@@ -17,11 +17,10 @@ export class LiveFeedService implements OnInit, OnDestroy {
   private timeMultiplier$ = new BehaviorSubject<LiveFeedSpeedModifier>(LiveFeedSpeedModifier.THIRTYTWO_X);
   private currentDate$ = new BehaviorSubject<Date>(this.baseDate);
 
-  constructor(private dataStoreService: DataStoreService) {}
-
-  ngOnInit(): void {
+  constructor(private dataStoreService: DataStoreService) {
     this.modeSelectionSubscription = this.dataStoreService.modeSelection.subscribe(modeSelection => {
-      if (modeSelection === ModeSelection.LIVE_FEED) {
+      console.log('live-feed mode selection: ', modeSelection);
+      if (modeSelection == ModeSelection.LIVE_FEED) {
         this.startInterval();
       } else {
         this.stopInterval();
@@ -30,6 +29,7 @@ export class LiveFeedService implements OnInit, OnDestroy {
   }
 
   startInterval(): void {
+    console.log('startInterval');
     this.intervalSubscription = this.timeMultiplier$.pipe(
       switchMap((modifier) =>
         interval(Math.max(1000 / modifier, 10))
@@ -63,10 +63,5 @@ export class LiveFeedService implements OnInit, OnDestroy {
 
   setReversed(reversed: boolean) {
     this.reversed = reversed;
-  }
-
-  ngOnDestroy(): void {
-    this.modeSelectionSubscription.unsubscribe();
-    this.stopInterval();
   }
 }

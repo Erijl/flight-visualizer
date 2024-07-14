@@ -41,6 +41,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   currentDate$!: Observable<Date>;
   currentDateSubscription: Subscription | null = null;
+  modeSelection: ModeSelection = ModeSelection.NONE;
 
 
   //popup = new mapboxgl.Popup({
@@ -55,32 +56,16 @@ export class MapComponent implements OnInit, OnDestroy {
     this.currentDate$ = this.liveFeedService.getCurrentDate$();
 
     this.modeSelectionSubscription = this.dataStoreService.modeSelection.subscribe(mode => {
-      console.log('Mode selection changed to: ' + mode)
-      if(mode == ModeSelection.LIVE_FEED) {
-        this.geoService.removeLayerFromMap(this.map, LayerType.ROUTELAYER);
-        this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
-        this.geoService.removeSourceFromMap(this.map, SourceType.ROUTESOURCE);
-        this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
-
-        this.replaceCurrentlyRenderedAirports(this.dataStoreService.getAllAirports(), true);
-        this.runLiveFeed();
-      } else if(mode == ModeSelection.SANDBOX) {
-        this.geoService.removeLayerFromMap(this.map, LayerType.AIRPLANELAYER);
-        this.geoService.removeSourceFromMap(this.map, SourceType.AIRPLANESOURCE);
-
-        this.currentDateSubscription?.unsubscribe();
-
-        this.replaceCurrentlyRenderedAirports(this.dataStoreService.getAllAirports(), true);
-        this.replaceCurrentlyRenderedRoutes(this.dataStoreService.getAllLegRenders());
-      }
+      this.modeSelection = mode;
+      this.handleModeSelection(true);
     });
 
     this.currentlyRenderedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
-      this.replaceCurrentlyRenderedAirports(airports);
+      this.handleModeSelection();
     });
 
     this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
-      this.replaceCurrentlyRenderedRoutes(routes);
+      this.handleModeSelection()
     });
 
     this.selectedRouteSubscription = this.dataStoreService.selectedRoute.subscribe(route => {
@@ -160,7 +145,7 @@ export class MapComponent implements OnInit, OnDestroy {
       this.dataStoreService.setSelectedAirportFilter(SelectedAirportFilter.create());
 
       this.enableRouteLayerSelection();
-    } else if(this.selectionType === DetailSelectionType.AIRPLANE) {
+    } else if (this.selectionType === DetailSelectionType.AIRPLANE) {
       this.dataStoreService.setSelectedRoute(LegRender.create()); //TODO move to clear function, clearSelection()
       this.dataStoreService.setSelectedAirportFilter(SelectedAirportFilter.create());
 
@@ -189,7 +174,7 @@ export class MapComponent implements OnInit, OnDestroy {
       leg.destinationAirportIataCode === clickedRoute.properties.destinationAirport
     );
 
-    if(clickedLeg) {
+    if (clickedLeg) {
       this.selectedRoute = clickedLeg;
       this.dataStoreService.setSelectedRoute(this.selectedRoute);
     }
@@ -230,7 +215,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   highlightSelectedRoute(): void {
-    if(this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) return; // No route highlighting in live feed mode since archs are off
+    if (this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) return; // No route highlighting in live feed mode since archs are off
 
     this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
     this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
@@ -250,11 +235,11 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  replaceCurrentlyRenderedAirports(newAirports: AirportRender[], forceRenderSourceAndLayer:boolean = false): void {
+  replaceCurrentlyRenderedAirports(newAirports: AirportRender[], forceRenderSourceAndLayer: boolean = false): void {
     let airportsGeoJson = this.geoService.convertAirportRendersToGeoJson(newAirports);
-    if(!this.map) return;
+    if (!this.map) return;
 
-    if(this.map.getSource(SourceType.AIRPORTSOURCE) && !forceRenderSourceAndLayer) {
+    if (this.map.getSource(SourceType.AIRPORTSOURCE) && !forceRenderSourceAndLayer) {
       this.geoService.updateMapSourceData(this.map, SourceType.AIRPORTSOURCE, airportsGeoJson);
     } else {
       this.geoService.removeLayerFromMap(this.map, LayerType.AIRPORTLAYER);
@@ -270,11 +255,11 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   replaceCurrentlyRenderedRoutes(newRoutes: LegRender[]): void {
-    if(this.dataStoreService.getModeSelection() == ModeSelection.SANDBOX) { //TODO refactor, to complex method
+    if (this.dataStoreService.getModeSelection() == ModeSelection.SANDBOX) { //TODO refactor, to complex method
       let routesGeoJson = this.geoService.convertLegRendersToGeoJson(newRoutes);
-      if(!this.map) return;
+      if (!this.map) return;
 
-      if(this.map.getSource(SourceType.ROUTESOURCE)) {
+      if (this.map.getSource(SourceType.ROUTESOURCE)) {
         this.geoService.updateMapSourceData(this.map, SourceType.ROUTESOURCE, routesGeoJson);
       } else {
         this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.ROUTESOURCE, routesGeoJson);
@@ -289,7 +274,7 @@ export class MapComponent implements OnInit, OnDestroy {
       if (this.selectionType === DetailSelectionType.ROUTE) {
         this.enableRouteLayerSelection();
       }
-    } else if(this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) { //TODO (possibly) base the speed (interval timeout & time multiplier) on the zoom level
+    } else if (this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) { //TODO (possibly) base the speed (interval timeout & time multiplier) on the zoom level
       this.runLiveFeed();
     }
   }
@@ -313,9 +298,32 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
+  handleModeSelection(acutalSwitch: boolean = false) {
+    if (acutalSwitch) {
+      console.log('Mode selection changed to: ' + this.modeSelection)
+    }
+    if (this.modeSelection == ModeSelection.LIVE_FEED) {
+      this.geoService.removeLayerFromMap(this.map, LayerType.ROUTELAYER);
+      this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
+      this.geoService.removeSourceFromMap(this.map, SourceType.ROUTESOURCE);
+      this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
+
+      this.replaceCurrentlyRenderedAirports(this.dataStoreService.getAllAirports(), true);
+      this.runLiveFeed();
+    } else if (this.modeSelection == ModeSelection.SANDBOX) {
+      this.geoService.removeLayerFromMap(this.map, LayerType.AIRPLANELAYER);
+      this.geoService.removeSourceFromMap(this.map, SourceType.AIRPLANESOURCE);
+
+      this.currentDateSubscription?.unsubscribe();
+
+      this.replaceCurrentlyRenderedAirports(this.dataStoreService.getAllAirports(), true);
+      this.replaceCurrentlyRenderedRoutes(this.dataStoreService.getAllLegRenders());
+    }
+  }
+
   enableRouteLayerSelection(): void {
     this.disableLayerSelection();
-    if(!this.map) return;
+    if (!this.map) return;
     this.map.on(MapEventType.CLICK, LayerType.ROUTELAYER, this.routeLayerClickHandler);
     this.map.on(MapEventType.MOUSEENTER, LayerType.ROUTELAYER, this.layerMouseEnterHandler);
     this.map.on(MapEventType.MOUSELEAVE, LayerType.ROUTELAYER, this.layerMouseLeaveHandler);
@@ -323,7 +331,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   enableAirportLayerSelection(): void {
     this.disableLayerSelection();
-    if(!this.map) return;
+    if (!this.map) return;
     this.map.on(MapEventType.CLICK, LayerType.AIRPORTLAYER, this.airportLayerClickHandler);
     this.map.on(MapEventType.MOUSEENTER, LayerType.AIRPORTLAYER, this.layerMouseEnterHandler);
     this.map.on(MapEventType.MOUSELEAVE, LayerType.AIRPORTLAYER, this.layerMouseLeaveHandler);
@@ -331,14 +339,14 @@ export class MapComponent implements OnInit, OnDestroy {
 
   enableAirplaneLayerSelection(): void {
     this.disableLayerSelection();
-    if(!this.map) return;
+    if (!this.map) return;
     this.map.on(MapEventType.CLICK, LayerType.AIRPLANELAYER, this.airplaneLayerClickHandler);
     this.map.on(MapEventType.MOUSEENTER, LayerType.AIRPLANELAYER, this.layerMouseEnterHandler);
     this.map.on(MapEventType.MOUSELEAVE, LayerType.AIRPLANELAYER, this.layerMouseLeaveHandler);
   }
 
   disableLayerSelection(): void {
-    if(!this.map) return;
+    if (!this.map) return;
     this.map.off(MapEventType.CLICK, LayerType.ROUTELAYER, this.routeLayerClickHandler);
     this.map.off(MapEventType.MOUSEENTER, LayerType.ROUTELAYER, this.layerMouseEnterHandler);
     this.map.off(MapEventType.MOUSELEAVE, LayerType.ROUTELAYER, this.layerMouseLeaveHandler);
