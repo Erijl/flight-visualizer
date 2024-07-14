@@ -13,7 +13,8 @@ import java.util.List;
 public interface FlightScheduleLegRepository extends JpaRepository<FlightScheduleLeg, Integer> {
 
     @Query(value = """
-                SELECT fsl.origin_airport                               AS 'originAirportIataCode',
+                SELECT fsl.id                                           AS 'legId',
+                       fsl.origin_airport                               AS 'originAirportIataCode',
                        fsl.destination_airport                          AS 'destinationAirportIataCode',
                        fsl.drawable_origin_longitude                    AS 'originLongitude',
                        a_origin.latitude                                AS 'originLatitude',

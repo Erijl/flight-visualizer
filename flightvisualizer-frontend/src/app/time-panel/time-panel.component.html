@@ -5,90 +5,11 @@
     </mat-panel-title>
   </mat-expansion-panel-header>
 
-  <div class="slider-container">
-    <mat-form-field>
-      <mat-label>Enter date range or date</mat-label>
-      <mat-date-range-input [dateFilter]="dateFilter" [rangePicker]="rangePicker" [(ngModel)]="timeFilter.dateRange">
-        <input [(ngModel)]="timeFilter.dateRange!.start" (ngModelChange)="onDateRangeChange()" matStartDate
-               placeholder="Start date">
-        <input [(ngModel)]="timeFilter.dateRange!.end" (ngModelChange)="onDateRangeChange()" matEndDate
-               placeholder="End date">
-      </mat-date-range-input>
-      <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
-      <mat-date-range-picker #rangePicker></mat-date-range-picker>
-    </mat-form-field>
+  <div *ngIf="modeSelection == ModeSelection.SANDBOX">
+    <app-sandbox-time-panel />
   </div>
 
-  <div class="slider-container small-padding">
-    <mat-slider
-      class="enlarged-slider"
-      min="0"
-      max="1439"
-      step="1"
-      (change)="onTimeRangeChange()">
-      <input [ngModel]="timeFilter.timeRange?.start" (ngModelChange)="timeFilter.timeRange!.start = $event"
-             matSliderStartThumb>
-      <input [ngModel]="timeFilter.timeRange?.end" (ngModelChange)="timeFilter.timeRange!.end = $event" matSliderEndThumb>
-    </mat-slider>
-    <div class="values-container">
-      <div *ngIf="!timeFilter.timeRange?.inverted">
-        UTC:
-        <span>{{ timeFilter.timeRange?.start | intToTimeofday }}</span>
-        -
-        <span>{{ timeFilter.timeRange?.end | intToTimeofday }}</span>
-      </div>
-
-      <div *ngIf="timeFilter.timeRange?.inverted">
-        UTC:
-        <span>{{ minTime | intToTimeofday }}</span>
-        -
-        <span>{{ timeFilter.timeRange?.start | intToTimeofday }}</span>
-        and
-
-        <span>{{ timeFilter.timeRange?.end | intToTimeofday }}</span>
-        -
-        <span>{{ maxTime | intToTimeofday }}</span>
-      </div>
-
-      <div *ngIf="panelOpenState">slider: ({{ timeFilter.timeRange?.inverted ? 'exlcuding' : 'including' }})</div>
-    </div>
+  <div *ngIf="modeSelection == ModeSelection.LIVE_FEED">
+    <app-live-feed-time-panel />
   </div>
-
-  <br>
-  <mat-expansion-panel (opened)="panelOpenState = true"
-                       (closed)="panelOpenState = false" class="special-expansion-panel">
-
-    <mat-expansion-panel-header>
-      <mat-panel-title class="sub-panel-title">
-        Advanced Time Options
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <!--Time zone selection: (SelectedTimezone (UTC+Offset)//TODO-->
-    <br>
-    <mat-slide-toggle [(ngModel)]="timeFilter.includeDifferentDayDepartures" (change)="onIncludeMultiDayFlightChange()">
-      Include Different Day Departures
-    </mat-slide-toggle>
-    <br>
-    <mat-slide-toggle [(ngModel)]="timeFilter.includeDifferentDayArrivals" (change)="onIncludeMultiDayFlightChange()">
-      Include Different Day Arrivals
-    </mat-slide-toggle>
-    <br>
-    <br>
-    <mat-slide-toggle [disabled]="!timeFilter.timeRange" [(ngModel)]="timeFilter.timeRange!.inverted" (change)="onTimeRangeInvertChange()">
-      Invert Time Range selection
-    </mat-slide-toggle>
-    <br>
-    <br>
-    <div class="sub-sub-header">Arrival / Departure Filter</div>
-    <select [(ngModel)]="aircraftTimeFilterType" (change)="onAircraftTimeFilterTypeChange()" class="inverted-select">
-      <option *ngFor="let type of aircraftTimeFilterTypes" [value]="type">{{ AircraftTimeFilterTypeLabels[type] }}</option>
-    </select>
-    <br>
-
-  </mat-expansion-panel>
-
-  <br>
-
-  <button (click)="resetFilters()" class="reset-button">Reset Filters</button>
-
 </mat-expansion-panel>

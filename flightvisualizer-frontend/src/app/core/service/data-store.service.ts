@@ -1,10 +1,13 @@
 import {Injectable} from '@angular/core';
 import {
-  DefaultGeneralFilter, DefaultRouteFilter, DefaultSelectedAirportFilter, DefaultTimeFilter
+  DefaultGeneralFilter,
+  DefaultRouteFilter,
+  DefaultSelectedAirportFilter,
+  DefaultTimeFilter, TimeModifier
 } from "../dto/airport";
 import {DataService} from "./data.service";
 import {BehaviorSubject} from "rxjs";
-import {DetailSelectionType} from "../enum";
+import {DetailSelectionType, ModeSelection} from "../enum";
 import {GeneralFilter, RouteFilter, SelectedAirportFilter, TimeFilter} from "../../protos/filters";
 import {
   AirportDetails,
@@ -61,6 +64,10 @@ export class DataStoreService {
   private _selectedRoute: BehaviorSubject<LegRender> = new BehaviorSubject<LegRender>(LegRender.create());
   selectedRoute = this._selectedRoute.asObservable();
 
+  private _selectedAirplane: BehaviorSubject<LegRender> = new BehaviorSubject<LegRender>(LegRender.create());
+  selectedAirplane = this._selectedAirplane.asObservable();
+
+
   // details
   private _airportDetails: BehaviorSubject<AirportDetails> = new BehaviorSubject<AirportDetails>(AirportDetails.create());
   airportDetails = this._airportDetails.asObservable();
@@ -68,10 +75,13 @@ export class DataStoreService {
   private _routeDetails: BehaviorSubject<DetailedLegInformation[]> = new BehaviorSubject<DetailedLegInformation[]>([]);
   routeDetails = this._routeDetails.asObservable();
 
+
   // UI state
   private _showLoadingScreen: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   showLoadingScreen = this._showLoadingScreen.asObservable();
 
+  private _modeSelection: BehaviorSubject<ModeSelection> = new BehaviorSubject<ModeSelection>(ModeSelection.NONE);
+  modeSelection = this._modeSelection.asObservable();
 
   constructor(private dataService: DataService) {
     this.getFlightDateFrequencies();
@@ -132,6 +142,14 @@ export class DataStoreService {
     return this.allLegRenders.filter(leg => leg.originAirportIataCode == selectedLeg.originAirportIataCode && leg.destinationAirportIataCode == selectedLeg.destinationAirportIataCode);
   }
 
+  getModeSelection(): ModeSelection {
+    return this._modeSelection.getValue();
+  }
+
+  getSelectedAirplane(): LegRender {
+    return this._selectedAirplane.getValue();
+  }
+
   // SETTERS
 
   setSelectedAirportFilter(selectedAirportFilter: SelectedAirportFilter): void {
@@ -153,7 +171,7 @@ export class DataStoreService {
     const originRender = this.getAirportRenderByIataCode(route.originAirportIataCode);
     const destinationRender = this.getAirportRenderByIataCode(route.destinationAirportIataCode);
     if (originRender && destinationRender) {
-      this.getAllLegsForSpecificRoute(route);
+      this.getAllLegDetailsForSpecificRoute(route);
     }
   }
 
@@ -194,6 +212,14 @@ export class DataStoreService {
     this.isInitialized = isInitialized;
   }
 
+  setModeSelection(modeSelection: ModeSelection): void {
+    this._modeSelection.next(modeSelection);
+  }
+
+  setSelectedAirplane(selectedAirplane: LegRender): void {
+    this._selectedAirplane.next(selectedAirplane);
+  }
+
   // FETCHING DATA
   private getDistinctFlightScheduleLegsForRendering(): void {
     if(!this.isInitialized) return;
@@ -217,7 +243,7 @@ export class DataStoreService {
     });
   }
 
-  private getAllLegsForSpecificRoute(leg: LegRender): void {
+  private getAllLegDetailsForSpecificRoute(leg: LegRender): void {
     this.dataService.getAllLegsForSpecificRoute(leg, this.getTimeFilter()).subscribe(routeDetails => {
       this.setRouteDetails(routeDetails);
     });

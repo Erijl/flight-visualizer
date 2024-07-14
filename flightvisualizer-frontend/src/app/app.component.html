@@ -16,7 +16,7 @@
       <h2 class="subheader">"ESC"-Menu: Please select a mode</h2>
     </div>
     <div class="cards-container">
-      <div class="card" (click)="selectMode(1)">
+      <div class="card" (click)="selectMode(ModeSelection.SANDBOX)">
         <img ngSrc="assets/no-text-side.PNG" alt="" height="1073" width="1070">
         <div class="card-content">
           <h2>
@@ -25,19 +25,16 @@
         </div>
       </div>
 
-      <div class="card disabled-card" (click)="selectMode(2)">
-        <img ngSrc="assets/no-text-placeholder.PNG" alt="" height="1073" width="1070">
+      <div class="card" (click)="selectMode(ModeSelection.LIVE_FEED)">
+        <img ngSrc="assets/no-text-placeholder.PNG" alt="" height="1073" width="1070"> <!-- //TODO use proper image sizing thing -->
         <div class="card-content">
           <h2>
             Live Feed
           </h2>
         </div>
-        <div class="wip-overlay">
-          <p>Work In Progress</p>
-        </div>
       </div>
 
-      <div class="card disabled-card" (click)="selectMode(3)">
+      <div class="card disabled-card" (click)="selectMode(ModeSelection.GRAPH_THEORY)">
         <img ngSrc="assets/graph-theory.PNG" alt="" height="1073" width="1070">
         <div class="card-content">
           <h2>

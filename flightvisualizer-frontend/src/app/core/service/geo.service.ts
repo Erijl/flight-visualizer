@@ -1,13 +1,16 @@
 import {Injectable} from '@angular/core';
 import mapboxgl from 'mapbox-gl';
 import {AirportRender, LegRender} from "../../protos/objects";
+import {DataStoreService} from "./data-store.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class GeoService {
 
-  constructor() {
+  EARTH_RADIUS_IN_METERS = 6371000;
+
+  constructor(private dataStoreService: DataStoreService) {
   }
 
   highlightRouteOnMap(map: mapboxgl.Map, sourceId: string, layerId: string, leg: LegRender): void {
@@ -58,6 +61,22 @@ export class GeoService {
     });
   }
 
+  addLayerTypeAirplane(map: mapboxgl.Map, layerId: string, sourceId: string): void {
+    map.addLayer({
+      'id': layerId,
+      'type': 'symbol',
+      'source': sourceId,
+      'layout': {
+        'icon-image': 'airport',
+        'icon-size': 1.5,
+        'icon-rotate': ['get', 'rotation'],
+        'icon-rotation-alignment': 'map',
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true
+      }
+    });
+  }
+
   convertAirportRendersToGeoJson(airports: AirportRender[]): any[] {
     const airportGeoFeatures: any[] = [];
     airports.forEach(airport => {
@@ -97,16 +116,42 @@ export class GeoService {
     return airportGeoRoutes;
   }
 
+  convertLegRendersToLiveFeedGeoJson(legRenders: LegRender[], currentDate: Date): any[] {
+    const liveFeedAirplanePositions: any[] = []; //TODO move filtering to other file / function & add minute comparison
+    legRenders.filter(leg => Math.floor(leg.details!.departureTimeUtc/60) <= currentDate.getHours() && Math.floor(leg.details!.arrivalTimeUtc/60) >= currentDate.getHours()).forEach(legRender => {
+      const coordsAndRot = this.calculateIntermediateCoordinates(legRender, ((((currentDate.getMinutes() * 60) + (currentDate.getHours() * 3600) + currentDate.getSeconds()) - (legRender.details!.departureTimeUtc * 60)) / (legRender.durationMinutes * 60)));
+      if(coordsAndRot[0] == null || coordsAndRot[1] == null || coordsAndRot[2] == null) return; //TODO check why some flights are not rendered
+
+      liveFeedAirplanePositions.push({
+        'type': 'Feature',
+        'geometry': {
+          'type': 'Point',
+          'coordinates': [
+            coordsAndRot[0],
+            coordsAndRot[1]
+          ]
+        },
+        'properties': {
+          'originAirport': legRender.originAirportIataCode,
+          'destinationAirport': legRender.destinationAirportIataCode,
+          'legId': legRender.legId,
+          'rotation': coordsAndRot[2]
+        }
+      });
+    });
+    return liveFeedAirplanePositions;
+  }
+
   removeLayerFromMap(map: mapboxgl.Map, layerId: string): void {
-    if(!map) return;
-    if(map.getLayer(layerId)) {
+    if (!map) return;
+    if (map.getLayer(layerId)) {
       map.removeLayer(layerId);
     }
   }
 
   removeSourceFromMap(map: mapboxgl.Map, sourceId: string): void {
-    if(!map) return;
-    if(map.getSource(sourceId)) {
+    if (!map) return;
+    if (map.getSource(sourceId)) {
       map.removeSource(sourceId);
     }
   }
@@ -117,5 +162,52 @@ export class GeoService {
       'type': 'FeatureCollection',
       'features': features
     });
+  }
+
+  //It really hurts implementing this into the frontend, but there is no other option while keeping up the performance and allowing speed modifiers
+  private calculateIntermediateCoordinates(legRender: LegRender, percentageTraveled: number): [number, number, number] | [null, null, null] {
+    const origin = this.dataStoreService.getAllAirports().find(airport => airport.iataCode == legRender.originAirportIataCode);
+    const destination = this.dataStoreService.getAllAirports().find(airport => airport.iataCode == legRender.destinationAirportIataCode);
+
+    if (!origin || !destination || percentageTraveled < 0 || percentageTraveled > 1) {
+      return [null, null, null];
+    }
+
+    // 1. Calculate total distance in meters
+    const totalDistance = legRender.distanceKilometers * 1000;
+
+    // 2. Calculate distance traveled
+    const distanceTraveled = totalDistance * percentageTraveled;
+
+    // 3. Convert to radians and get bearing
+    const originLatitudeRadians = (origin.coordinate!.latitude * Math.PI) / 180;
+    const originLongitudeRadians = (origin.coordinate!.longitude * Math.PI) / 180;
+    const destinationLatitudeRadians = (destination.coordinate!.latitude * Math.PI) / 180;
+    const destinationLongitudeRadians = (destination.coordinate!.longitude * Math.PI) / 180;
+
+    const y = Math.sin(destinationLongitudeRadians - originLongitudeRadians) * Math.cos(destinationLatitudeRadians);
+    const x = Math.cos(originLatitudeRadians) * Math.sin(destinationLatitudeRadians) -
+      Math.sin(originLatitudeRadians) * Math.cos(destinationLatitudeRadians) * Math.cos(destinationLongitudeRadians - originLongitudeRadians);
+    const bearing = Math.atan2(y, x);
+
+    // 4. Calculate intermediate point
+    const angularDistance = distanceTraveled / this.EARTH_RADIUS_IN_METERS;
+
+    const intermediateLatitudeRadians = Math.asin(Math.sin(originLatitudeRadians) * Math.cos(angularDistance) +
+      Math.cos(originLatitudeRadians) * Math.sin(angularDistance) * Math.cos(bearing));
+
+    const intermediateLongitudeRadians = originLongitudeRadians + Math.atan2(Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(originLatitudeRadians),
+      Math.cos(angularDistance) - Math.sin(originLatitudeRadians) * Math.sin(intermediateLatitudeRadians));
+
+    // 5. Calculate rotation angle (bearing to destination from intermediate point)
+    const y2 = Math.sin(destinationLongitudeRadians - intermediateLongitudeRadians) * Math.cos(destinationLatitudeRadians);
+    const x2 = Math.cos(intermediateLatitudeRadians) * Math.sin(destinationLatitudeRadians) - Math.sin(intermediateLatitudeRadians) * Math.cos(destinationLatitudeRadians) * Math.cos(destinationLongitudeRadians - intermediateLongitudeRadians);
+    let rotationAngle = Math.atan2(y2, x2) * (180 / Math.PI);
+
+    // Normalize rotation angle to be between 0 and 360 degrees
+    rotationAngle = (rotationAngle + 360) % 360;
+
+    // 6. Convert back to degrees and return as a tuple
+    return [intermediateLongitudeRadians * (180 / Math.PI), intermediateLatitudeRadians * (180 / Math.PI), rotationAngle];
   }
 }

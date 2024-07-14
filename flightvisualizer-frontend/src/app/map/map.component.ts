@@ -1,20 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import mapboxgl from 'mapbox-gl';
 import {DefaultGeneralFilter, DefaultSelectedAirportFilter} from "../core/dto/airport";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {GeoService} from "../core/service/geo.service";
-import {
-  CursorStyles,
-  DetailSelectionType,
-  LayerType,
-  MapEventType,
-  SourceType
-} from "../core/enum";
+import {CursorStyles, DetailSelectionType, LayerType, MapEventType, ModeSelection, SourceType} from "../core/enum";
 import {DataStoreService} from "../core/service/data-store.service";
-import {Subscription} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {environment} from "../../environments/environment";
 import {GeneralFilter, SelectedAirportFilter} from "../protos/filters";
 import {AirportRender, LegRender} from "../protos/objects";
+import {LiveFeedService} from "../core/service/live-feed.service";
 
 @Component({
   selector: 'app-map',
@@ -33,6 +28,7 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedAirportSubscription!: Subscription;
   generalFilterSubscription!: Subscription;
   detailSelectionTypeSubscription!: Subscription;
+  modeSelectionSubscription!: Subscription;
 
   // UI data
   generalFilter: GeneralFilter = GeneralFilter.create(DefaultGeneralFilter);
@@ -40,23 +36,36 @@ export class MapComponent implements OnInit, OnDestroy {
   // UI state
   selectedAirportFilter: SelectedAirportFilter = SelectedAirportFilter.create();
   selectedRoute: LegRender = LegRender.create();
+  selectedAirplane: LegRender = LegRender.create();
   selectionType: DetailSelectionType = DetailSelectionType.AIRPORT;
+
+  currentDate$!: Observable<Date>;
+  currentDateSubscription: Subscription | null = null;
+  modeSelection: ModeSelection = ModeSelection.NONE;
+
 
   //popup = new mapboxgl.Popup({
   //  closeButton: false,
   //  closeOnClick: false
   //});
 
-  constructor(private geoService: GeoService, private dataStoreService: DataStoreService) {
+  constructor(private geoService: GeoService, private dataStoreService: DataStoreService, private liveFeedService: LiveFeedService) {
   }
 
   ngOnInit(): void {
+    this.currentDate$ = this.liveFeedService.getCurrentDate$();
+
+    this.modeSelectionSubscription = this.dataStoreService.modeSelection.subscribe(mode => {
+      this.modeSelection = mode;
+      this.handleModeSelection(true);
+    });
+
     this.currentlyRenderedAirportsSubscription = this.dataStoreService.currentlyDisplayedAirports.subscribe(airports => {
-      this.replaceCurrentlyRenderedAirports(airports);
+      this.handleModeSelection();
     });
 
     this.currentlyRenderedRoutesSubscription = this.dataStoreService.renderedRoutes.subscribe(routes => {
-      this.replaceCurrentlyRenderedRoutes(routes);
+      this.handleModeSelection()
     });
 
     this.selectedRouteSubscription = this.dataStoreService.selectedRoute.subscribe(route => {
@@ -100,7 +109,17 @@ export class MapComponent implements OnInit, OnDestroy {
 
     // @ts-ignore
     this.map.on(MapEventType.CLICK, (e) => {
-      const features = this.map.queryRenderedFeatures(e.point, {layers: [LayerType.AIRPORTLAYER, LayerType.ROUTELAYER]});
+      let layers: string[] = [];
+
+      if (this.selectionType === DetailSelectionType.AIRPORT) {
+        layers.push(LayerType.AIRPORTLAYER);
+      } else if (this.selectionType === DetailSelectionType.ROUTE) {
+        layers.push(LayerType.ROUTELAYER);
+      } else if (this.selectionType === DetailSelectionType.AIRPLANE) {
+        layers.push(LayerType.AIRPLANELAYER);
+      }
+
+      const features = this.map.queryRenderedFeatures(e.point, {layers: layers});
 
       if (!features.length) {
         if (this.selectionType === DetailSelectionType.AIRPORT) {
@@ -109,6 +128,9 @@ export class MapComponent implements OnInit, OnDestroy {
         } else if (this.selectionType === DetailSelectionType.ROUTE) {
           this.selectedRoute = LegRender.create();
           this.dataStoreService.setSelectedRoute(this.selectedRoute);
+        } else if (this.selectionType === DetailSelectionType.AIRPLANE) {
+          this.selectedAirplane = LegRender.create();
+          this.dataStoreService.setSelectedAirplane(this.selectedAirplane);
         }
       }
     });
@@ -123,6 +145,11 @@ export class MapComponent implements OnInit, OnDestroy {
       this.dataStoreService.setSelectedAirportFilter(SelectedAirportFilter.create());
 
       this.enableRouteLayerSelection();
+    } else if (this.selectionType === DetailSelectionType.AIRPLANE) {
+      this.dataStoreService.setSelectedRoute(LegRender.create()); //TODO move to clear function, clearSelection()
+      this.dataStoreService.setSelectedAirportFilter(SelectedAirportFilter.create());
+
+      this.enableAirplaneLayerSelection();
     }
   }
 
@@ -147,11 +174,25 @@ export class MapComponent implements OnInit, OnDestroy {
       leg.destinationAirportIataCode === clickedRoute.properties.destinationAirport
     );
 
-    if(clickedLeg) {
+    if (clickedLeg) {
       this.selectedRoute = clickedLeg;
       this.dataStoreService.setSelectedRoute(this.selectedRoute);
     }
   }
+
+  // @ts-ignore
+  airplaneLayerClickHandler = (e) => {
+    // @ts-ignore
+    const clickedAirplane = e.features[0];
+    const selectedAirplane = this.dataStoreService.getAllLegRenders().find(leg => leg.legId == clickedAirplane.properties.legId);
+    if (selectedAirplane && selectedAirplane.legId && selectedAirplane.legId > 0) {
+
+      this.dataStoreService.setSelectedAirplane(selectedAirplane);
+
+      this.selectedRoute = selectedAirplane;
+      this.dataStoreService.setSelectedRoute(this.selectedRoute);
+    }
+  };
 
   // @ts-ignore
   layerMouseEnterHandler = (e) => {
@@ -174,6 +215,8 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   highlightSelectedRoute(): void {
+    if (this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) return; // No route highlighting in live feed mode since archs are off
+
     this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
     this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
 
@@ -192,15 +235,18 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  replaceCurrentlyRenderedAirports(newAirports: AirportRender[]): void {
+  replaceCurrentlyRenderedAirports(newAirports: AirportRender[], forceRenderSourceAndLayer: boolean = false): void {
     let airportsGeoJson = this.geoService.convertAirportRendersToGeoJson(newAirports);
-    if(!this.map) return;
+    if (!this.map) return;
 
-    if(this.map.getSource(SourceType.AIRPORTSOURCE)) {
+    if (this.map.getSource(SourceType.AIRPORTSOURCE) && !forceRenderSourceAndLayer) {
       this.geoService.updateMapSourceData(this.map, SourceType.AIRPORTSOURCE, airportsGeoJson);
     } else {
+      this.geoService.removeLayerFromMap(this.map, LayerType.AIRPORTLAYER);
+      this.geoService.removeSourceFromMap(this.map, SourceType.AIRPORTSOURCE);
+
       this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.AIRPORTSOURCE, airportsGeoJson);
-      this.geoService.addLayerTypeCircleToMap(this.map, LayerType.AIRPORTLAYER, SourceType.AIRPORTSOURCE, 8, '#eea719');
+      this.geoService.addLayerTypeCircleToMap(this.map, LayerType.AIRPORTLAYER, SourceType.AIRPORTSOURCE, this.dataStoreService.getModeSelection() == ModeSelection.SANDBOX ? 8 : 5, '#eea719'); //TODO replace shitty if with proper mode objects that store such things
     }
 
     if (this.selectionType === DetailSelectionType.AIRPORT) {
@@ -209,29 +255,75 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   replaceCurrentlyRenderedRoutes(newRoutes: LegRender[]): void {
-    let routesGeoJson = this.geoService.convertLegRendersToGeoJson(newRoutes);
-    if(!this.map) return;
+    if (this.dataStoreService.getModeSelection() == ModeSelection.SANDBOX) { //TODO refactor, to complex method
+      let routesGeoJson = this.geoService.convertLegRendersToGeoJson(newRoutes);
+      if (!this.map) return;
 
-    if(this.map.getSource(SourceType.ROUTESOURCE)) {
-      this.geoService.updateMapSourceData(this.map, SourceType.ROUTESOURCE, routesGeoJson);
-    } else {
-      this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.ROUTESOURCE, routesGeoJson);
-      this.geoService.addLayerTypeLineToMap(this.map, LayerType.ROUTELAYER, SourceType.ROUTESOURCE, {}, {
-        'line-color': '#ffffff',
-        'line-width': 2,
-        'line-opacity': 0.9,
-        //'line-dasharray': [2, 2]
-      });
+      if (this.map.getSource(SourceType.ROUTESOURCE)) {
+        this.geoService.updateMapSourceData(this.map, SourceType.ROUTESOURCE, routesGeoJson);
+      } else {
+        this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.ROUTESOURCE, routesGeoJson);
+        this.geoService.addLayerTypeLineToMap(this.map, LayerType.ROUTELAYER, SourceType.ROUTESOURCE, {}, {
+          'line-color': '#ffffff',
+          'line-width': 2,
+          'line-opacity': 0.9,
+          //'line-dasharray': [2, 2]
+        });
+      }
+
+      if (this.selectionType === DetailSelectionType.ROUTE) {
+        this.enableRouteLayerSelection();
+      }
+    } else if (this.dataStoreService.getModeSelection() == ModeSelection.LIVE_FEED) { //TODO (possibly) base the speed (interval timeout & time multiplier) on the zoom level
+      this.runLiveFeed();
     }
+  }
 
-    if (this.selectionType === DetailSelectionType.ROUTE) {
-      this.enableRouteLayerSelection();
+  runLiveFeed() {
+    this.currentDateSubscription = this.currentDate$.subscribe((newDateObj) => {
+      const airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(this.dataStoreService.getAllLegRenders(), newDateObj);
+
+      if (!this.map) return;
+
+      if (this.map.getSource(SourceType.AIRPLANESOURCE)) {
+        this.geoService.updateMapSourceData(this.map, SourceType.AIRPLANESOURCE, airplanesGeoJson);
+      } else {
+        this.geoService.addFeatureCollectionSourceToMap(this.map, SourceType.AIRPLANESOURCE, airplanesGeoJson);
+        this.geoService.addLayerTypeAirplane(this.map, LayerType.AIRPLANELAYER, SourceType.AIRPLANESOURCE);
+      }
+    });
+
+    if (this.selectionType === DetailSelectionType.AIRPLANE) {
+      this.enableAirplaneLayerSelection();
+    }
+  }
+
+  handleModeSelection(acutalSwitch: boolean = false) {
+    if (acutalSwitch) {
+      console.log('Mode selection changed to: ' + this.modeSelection)
+    }
+    if (this.modeSelection == ModeSelection.LIVE_FEED) {
+      this.geoService.removeLayerFromMap(this.map, LayerType.ROUTELAYER);
+      this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
+      this.geoService.removeSourceFromMap(this.map, SourceType.ROUTESOURCE);
+      this.geoService.removeSourceFromMap(this.map, SourceType.ROUTEHIGHLIGHTSOURCE);
+
+      this.replaceCurrentlyRenderedAirports(this.dataStoreService.getAllAirports(), true);
+      this.runLiveFeed();
+    } else if (this.modeSelection == ModeSelection.SANDBOX) {
+      this.geoService.removeLayerFromMap(this.map, LayerType.AIRPLANELAYER);
+      this.geoService.removeSourceFromMap(this.map, SourceType.AIRPLANESOURCE);
+
+      this.currentDateSubscription?.unsubscribe();
+
+      this.replaceCurrentlyRenderedAirports(this.dataStoreService.getAllAirports(), true);
+      this.replaceCurrentlyRenderedRoutes(this.dataStoreService.getAllLegRenders());
     }
   }
 
   enableRouteLayerSelection(): void {
     this.disableLayerSelection();
-    if(!this.map) return;
+    if (!this.map) return;
     this.map.on(MapEventType.CLICK, LayerType.ROUTELAYER, this.routeLayerClickHandler);
     this.map.on(MapEventType.MOUSEENTER, LayerType.ROUTELAYER, this.layerMouseEnterHandler);
     this.map.on(MapEventType.MOUSELEAVE, LayerType.ROUTELAYER, this.layerMouseLeaveHandler);
@@ -239,14 +331,22 @@ export class MapComponent implements OnInit, OnDestroy {
 
   enableAirportLayerSelection(): void {
     this.disableLayerSelection();
-    if(!this.map) return;
+    if (!this.map) return;
     this.map.on(MapEventType.CLICK, LayerType.AIRPORTLAYER, this.airportLayerClickHandler);
     this.map.on(MapEventType.MOUSEENTER, LayerType.AIRPORTLAYER, this.layerMouseEnterHandler);
     this.map.on(MapEventType.MOUSELEAVE, LayerType.AIRPORTLAYER, this.layerMouseLeaveHandler);
   }
 
+  enableAirplaneLayerSelection(): void {
+    this.disableLayerSelection();
+    if (!this.map) return;
+    this.map.on(MapEventType.CLICK, LayerType.AIRPLANELAYER, this.airplaneLayerClickHandler);
+    this.map.on(MapEventType.MOUSEENTER, LayerType.AIRPLANELAYER, this.layerMouseEnterHandler);
+    this.map.on(MapEventType.MOUSELEAVE, LayerType.AIRPLANELAYER, this.layerMouseLeaveHandler);
+  }
+
   disableLayerSelection(): void {
-    if(!this.map) return;
+    if (!this.map) return;
     this.map.off(MapEventType.CLICK, LayerType.ROUTELAYER, this.routeLayerClickHandler);
     this.map.off(MapEventType.MOUSEENTER, LayerType.ROUTELAYER, this.layerMouseEnterHandler);
     this.map.off(MapEventType.MOUSELEAVE, LayerType.ROUTELAYER, this.layerMouseLeaveHandler);
@@ -254,6 +354,10 @@ export class MapComponent implements OnInit, OnDestroy {
     this.map.off(MapEventType.CLICK, LayerType.AIRPORTLAYER, this.airportLayerClickHandler);
     this.map.off(MapEventType.MOUSEENTER, LayerType.AIRPORTLAYER, this.layerMouseEnterHandler);
     this.map.off(MapEventType.MOUSELEAVE, LayerType.AIRPORTLAYER, this.layerMouseLeaveHandler);
+
+    this.map.off(MapEventType.CLICK, LayerType.AIRPLANELAYER, this.airplaneLayerClickHandler);
+    this.map.off(MapEventType.MOUSEENTER, LayerType.AIRPLANELAYER, this.layerMouseEnterHandler);
+    this.map.off(MapEventType.MOUSELEAVE, LayerType.AIRPLANELAYER, this.layerMouseLeaveHandler);
   }
 
   ngOnDestroy(): void {
@@ -263,5 +367,6 @@ export class MapComponent implements OnInit, OnDestroy {
     this.selectedAirportSubscription.unsubscribe();
     this.generalFilterSubscription.unsubscribe();
     this.detailSelectionTypeSubscription.unsubscribe();
+    this.modeSelectionSubscription.unsubscribe();
   }
 }
