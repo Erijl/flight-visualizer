@@ -56,6 +56,82 @@
   z-index: 99;
 }
 
+#modal-wrapper {
+  width: 100%;
+  height: 72vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 10;
+  padding: 2rem;
+}
+
+#modal {
+  display: flex;
+  width: 66rem;
+  aspect-ratio: 4 / 3;
+  position: relative;
+  background-color: rgb(50 50 50);
+  border: 0.5rem solid rgb(30 30 30);
+  border-top-right-radius: 5rem;
+  border-bottom-left-radius: 5rem;
+  overflow: hidden;
+  box-shadow: 12px 25px 50px 12px rgb(0 0 0 / 0.5);
+}
+
+#modal-background {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 1;
+  height: 100%;
+  width: 100%;
+  background-image: url("https://assets.codepen.io/1468070/Repeatable+Pattern+-+Wavy+Lines.png?format=auto&quality=80");
+  background-size: 200%;
+  opacity: 0.3;
+  animation: move-background 50s linear infinite;
+}
+
+#modal-content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 3rem;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  #modal {
+    width: 100%;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+@media(max-height: 800px) {
+  #modal-wrapper {
+    height: 100vh;
+  }
+}
+@media(max-width: 1024px) {
+  #modal {
+    aspect-ratio: auto;
+    min-height: 500px;
+    width: 100%;
+    border-top-right-radius: 3rem;
+    border-bottom-left-radius: 3rem;
+  }
+}
+
+@media(max-width: 728px) {
+  #modal {
+    min-height: 400px;
+  }
+}
+
 
 main {
   display: flex;
@@ -178,13 +254,16 @@ main {
   z-index: var(--toast-message-overlay-z-index);
 }
 .link-container {
+  justify-content: center;
+  align-items: center;
   margin-top: 20px;
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
+  font-size: 3rem;
 }
 .link-item {
-  font-size: 1rem;
+  font-size: 1.1rem;
   color: #ddd;
   text-decoration: none;
   appearance: none;

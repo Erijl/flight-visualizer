@@ -7,8 +7,8 @@
   --loading-overlay-z-index: 10000;
   --toast-message-overlay-z-index: 20000;
 
-  --light-gold-rgb: 249 181 51;
-  --dark-gold-rgb: 215 147 23;
+  --light-gold-rgb: 131 87 3;
+  --dark-gold-rgb: 96 66 1;
 }
 
 * {
