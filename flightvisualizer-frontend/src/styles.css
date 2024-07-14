@@ -6,6 +6,9 @@
   --liability-modal-content-z-index: 1000;
   --loading-overlay-z-index: 10000;
   --toast-message-overlay-z-index: 20000;
+
+  --light-gold-rgb: 249 181 51;
+  --dark-gold-rgb: 215 147 23;
 }
 
 * {

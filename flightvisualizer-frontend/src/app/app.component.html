@@ -8,6 +8,12 @@
 
 <app-loading-overlay *ngIf="isLoading"></app-loading-overlay>
 
+
+<div id="airplane-container" *ngIf="showModeSelect">
+  <div id="airplane-pattern"></div>
+  <div id="airplane-gradient-overlay"></div>
+</div>
+
 <div [class.blur]="showModal">
   <app-liability-modal *ngIf="showModal" (closeModalEvent)="closeModal()"></app-liability-modal>
   <div *ngIf="showModeSelect" class="mode-select-screen">
@@ -34,6 +40,9 @@
         </div>
       </div>
 
+      <!-- I couldn't find a good library that could generate proper networks, and since I am a lot of things,
+      but definitely not a ui wizard, this will get left out for now
+
       <div class="card disabled-card" (click)="selectMode(ModeSelection.GRAPH_THEORY)">
         <img ngSrc="assets/graph-theory.PNG" alt="" height="1073" width="1070">
         <div class="card-content">
@@ -45,6 +54,7 @@
           <p>Work In Progress</p>
         </div>
       </div>
+      -->
     </div>
     <div class="link-container">
       <a href="mailto:support@flight-visualizer.com" class="link-item">Contact</a>
