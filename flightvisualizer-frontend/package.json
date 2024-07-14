@@ -22,6 +22,7 @@
     "@angular/platform-browser-dynamic": "^17.3.2",
     "@angular/router": "^17.3.2",
     "@types/long": "^5.0.0",
+    "@unpic/angular": "^0.0.39",
     "long": "^5.2.3",
     "mapbox-gl": "^3.1.2",
     "rxjs": "~7.8.0",
