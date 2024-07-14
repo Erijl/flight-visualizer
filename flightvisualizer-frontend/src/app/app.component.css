@@ -76,8 +76,7 @@
   position: relative;
   background-color: rgb(50 50 50);
   border: 0.5rem solid rgb(30 30 30);
-  border-top-right-radius: 5rem;
-  border-bottom-left-radius: 5rem;
+  border-radius: 1rem;
   overflow: hidden;
   box-shadow: 12px 25px 50px 12px rgb(0 0 0 / 0.5);
 }
@@ -168,16 +167,26 @@ main {
   align-items: center;
   gap: 80px;
 }
-
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  outline: 0.2rem solid #eea719;
+}
 .card {
   width: 24rem;
   height: 36rem;
-  border-radius: 10px;
   overflow: hidden;
   cursor: pointer;
   position: relative;
   color: rgb(240, 240, 240);
   box-shadow: 0 10px 30px 5px rgba(0, 0, 0, 0.2);
+  font-size: 1.25rem;
+  border: none;
+  border-radius: 0.75rem;
+  outline: 0.2rem solid #606060;
+  margin-bottom: .3rem;
+
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 
   img {
     position: absolute;
