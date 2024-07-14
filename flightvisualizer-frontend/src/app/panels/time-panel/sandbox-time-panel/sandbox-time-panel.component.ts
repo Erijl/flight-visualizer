@@ -1,17 +1,17 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {AircraftTimeFilterTypeLabels} from "../../core/enum";
-import {AircraftTimeFilterType} from "../../protos/enums";
-import {TimeFilter} from "../../protos/filters";
-import {DefaultTimeFilter} from "../../core/dto/airport";
-import {Subscription} from "rxjs";
-import {DataStoreService} from "../../core/service/data-store.service";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AircraftTimeFilterTypeLabels } from "../../../core/enum";
+import { AircraftTimeFilterType } from "../../../protos/enums";
+import { TimeFilter } from "../../../protos/filters";
+import { DefaultTimeFilter } from "../../../core/dto/default-filter";
+import { Subscription } from "rxjs";
+import { DataStoreService } from "../../../core/services/data-store.service";
 
 @Component({
   selector: 'app-sandbox-time-panel',
   templateUrl: './sandbox-time-panel.component.html',
   styleUrl: './sandbox-time-panel.component.css'
 })
-export class SandboxTimePanelComponent implements OnInit, OnDestroy{
+export class SandboxTimePanelComponent implements OnInit, OnDestroy {
 
   // Constants
   maxTime = 1439;
@@ -63,12 +63,12 @@ export class SandboxTimePanelComponent implements OnInit, OnDestroy{
   onDateRangeChange(): void {
     // Adjust for timezone because Angular returns a local date (?) (it works, just leave it)
     const offset = new Date().getTimezoneOffset();
-    if(this.timeFilter.dateRange && this.timeFilter.dateRange.start) {
-      this.timeFilter.dateRange.start = new Date(this.timeFilter.dateRange.start.getTime() + ((offset * 60000)*(-1)));
+    if (this.timeFilter.dateRange && this.timeFilter.dateRange.start) {
+      this.timeFilter.dateRange.start = new Date(this.timeFilter.dateRange.start.getTime() + ((offset * 60000) * (-1)));
     }
 
-    if(this.timeFilter.dateRange && this.timeFilter.dateRange.end) {
-      this.timeFilter.dateRange.end = new Date(this.timeFilter.dateRange.end.getTime() + ((offset * 60000)*(-1)));
+    if (this.timeFilter.dateRange && this.timeFilter.dateRange.end) {
+      this.timeFilter.dateRange.end = new Date(this.timeFilter.dateRange.end.getTime() + ((offset * 60000) * (-1)));
     }
 
     this.dataStoreService.setTimeFilter(this.timeFilter);
@@ -78,6 +78,7 @@ export class SandboxTimePanelComponent implements OnInit, OnDestroy{
     this.timeFilter.aircraftDepOrArrInTimeRange = this.aircraftTimeFilterType;
     this.dataStoreService.setTimeFilter(this.timeFilter);
   }
+
   onTimeRangeInvertChange(): void {
     this.timeFilter.includeDifferentDayDepartures = true;
     this.timeFilter.includeDifferentDayArrivals = true;
@@ -92,7 +93,7 @@ export class SandboxTimePanelComponent implements OnInit, OnDestroy{
     this.dataStoreService.initTimeFilter();
   }
 
-  onTimeRangeChange(): void  {
+  onTimeRangeChange(): void {
     this.dataStoreService.setTimeFilter(this.timeFilter);
   }
 

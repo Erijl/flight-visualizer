@@ -8,14 +8,3 @@ export const DefaultGeneralFilter = {airportDisplayType: AirportDisplayType.AIRP
 export const DefaultRouteFilter = {start: 0, end: 20000, routeFilterType: RouteFilterType.DISTANCE};
 
 export const DefaultSelectedAirportFilter = {iataCode: '', includingArrivals: true, includingDepartures: true};
-
-export class TimeModifier {
-
-  dateTime: Date;
-  speedMultiplier: number;
-
-  constructor(dateTime: Date, speedMultiplier: number) {
-    this.dateTime = dateTime;
-    this.speedMultiplier = speedMultiplier;
-  }
-}

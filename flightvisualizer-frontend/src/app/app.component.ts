@@ -1,7 +1,7 @@
 import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
-import {DataStoreService} from "./core/service/data-store.service";
-import {ToastService} from "./core/service/toast.service";
+import {DataStoreService} from "./core/services/data-store.service";
+import {ToastService} from "./core/services/toast.service";
 import {environment} from "../environments/environment";
 import {ModeSelection} from "./core/enum";
 

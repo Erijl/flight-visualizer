@@ -2,10 +2,10 @@ import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/c
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
-import {DataStoreService} from "../core/service/data-store.service";
+import {DataStoreService} from "../../../core/services/data-store.service";
 import {Subscription} from "rxjs";
-import {AirportDetails, AirportRender, LegRender} from "../protos/objects";
-import {SelectedAirportFilter} from "../protos/filters";
+import {AirportDetails, AirportRender, LegRender} from "../../../protos/objects";
+import {SelectedAirportFilter} from "../../../protos/filters";
 
 @Component({
   selector: 'app-airport-info',
