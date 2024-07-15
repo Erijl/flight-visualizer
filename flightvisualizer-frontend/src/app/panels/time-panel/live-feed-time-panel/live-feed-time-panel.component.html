@@ -17,6 +17,9 @@
       <mat-button-toggle value="ninetysixX">96x</mat-button-toggle>
     </mat-button-toggle-group>
   </div>
+  <div *ngIf="selectionType == 'sixtyfourX' || selectionType == 'ninetysixX'" class="performance-warning">
+    *Note: 64x and 96x speed multipliers can cause performance issues
+  </div>
   <br/>
 
   <div class="selection-container">

@@ -280,6 +280,8 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   runLiveFeed() {
+    if(this.currentDateSubscription != null) this.currentDateSubscription.unsubscribe();
+
     this.currentDateSubscription = this.currentDate$.subscribe((newDateObj) => {
       const airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(this.dataStoreService.getAllLegRenders(), newDateObj);
 

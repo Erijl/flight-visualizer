@@ -26,3 +26,9 @@ button:hover {
   align-items: center;
   margin-top: 10px;
 }
+
+.performance-warning {
+  color: #da0000;
+  font-size: 14px;
+  margin-top: 10px;
+}
