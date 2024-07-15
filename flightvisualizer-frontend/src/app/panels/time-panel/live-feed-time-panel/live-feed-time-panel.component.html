@@ -1,0 +1,39 @@
+<h1 style="text-align: center">
+  <p>{{ currentTime | date:'mediumTime' }} UTC</p>
+</h1>
+
+<br/>
+
+<div class="route-filter-container">
+  <h2>Speed multiplier</h2>
+  <div class="selection-container">
+    <mat-button-toggle-group [(ngModel)]="selectionType" (change)="onSpeedModifierChange()" name="fontStyle"
+                             aria-label="Select selection type">
+      <mat-button-toggle value="oneX">1x</mat-button-toggle>
+      <mat-button-toggle value="eightX">8x</mat-button-toggle>
+      <mat-button-toggle value="sixteenX">16x</mat-button-toggle>
+      <mat-button-toggle value="thirtytwoX">32x</mat-button-toggle>
+      <mat-button-toggle value="sixtyfourX">64x</mat-button-toggle>
+      <mat-button-toggle value="ninetysixX">96x</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+  <div *ngIf="selectionType == 'sixtyfourX' || selectionType == 'ninetysixX'" class="performance-warning">
+    *Note: 64x and 96x speed multipliers can cause performance issues
+  </div>
+  <br/>
+
+  <div class="selection-container">
+
+    <div class="reverse-toggle">
+      <mat-slide-toggle [(ngModel)]="reversed" (change)="onReverseChange()" aria-label="Select reversed">
+        Reverse flight direction
+      </mat-slide-toggle>
+    </div>
+
+  </div>
+</div>
+
+<br/>
+
+<button (click)="onResetDate()">Reset Date</button>
+

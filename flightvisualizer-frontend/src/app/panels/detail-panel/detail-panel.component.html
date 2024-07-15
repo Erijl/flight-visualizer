@@ -1,0 +1,28 @@
+<mat-expansion-panel [expanded]="expanded">
+  <mat-expansion-panel-header>
+    <mat-panel-title class="panel-title">
+      Detail Panel
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+
+  <div class="selection-container">
+    <mat-button-toggle-group [(ngModel)]="selectionType" (change)="onSelectionTypeChange()" name="fontStyle"
+                             aria-label="Select selection type">
+      <mat-button-toggle *ngIf="modeSelection == ModeSelection.LIVE_FEED" value="airplane">Airplane</mat-button-toggle>
+      <mat-button-toggle value="airport">Airport</mat-button-toggle>
+      <mat-button-toggle *ngIf="modeSelection == ModeSelection.SANDBOX" value="route">Route</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+
+  <div *ngIf="selectionType == DetailSelectionType.AIRPLANE">
+    <app-airplane-info />
+  </div>
+
+  <div *ngIf="selectionType == DetailSelectionType.AIRPORT">
+    <app-airport-info />
+  </div>
+
+  <div *ngIf="selectionType == DetailSelectionType.ROUTE">
+    <app-route-info />
+  </div>
+</mat-expansion-panel>

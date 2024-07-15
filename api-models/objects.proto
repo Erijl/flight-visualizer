@@ -14,12 +14,13 @@ import "enums.proto";
 // Classes
 
 message LegRender {
-  string originAirportIataCode = 1;
-  string destinationAirportIataCode = 2;
-  int32 durationMinutes = 3;
-  int32 distanceKilometers = 4;
-  repeated Coordinate coordinates = 5;
-  Details details = 6;
+  int64 legId = 1;
+  string originAirportIataCode = 2;
+  string destinationAirportIataCode = 3;
+  int32 durationMinutes = 4;
+  int32 distanceKilometers = 5;
+  repeated Coordinate coordinates = 6;
+  Details details = 7;
 
   message Details {
     string originAirportName = 1;

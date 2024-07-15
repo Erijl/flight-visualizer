@@ -29,14 +29,41 @@ export const AircraftTimeFilterTypeLabels: { [key in AircraftTimeFilterType]: st
   [AircraftTimeFilterType.UNRECOGNIZED]: 'TECHNICAL VALUE'
 };
 
+export enum ModeSelection {
+  NONE,
+  SANDBOX,
+  LIVE_FEED,
+  GRAPH_THEORY
+}
+
+export enum LiveFeedSpeedMultiplierString {
+  ONE_X = "oneX",
+  EIGHT_X = "eightX",
+  SIXTEEN_X = "sixteenX",
+  THIRTYTWO_X = "thirtytwoX",
+  SIXTYFOUR_X = "sixtyfourX",
+  NINETYSIX_X = "ninetysixX",
+}
+
+export const LiveFeedSpeedMultiplier: { [key in LiveFeedSpeedMultiplierString]: string } = {
+  [LiveFeedSpeedMultiplierString.ONE_X]: '1',
+  [LiveFeedSpeedMultiplierString.EIGHT_X]: '8',
+  [LiveFeedSpeedMultiplierString.SIXTEEN_X]: '16',
+  [LiveFeedSpeedMultiplierString.THIRTYTWO_X]: '32',
+  [LiveFeedSpeedMultiplierString.SIXTYFOUR_X]: '64',
+  [LiveFeedSpeedMultiplierString.NINETYSIX_X]: '96'
+};
+
 export enum DetailSelectionType {
   AIRPORT = "airport",
   ROUTE = "route",
+  AIRPLANE = "airplane",
 }
 
 export enum LayerType {
   AIRPORTLAYER = "airportLayer",
   ROUTELAYER = "routeLayer",
+  AIRPLANELAYER = "airplaneLayer",
   AIRPORTHIGHLIGHTLAYER = "airportHighlightLayer",
   ROUTEHIGHLIGHTLAYER = "routeHighlightLayer",
 }
@@ -44,6 +71,7 @@ export enum LayerType {
 export enum SourceType {
   AIRPORTSOURCE = "airportSource",
   ROUTESOURCE = "routeSource",
+  AIRPLANESOURCE = "airplaneSource",
   AIRPORTHIGHLIGHTSOURCE = "airportHighlightSource",
   ROUTEHIGHLIGHTSOURCE = "routeHighlightSource",
 }

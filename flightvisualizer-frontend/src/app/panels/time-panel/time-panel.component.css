@@ -1,0 +1,102 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #222;
+}
+
+h1, h2 {
+  color: #ddd;
+  font-weight: normal;
+}
+
+.sub-sub-header {
+  color: #ddd;
+  font-size: 1.25em;
+  font-weight: 400;
+  padding-left: 1px;
+  padding-bottom: 5px;
+}
+
+select {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #333;
+  color: #ddd;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #555;
+  color: #ddd;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #777;
+}
+
+.mat-slider {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.mat-slider .mat-slider-wrapper {
+  background-color: #555;
+}
+
+.mat-slider .mat-slider-thumb {
+  background-color: #ddd;
+}
+
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #222;
+  border-radius: 5px;
+}
+
+.small-padding {
+  padding: 6px;
+}
+
+.values-container {
+  text-align: center;
+  color: #ddd;
+  font-size: 16px;
+}
+
+.enlarged-slider {
+  width: 80%;
+}
+
+.inverted-select {
+  background-color: #282828;
+  color: #ddd;
+}
+
+.reset-button {
+  margin-bottom: 20px;
+}
+
+.special-expansion-panel {
+  background-color: #333;
+}
+
+.mat-expansion-panel {
+  background-color: #222;
+  color: #ddd;
+  border-radius: 5px;
+}
+
+.sub-panel-title {
+  color: #ddd;
+  font-size: 1.25em;
+  font-weight: 500;
+}

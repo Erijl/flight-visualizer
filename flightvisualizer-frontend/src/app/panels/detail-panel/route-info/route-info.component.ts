@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
-import {DataStoreService} from "../core/service/data-store.service";
-import {DetailedLegInformation, LegRender} from "../protos/objects";
+import {DataStoreService} from "../../../core/services/data-store.service";
+import {DetailedLegInformation, LegRender} from "../../../protos/objects";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort} from "@angular/material/sort";
 import {MatTableDataSource} from "@angular/material/table";

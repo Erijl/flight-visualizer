@@ -21,6 +21,7 @@ public class LegRenderBuilder {
      */
     public static LegRender buildLegRender(LegRenderDataProjection legRenderDataProjection) {
         return LegRender.newBuilder()
+                .setLegId(legRenderDataProjection.getLegId())
                 .setOriginAirportIataCode(legRenderDataProjection.getOriginAirportIataCode())
                 .setDestinationAirportIataCode(legRenderDataProjection.getDestinationAirportIataCode())
                 .setDurationMinutes(legRenderDataProjection.getDurationMinutes())

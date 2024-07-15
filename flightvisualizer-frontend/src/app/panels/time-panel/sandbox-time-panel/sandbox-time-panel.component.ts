@@ -1,31 +1,17 @@
-import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import {DataStoreService} from "../core/service/data-store.service";
-import {DefaultTimeFilter} from "../core/dto/airport";
-import {state, style, trigger} from "@angular/animations";
-import {Subscription} from "rxjs";
-import {AircraftTimeFilterType} from "../protos/enums";
-import {TimeFilter} from "../protos/filters";
-import {AircraftTimeFilterTypeLabels} from "../core/enum";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AircraftTimeFilterTypeLabels } from "../../../core/enum";
+import { AircraftTimeFilterType } from "../../../protos/enums";
+import { TimeFilter } from "../../../protos/filters";
+import { DefaultTimeFilter } from "../../../core/dto/default-filter";
+import { Subscription } from "rxjs";
+import { DataStoreService } from "../../../core/services/data-store.service";
 
 @Component({
-  selector: 'app-time-panel',
-  animations: [
-    trigger('openClose', [
-      // ...
-      state('open', style({
-        transition: 'transform 0.5s',
-        transform: 'rotate(0deg)'
-      })),
-      state('closed', style({
-        transition: 'transform 0.5s',
-        transform: 'rotate(180deg)'
-      })),
-    ]),
-  ],
-  templateUrl: './time-panel.component.html',
-  styleUrl: './time-panel.component.css'
+  selector: 'app-sandbox-time-panel',
+  templateUrl: './sandbox-time-panel.component.html',
+  styleUrl: './sandbox-time-panel.component.css'
 })
-export class TimePanelComponent implements OnInit, OnDestroy {
+export class SandboxTimePanelComponent implements OnInit, OnDestroy {
 
   // Constants
   maxTime = 1439;
@@ -48,7 +34,6 @@ export class TimePanelComponent implements OnInit, OnDestroy {
 
   // UI State
   panelOpenState = false;
-  expanded: boolean = true;
 
   // Callbacks
   dateFilter = this.getIsDateAvailableInputFilter();
@@ -78,12 +63,12 @@ export class TimePanelComponent implements OnInit, OnDestroy {
   onDateRangeChange(): void {
     // Adjust for timezone because Angular returns a local date (?) (it works, just leave it)
     const offset = new Date().getTimezoneOffset();
-    if(this.timeFilter.dateRange && this.timeFilter.dateRange.start) {
-      this.timeFilter.dateRange.start = new Date(this.timeFilter.dateRange.start.getTime() + ((offset * 60000)*(-1)));
+    if (this.timeFilter.dateRange && this.timeFilter.dateRange.start) {
+      this.timeFilter.dateRange.start = new Date(this.timeFilter.dateRange.start.getTime() + ((offset * 60000) * (-1)));
     }
 
-    if(this.timeFilter.dateRange && this.timeFilter.dateRange.end) {
-      this.timeFilter.dateRange.end = new Date(this.timeFilter.dateRange.end.getTime() + ((offset * 60000)*(-1)));
+    if (this.timeFilter.dateRange && this.timeFilter.dateRange.end) {
+      this.timeFilter.dateRange.end = new Date(this.timeFilter.dateRange.end.getTime() + ((offset * 60000) * (-1)));
     }
 
     this.dataStoreService.setTimeFilter(this.timeFilter);
@@ -93,6 +78,7 @@ export class TimePanelComponent implements OnInit, OnDestroy {
     this.timeFilter.aircraftDepOrArrInTimeRange = this.aircraftTimeFilterType;
     this.dataStoreService.setTimeFilter(this.timeFilter);
   }
+
   onTimeRangeInvertChange(): void {
     this.timeFilter.includeDifferentDayDepartures = true;
     this.timeFilter.includeDifferentDayArrivals = true;
@@ -107,12 +93,13 @@ export class TimePanelComponent implements OnInit, OnDestroy {
     this.dataStoreService.initTimeFilter();
   }
 
-  onTimeRangeChange(): void  {
+  onTimeRangeChange(): void {
     this.dataStoreService.setTimeFilter(this.timeFilter);
   }
 
   ngOnDestroy(): void {
     this.flightDateFrequenciesSubscription.unsubscribe();
+    this.timeFilterSubscription.unsubscribe();
   }
 
   protected readonly AircraftTimeFilterTypeLabels = AircraftTimeFilterTypeLabels;

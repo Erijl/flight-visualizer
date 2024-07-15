@@ -76,10 +76,9 @@ button:hover {
   width: 80%;
 }
 
-.mat-expansion-panel {
-  background-color: #222;
+.inverted-select {
+  background-color: #282828;
   color: #ddd;
-  border-radius: 5px;
 }
 
 .reset-button {
@@ -90,13 +89,14 @@ button:hover {
   background-color: #333;
 }
 
+.mat-expansion-panel {
+  background-color: #333;
+  color: #ddd;
+  border-radius: 5px;
+}
+
 .sub-panel-title {
   color: #ddd;
   font-size: 1.25em;
   font-weight: 500;
-}
-
-.inverted-select {
-  background-color: #282828;
-  color: #ddd;
 }
