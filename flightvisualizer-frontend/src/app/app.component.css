@@ -7,16 +7,6 @@
   }
 }
 
-@keyframes move-background {
-  0% {
-    background-position: 0% 0%;
-  }
-
-  100% {
-    background-position: -100% 0%;
-  }
-}
-
 /* inspired by the background of https://codepen.io/Hyperplexed/pen/zYXZoZg */
 #airplane-container {
   position: fixed;
@@ -91,10 +81,8 @@
   z-index: 1;
   height: 100%;
   width: 100%;
-  background-image: url("https://assets.codepen.io/1468070/Repeatable+Pattern+-+Wavy+Lines.png?format=auto&quality=80");
   background-size: 200%;
   opacity: 0.3;
-  animation: move-background 50s linear infinite;
 }
 
 #modal-content {
