@@ -34,7 +34,6 @@ export class LiveFeedService {
       ),
     ).subscribe(() => {
       const newDate = new Date(this.currentDate$.value.getTime() + ((this.timeMultiplier$.value * 1000) * (this.reversed ? -1 : 1)));
-      console.log(newDate);
       this.currentDate$.next(newDate);
     });
   }

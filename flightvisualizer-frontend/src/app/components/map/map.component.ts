@@ -301,9 +301,6 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   handleModeSelection(acutalSwitch: boolean = false) {
-    if (acutalSwitch) {
-      console.log('Mode selection changed to: ' + this.modeSelection)
-    }
     if (this.modeSelection == ModeSelection.LIVE_FEED) {
       this.geoService.removeLayerFromMap(this.map, LayerType.ROUTELAYER);
       this.geoService.removeLayerFromMap(this.map, LayerType.ROUTEHIGHLIGHTLAYER);
