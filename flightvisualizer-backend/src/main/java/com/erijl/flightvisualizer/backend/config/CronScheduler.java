@@ -84,6 +84,11 @@ public class CronScheduler {
             } catch (Exception e) {
                 log.error("Error fetching flight schedule for {}", currentDate, e);
             }
+            try { // To avoid rate limiting
+                Thread.sleep(5 * 1000);
+            } catch (InterruptedException e) {
+                log.warn("Delay interrupted", e);
+            }
             currentDate = currentDate.plusDays(1);
         }
     }
