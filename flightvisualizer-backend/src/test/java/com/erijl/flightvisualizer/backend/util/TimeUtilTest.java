@@ -15,31 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class TimeUtilTest {
 
     @Test
-    void testConvertDateToDDMMMYY() {
-        TimeUtil timeUtil = new TimeUtil();
-
-        assertEquals("11AUG23", timeUtil.convertDateToDDMMMYY(
-                new GregorianCalendar(
-                        2023,
-                        Calendar.AUGUST,
-                        11
-                ).getTime()
-        ));
-
-        assertEquals("01DEC24", timeUtil.convertDateToDDMMMYY(
-                new GregorianCalendar(
-                        2024,
-                        Calendar.DECEMBER,
-                        1
-                ).getTime()
-        ));
-    }
-
-    @Test
     void testConvertDateToDDMMMYYLocalDate() {
-        TimeUtil timeUtil = new TimeUtil();
-
-        assertEquals("11AUG23", timeUtil.convertDateToDDMMMYY(
+        assertEquals("11AUG23", TimeUtil.convertDateToDDMMMYY(
                 LocalDate.of(
                         2023,
                         8,
@@ -47,7 +24,7 @@ public class TimeUtilTest {
                 )
         ));
 
-        assertEquals("01DEC24", timeUtil.convertDateToDDMMMYY(
+        assertEquals("01DEC24", TimeUtil.convertDateToDDMMMYY(
                 LocalDate.of(
                         2024,
                         12,

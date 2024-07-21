@@ -58,8 +58,6 @@ public class CronScheduler {
     private final PerformanceTracker performanceTracker;
 
 
-    //TODO remove java.util.date globally
-    //TODO make TimeUtil static
     public CronScheduler(TimeUtil timeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
         this.timeUtil = timeUtil;
         this.restUtil = restUtil;
@@ -75,10 +73,10 @@ public class CronScheduler {
         this.performanceTracker = new PerformanceTracker();
     }
 
-    //@Scheduled(initialDelay = 1000)
+    @Scheduled(initialDelay = 1000)
     public void fetchOldFlightSchedules() {
-        LocalDate startDate = LocalDate.of(2024, 6, 1);
-        LocalDate endDate = LocalDate.of(2024, 6, 10);
+        LocalDate startDate = LocalDate.of(2024, 6, 2);
+        LocalDate endDate = LocalDate.of(2024, 6, 7);
         LocalDate currentDate = startDate;
         while (!currentDate.isAfter(endDate)) {
             try {
@@ -86,11 +84,6 @@ public class CronScheduler {
                 fetchFlightSchedule(currentDate);
             } catch (Exception e) {
                 log.error("Error fetching flight schedule for {}", currentDate, e);
-            }
-            try {
-                Thread.sleep(5 * 1000);
-            } catch (InterruptedException e) {
-                log.warn("Delay interrupted", e);
             }
             currentDate = currentDate.plusDays(1);
         }
