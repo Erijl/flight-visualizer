@@ -86,6 +86,7 @@ body.modal-open::before {
 
 .understand-button:hover {
   background: #c2185b;
+  cursor: pointer;
 }
 
 .link-container {

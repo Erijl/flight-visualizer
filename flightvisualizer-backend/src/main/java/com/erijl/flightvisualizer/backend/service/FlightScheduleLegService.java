@@ -67,7 +67,6 @@ public class FlightScheduleLegService {
     public SandboxModeResponseObject getDistinctFlightScheduleLegsForRendering(CombinedFilterRequest combinedFilterRequest) {
         CombinedFilterRequestValidator.validate(combinedFilterRequest);
 
-        //TODO possible error when selecting too many days (check db performance)
         LocalDate startDate = TimeUtil.convertProtoTimestampToLocalDate(combinedFilterRequest.getTimeFilter().getDateRange().getStart());
         LocalDate endDate = TimeUtil.convertProtoTimestampToLocalDate(combinedFilterRequest.getTimeFilter().getDateRange().getEnd());
         List<LegRenderDataProjection> legs = flightScheduleLegRepository

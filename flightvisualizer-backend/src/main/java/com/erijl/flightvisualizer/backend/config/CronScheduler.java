@@ -58,10 +58,7 @@ public class CronScheduler {
     private final PerformanceTracker performanceTracker;
 
 
-    //TODO remove java.util.date globally
-    //TODO make TimeUtil static
-    public CronScheduler(TimeUtil timeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
-        this.timeUtil = timeUtil;
+    public CronScheduler(RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
         this.restUtil = restUtil;
         this.airlineService = airlineService;
         this.aircraftService = aircraftService;
@@ -75,10 +72,10 @@ public class CronScheduler {
         this.performanceTracker = new PerformanceTracker();
     }
 
-    //@Scheduled(initialDelay = 1000)
+    @Scheduled(initialDelay = 1000)
     public void fetchOldFlightSchedules() {
-        LocalDate startDate = LocalDate.of(2024, 6, 1);
-        LocalDate endDate = LocalDate.of(2024, 6, 10);
+        LocalDate startDate = LocalDate.of(2024, 6, 2);
+        LocalDate endDate = LocalDate.of(2024, 6, 7);
         LocalDate currentDate = startDate;
         while (!currentDate.isAfter(endDate)) {
             try {
@@ -87,7 +84,7 @@ public class CronScheduler {
             } catch (Exception e) {
                 log.error("Error fetching flight schedule for {}", currentDate, e);
             }
-            try {
+            try { // To avoid rate limiting
                 Thread.sleep(5 * 1000);
             } catch (InterruptedException e) {
                 log.warn("Delay interrupted", e);
@@ -131,8 +128,8 @@ public class CronScheduler {
         String requestUrl = new UrlBuilder(this.baseUrl)
                 .flightSchedule()
                 .filterAirlineCodes("LH")
-                .filterStartDate(this.timeUtil.convertDateToDDMMMYY(dateToFetch))
-                .filterEndDate(this.timeUtil.convertDateToDDMMMYY(dateToFetch.plus(1, ChronoUnit.DAYS)))
+                .filterStartDate(TimeUtil.convertDateToDDMMMYY(dateToFetch))
+                .filterEndDate(TimeUtil.convertDateToDDMMMYY(dateToFetch.plus(1, ChronoUnit.DAYS)))
                 .filterDaysOfOperation(new WeekRepresentation(dateToFetch).toDaysOfOperationString())
                 .getUrl();
 
@@ -199,11 +196,11 @@ public class CronScheduler {
         performanceTracker.addPerformance("Going through flight schedule response list");
         for (FlightScheduleResponse flightScheduleResponse : flightScheduleResponseList) {
 
-            java.sql.Date startDateUtc = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getStartDate());
-            java.sql.Date endDateUtc = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getEndDate());
+            java.sql.Date startDateUtc = TimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getStartDate());
+            java.sql.Date endDateUtc = TimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getEndDate());
             String operationDaysUtc = flightScheduleResponse.getPeriodOfOperationResponseUTC().getDaysOfOperation();
-            java.sql.Date startDateLt = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getStartDate());
-            java.sql.Date endDateLt = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getEndDate());
+            java.sql.Date startDateLt = TimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getStartDate());
+            java.sql.Date endDateLt = TimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getEndDate());
             String operationDaysLt = flightScheduleResponse.getPeriodOfOperationResponseLT().getDaysOfOperation();
 
             String operationPeriodKeyString = new FlightScheduleOperationPeriodKey(
