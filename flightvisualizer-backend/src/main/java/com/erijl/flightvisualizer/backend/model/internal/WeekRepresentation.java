@@ -5,8 +5,6 @@ import lombok.Setter;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -33,24 +31,6 @@ public class WeekRepresentation {
         this.friday = daysOfOperation.contains("5");
         this.saturday = daysOfOperation.contains("6");
         this.sunday = daysOfOperation.contains("7");
-    }
-
-    /**
-     * Creating a new {@link WeekRepresentation} instance based on a Date object
-     *
-     * @param date Date object representing the current date
-     */
-    public WeekRepresentation(Date date) {
-        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        DayOfWeek currentDayOfWeek = localDate.getDayOfWeek();
-
-        this.monday = currentDayOfWeek == DayOfWeek.MONDAY;
-        this.tuesday = currentDayOfWeek == DayOfWeek.TUESDAY;
-        this.wednesday = currentDayOfWeek == DayOfWeek.WEDNESDAY;
-        this.thursday = currentDayOfWeek == DayOfWeek.THURSDAY;
-        this.friday = currentDayOfWeek == DayOfWeek.FRIDAY;
-        this.saturday = currentDayOfWeek == DayOfWeek.SATURDAY;
-        this.sunday = currentDayOfWeek == DayOfWeek.SUNDAY;
     }
 
     public WeekRepresentation(LocalDate date) {
