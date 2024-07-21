@@ -1,6 +1,7 @@
 # Flight Visualizer - Database
 
-This directory contains the scripts for setting up the database.
+This directory contains the scripts for setting up the database, 
+and a possibly interesting optimization problem about bulk insertion and solution.
 
 ## Model
 
