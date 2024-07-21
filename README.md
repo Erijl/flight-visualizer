@@ -19,20 +19,20 @@ Some technical highlights, not necessarily unique but definitely uncommon and te
 I needed a shared data model between client and server, from a single source of truth (SSoT). So, instead of going the
 usual route, I chose Protocol Buffers in combination with a standard Rest API. Not too common, but this not only assures
 that the data model is consistent between client and server but also allows for a more efficient data transfer and better
-performance than typical methods. [More Details](./api-models/README.md)
+performance than typical methods. [Implementation](./api-models)
 
 ### Theoretical real time flight visualisation
 
 The 'theoretical' flight visualisation utilizes parts of the Haversine formula to theoretically calculate the position
-of an aircraft at any given time based on the departure and arrival times as well as an approximated distance time
-function of an average airplane. Now sadly due to performance issues this had to be implemented into the
-frontend. [More Details](./flightvisualizer-backend/README.md)
+of an aircraft at any given time based on the departure and arrival times. Paring this with a sped up interval and some
+speed modifiers, you got yourself a real-time flight visualisation. But sadly, due to performance issues, this had to be implemented into the frontend.
+[Implementation](./flightvisualizer-frontend/src/app/core/services/geo.service.ts)
 
 ### Automatic CI/CD pipeline with GitHub Actions
 
 The project is set up with a CI/CD pipeline that automatically builds and deploys the frontend to my FTP server.
 Additionally, the backend is built with all the necessary environment variables and deployed as a private Docker image to the
-Docker Hub. [More Details](./.github/workflows)
+Docker Hub. [Implementation](./.github/workflows)
 
 ## Getting Started / Contributing
 
@@ -42,7 +42,7 @@ I will create a fully comprehensive guide for local development including sample
 
 ## Project Structure
 
-The Project is divided into four main directories, each containing its own readme for more detailed information:
+The Project is divided into four main directories, some containing its own readme for more detailed information:
 
     /api-models - Protocol Buffer files for the SSoT data models
     /flightvisualizer-backend - Spring Boot backend code
