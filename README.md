@@ -10,28 +10,29 @@
 Flight Visualizer is an open-source web application that lets you explore Lufthansa's global flight network.
 Track flights, discover intricate details and enjoy the data. [Check it out here!](https://flight-visualizer.com)
 
-## Highlights
+## Technical Highlights
 
 Some technical highlights, not necessarily unique but definitely uncommon and technically interesting
 
 ### Protocol Buffers as SSoT data model with REST API
 
-I needed a shared data model between client and server, from a single source of truth. Instead of going the usual route,
-I chose Protocol Buffers in combination with a standard Rest API. Not to common, but this not only assures that the
-data model is consistent between client and server but also allows for a more efficient data transfer and better
+I needed a shared data model between client and server, from a single source of truth (SSoT). So, instead of going the
+usual route, I chose Protocol Buffers in combination with a standard Rest API. Not too common, but this not only assures
+that the data model is consistent between client and server but also allows for a more efficient data transfer and better
 performance than typical methods. [More Details](./api-models/README.md)
 
-### Theoretical Realtime flight visualisation
+### Theoretical real time flight visualisation
 
-The 'theoretical' flight visalisation utilizes parts of the Haversine formula to theoretically calculate the position
+The 'theoretical' flight visualisation utilizes parts of the Haversine formula to theoretically calculate the position
 of an aircraft at any given time based on the departure and arrival times as well as an approximated distance time
-function of an average airplane. [More Details](./flightvisualizer-backend/README.md)
+function of an average airplane. Now sadly due to performance issues this had to be implemented into the
+frontend. [More Details](./flightvisualizer-backend/README.md)
 
-### Graph Theory visualisation
+### Automatic CI/CD pipeline with GitHub Actions
 
-The graph theory visualisation is a unique way to visualize the flight network of Lufthansa. It uses a force directed
-graph layout to show the connections between airports and the number of flights between
-them. [More Details](./flightvisualizer-frontend/README.md)
+The project is set up with a CI/CD pipeline that automatically builds and deploys the frontend to my FTP server.
+Additionally, the backend is built with all the necessary environment variables and deployed as a private Docker image to the
+Docker Hub. [More Details](./.github/workflows)
 
 ## Getting Started / Contributing
 
@@ -41,8 +42,7 @@ I will create a fully comprehensive guide for local development including sample
 
 ## Project Structure
 
-The Project is divided into the following main directories,
-please note that each main directory contains its own readme for more detailed information:
+The Project is divided into four main directories, each containing its own readme for more detailed information:
 
     /api-models - Protocol Buffer files for the SSoT data models
     /flightvisualizer-backend - Spring Boot backend code
