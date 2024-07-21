@@ -49,9 +49,9 @@ public class TimeUtil {
      * @param ddMMMyyFormat The date string in the 'ddMMMyy' format to be converted
      * @return A {@link Date} object representing the converted date. Returns null if the string cannot be parsed.
      */
-    public Date convertDDMMMYYToSQLDate(String ddMMMyyFormat) {
+    public static Date convertDDMMMYYToSQLDate(String ddMMMyyFormat) {
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("ddMMMyy", Locale.ENGLISH);
-        return this.convertDateToSqlDate(LocalDate.parse(ddMMMyyFormat, dateFormat));
+        return convertDateToSqlDate(LocalDate.parse(ddMMMyyFormat, dateFormat));
     }
 
     /**
@@ -60,7 +60,7 @@ public class TimeUtil {
      * @param date The {@link LocalDate} object to be converted
      * @return A {@link Date} object representing the converted date
      */
-    public Date convertDateToSqlDate(LocalDate date) {
+    public static Date convertDateToSqlDate(LocalDate date) {
         return Date.valueOf(date);
     }
 

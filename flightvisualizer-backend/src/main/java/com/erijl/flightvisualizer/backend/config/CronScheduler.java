@@ -58,8 +58,7 @@ public class CronScheduler {
     private final PerformanceTracker performanceTracker;
 
 
-    public CronScheduler(TimeUtil timeUtil, RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
-        this.timeUtil = timeUtil;
+    public CronScheduler(RestUtil restUtil, AirlineService airlineService, AircraftService aircraftService, AirportService airportService, FlightScheduleRepository flightScheduleRepository, AuthManager authManager, FlightScheduleCronRunRepository flightScheduleCronRunRepository, FlightScheduleOperationPeriodRepository flightScheduleOperationPeriodRepository, FlightScheduleDataElementRepository flightScheduleDataElementRepository, FlightScheduleLegRepository flightScheduleLegRepository) {
         this.restUtil = restUtil;
         this.airlineService = airlineService;
         this.aircraftService = aircraftService;
@@ -124,8 +123,8 @@ public class CronScheduler {
         String requestUrl = new UrlBuilder(this.baseUrl)
                 .flightSchedule()
                 .filterAirlineCodes("LH")
-                .filterStartDate(this.timeUtil.convertDateToDDMMMYY(dateToFetch))
-                .filterEndDate(this.timeUtil.convertDateToDDMMMYY(dateToFetch.plus(1, ChronoUnit.DAYS)))
+                .filterStartDate(TimeUtil.convertDateToDDMMMYY(dateToFetch))
+                .filterEndDate(TimeUtil.convertDateToDDMMMYY(dateToFetch.plus(1, ChronoUnit.DAYS)))
                 .filterDaysOfOperation(new WeekRepresentation(dateToFetch).toDaysOfOperationString())
                 .getUrl();
 
@@ -192,11 +191,11 @@ public class CronScheduler {
         performanceTracker.addPerformance("Going through flight schedule response list");
         for (FlightScheduleResponse flightScheduleResponse : flightScheduleResponseList) {
 
-            java.sql.Date startDateUtc = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getStartDate());
-            java.sql.Date endDateUtc = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getEndDate());
+            java.sql.Date startDateUtc = TimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getStartDate());
+            java.sql.Date endDateUtc = TimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseUTC().getEndDate());
             String operationDaysUtc = flightScheduleResponse.getPeriodOfOperationResponseUTC().getDaysOfOperation();
-            java.sql.Date startDateLt = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getStartDate());
-            java.sql.Date endDateLt = this.timeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getEndDate());
+            java.sql.Date startDateLt = TimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getStartDate());
+            java.sql.Date endDateLt = TimeUtil.convertDDMMMYYToSQLDate(flightScheduleResponse.getPeriodOfOperationResponseLT().getEndDate());
             String operationDaysLt = flightScheduleResponse.getPeriodOfOperationResponseLT().getDaysOfOperation();
 
             String operationPeriodKeyString = new FlightScheduleOperationPeriodKey(
