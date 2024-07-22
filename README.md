@@ -2,13 +2,15 @@
 
 <div align="center">
 
-![Frontend Deployment](https://img.shields.io/github/actions/workflow/status/erijl/flight-visualizer/main.yml)
-![Backend Deployment](https://img.shields.io/github/actions/workflow/status/erijl/flight-visualizer/publish_backend-docker-image.yml)
+![Frontend Deployment](https://img.shields.io/github/actions/workflow/status/erijl/flight-visualizer/deploy-frontend-ftp.yml?label=Frontend%20Deployment)
+![Backend Deployment](https://img.shields.io/github/actions/workflow/status/erijl/flight-visualizer/publish-backend-docker-image.yml?label=Backend%20Deployment)
 
 </div>
 
 Flight Visualizer is an open-source web application that lets you explore Lufthansa's global flight network.
 Track flights, discover intricate details and enjoy the data. [Check it out here!](https://flight-visualizer.com)
+
+**Disclaimer:** This project is not affiliated with Lufthansa in any way, it's just based around their data.
 
 ## Technical Highlights
 
