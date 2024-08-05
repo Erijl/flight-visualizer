@@ -5,12 +5,13 @@ import com.erijl.flightvisualizer.backend.model.entities.FlightScheduleLeg;
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TimeUtilTest {
 
@@ -109,5 +110,37 @@ public class TimeUtilTest {
                 .build();
 
         assertNull(TimeUtil.convertProtoTimestampToLocalDate(timestamp));
+    }
+
+    @Test
+    void testConvertDDMMMYYToSQLDate() {
+        LocalDate localDate = LocalDate.of(2024, 8, 4);
+
+        assertEquals(TimeUtil.convertDateToSqlDate(localDate), TimeUtil.convertDDMMMYYToSQLDate("04AUG24"));
+    }
+
+    @Test
+    void convertDDMMMYYToSQLDate_ShouldReturnCorrectDate() {
+        LocalDate expectedLocalDate = LocalDate.of(2024, 8, 4);
+        Date expectedDate = Date.valueOf(expectedLocalDate);
+
+        Date actualDate = TimeUtil.convertDDMMMYYToSQLDate("04AUG24");
+
+        assertEquals(expectedDate, actualDate);
+    }
+
+    @Test
+    void convertDDMMMYYToSQLDate_WithInvalidFormat_ShouldThrowException() {
+        assertThrows(Exception.class, () -> TimeUtil.convertDDMMMYYToSQLDate("04-08-24"));
+    }
+
+    @Test
+    void convertDDMMMYYToSQLDate_WithNull_ShouldThrowException() {
+        assertThrows(Exception.class, () -> TimeUtil.convertDDMMMYYToSQLDate(null));
+    }
+
+    @Test
+    void convertDDMMMYYToSQLDate_WithEmptyString_ShouldThrowException() {
+        assertThrows(Exception.class, () -> TimeUtil.convertDDMMMYYToSQLDate(""));
     }
 }

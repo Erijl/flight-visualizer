@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Locale;
 
 @Component
@@ -50,8 +51,11 @@ public class TimeUtil {
      * @return A {@link Date} object representing the converted date. Returns null if the string cannot be parsed.
      */
     public static Date convertDDMMMYYToSQLDate(String ddMMMyyFormat) {
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("ddMMMyy", Locale.ENGLISH);
-        return convertDateToSqlDate(LocalDate.parse(ddMMMyyFormat, dateFormat));
+        DateTimeFormatter dateFormat = new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .appendPattern("ddMMMyy")
+                .toFormatter(Locale.ENGLISH);
+        return convertDateToSqlDate(LocalDate.from(dateFormat.parse(ddMMMyyFormat)));
     }
 
     /**

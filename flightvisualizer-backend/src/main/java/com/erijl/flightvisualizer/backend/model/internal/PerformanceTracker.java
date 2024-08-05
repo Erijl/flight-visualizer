@@ -20,6 +20,7 @@ public class PerformanceTracker {
      * Start the initial tracking
      */
     public void startTracking() {
+        if(stopWatch.isRunning()) return;
         stopWatch.start();
         startTime = System.currentTimeMillis();
     }
