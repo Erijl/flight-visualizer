@@ -94,24 +94,25 @@ public class CronScheduler {
     //}
 
     @Scheduled(fixedRate = 1000 * 60 * 60)
-    public void fetchCurrentFlightSchedule() {
+    public void fetchCurrentFlightSchedule() { //TODO fix: currently pushing corrupted data
         LocalDate currentDate = LocalDate.now(ZoneId.of("UTC"));
+        log.error("[{}]: CRONJOB DISABLED; would fetch {}", LocalDate.now(), currentDate);
 
-        try {
-            log.info("[{}]: Fetching flight schedule for {}", LocalDate.now(), currentDate);
-            performanceTracker.startTracking();
-
-            performanceTracker.addPerformance("Start fetching");
-            fetchFlightSchedule(currentDate);
-            performanceTracker.stop();
-
-            log.info("Flight schedule for {} fetched", currentDate);
-            log.info(performanceTracker.getPerformanceTrackrecordString());
-        } catch (Exception e) {
-            performanceTracker.stop();
-            log.info(performanceTracker.getPerformanceTrackrecordString());
-            log.error("Error fetching flight schedule for {}", currentDate, e);
-        }
+        //try {
+        //    log.info("[{}]: Fetching flight schedule for {}", LocalDate.now(), currentDate);
+        //    performanceTracker.startTracking();
+//
+        //    performanceTracker.addPerformance("Start fetching");
+        //    fetchFlightSchedule(currentDate);
+        //    performanceTracker.stop();
+//
+        //    log.info("Flight schedule for {} fetched", currentDate);
+        //    log.info(performanceTracker.getPerformanceTrackrecordString());
+        //} catch (Exception e) {
+        //    performanceTracker.stop();
+        //    log.info(performanceTracker.getPerformanceTrackrecordString());
+        //    log.error("Error fetching flight schedule for {}", currentDate, e);
+        //}
     }
 
     public void fetchFlightSchedule(LocalDate dateToFetch) {
