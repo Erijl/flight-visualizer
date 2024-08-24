@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+
+  flight-visualizer:
+    container_name: flight-visualizer
+    image: erijl/flight-visualizer
+    ports:
+      - "8081:8081"
+    networks:
+      - traefik
+    labels:
+      - traefik.http.routers.flight-visualizer.rule=Host(`api.flight-visualizer.com`)
+
+
+networks:
+  traefik:
+    external: true
