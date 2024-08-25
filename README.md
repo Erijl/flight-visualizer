@@ -14,27 +14,28 @@ Track flights, discover intricate details and enjoy the data. [Check it out here
 
 ## Technical Highlights
 
-Some technical highlights, not necessarily unique but definitely uncommon and technically interesting
+Some technical highlights, not necessarily unique but technically interesting and some being uncommon
 
 ### Protocol Buffers as SSoT data model with REST API
 
 I needed a shared data model between client and server, from a single source of truth (SSoT). So, instead of going the
-usual route, I chose Protocol Buffers in combination with a standard Rest API. Not too common, but this not only assures
+usual route, I chose Protocol Buffers in combination with a 'standard' Rest API. Not too common, but this not only assures
 that the data model is consistent between client and server but also allows for a more efficient data transfer and better
 performance than typical methods. [Implementation](./api-models)
 
 ### Theoretical real time flight visualisation
 
 The 'theoretical' flight visualisation utilizes parts of the Haversine formula to theoretically calculate the position
-of an aircraft at any given time based on the departure and arrival times. Paring this with a sped up interval and some
-speed modifiers, you got yourself a real-time flight visualisation. But sadly, due to performance issues, this had to be implemented into the frontend.
+of an aircraft at any given time based on the origin and destination airport coordinates as well as departure and arrival times. 
+Paring this with a sped up interval and some speed modifiers, you got yourself a real-time flight visualisation, 
+which (sadly) due to performance issues, had to be implemented into the frontend instead of precalculating in the backend.
 [Implementation](./flightvisualizer-frontend/src/app/core/services/geo.service.ts)
 
 ### Automatic CI/CD pipeline with GitHub Actions
 
-The project is set up with a CI/CD pipeline that automatically builds and deploys the frontend to my FTP server.
-Additionally, the backend is built with all the necessary environment variables and deployed as a private Docker image to the
-Docker Hub. [Implementation](./.github/workflows)
+The project utilizes a CI/CD pipeline to automate the build and deployment of both the frontend and backend. 
+The frontend is deployed to a web server, and the backend is containerized and deployed to my virtual machines in the cloud via Docker Hub.
+[Implementation](./.github/workflows)
 
 ## Getting Started / Contributing
 
