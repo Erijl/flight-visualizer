@@ -4,6 +4,7 @@
 
 ![Frontend Deployment](https://img.shields.io/github/actions/workflow/status/erijl/flight-visualizer/deploy-frontend-ftp.yml?label=Frontend%20Deployment)
 ![Backend Deployment](https://img.shields.io/github/actions/workflow/status/erijl/flight-visualizer/publish-backend-docker-image.yml?label=Backend%20Deployment)
+![](https://img.shields.io/badge/Backend_Test_Coverage-68%25-green)
 
 </div>
 
