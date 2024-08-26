@@ -1,15 +1,15 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import mapboxgl from 'mapbox-gl';
-import {DefaultGeneralFilter, DefaultSelectedAirportFilter} from "../../core/dto/default-filter";
+import { DefaultGeneralFilter, DefaultSelectedAirportFilter } from "../../core/dto/default-filter";
 import 'mapbox-gl/dist/mapbox-gl.css';
-import {GeoService} from "../../core/services/geo.service";
-import {CursorStyles, DetailSelectionType, LayerType, MapEventType, ModeSelection, SourceType} from "../../core/enum";
-import {DataStoreService} from "../../core/services/data-store.service";
-import {Observable, Subscription} from "rxjs";
-import {environment} from "../../../environments/environment";
-import {GeneralFilter, SelectedAirportFilter} from "../../protos/filters";
-import {AirportRender, LegRender} from "../../protos/objects";
-import {LiveFeedService} from "../../core/services/live-feed.service";
+import { GeoService } from "../../core/services/geo.service";
+import { CursorStyles, DetailSelectionType, LayerType, MapEventType, ModeSelection, SourceType } from "../../core/enum";
+import { DataStoreService } from "../../core/services/data-store.service";
+import { Observable, Subscription } from "rxjs";
+import { environment } from "../../../environments/environment";
+import { GeneralFilter, SelectedAirportFilter } from "../../protos/filters";
+import { AirportRender, LegRender } from "../../protos/objects";
+import { LiveFeedService } from "../../core/services/live-feed.service";
 
 @Component({
   selector: 'app-map',
@@ -32,6 +32,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   // UI data
   generalFilter: GeneralFilter = GeneralFilter.create(DefaultGeneralFilter);
+  innerScreenWidth = 1000;
 
   // UI state
   selectedAirportFilter: SelectedAirportFilter = SelectedAirportFilter.create();
@@ -53,6 +54,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.innerScreenWidth = window.innerWidth;
     this.currentDate$ = this.liveFeedService.getCurrentDate$();
 
     this.modeSelectionSubscription = this.dataStoreService.modeSelection.subscribe(mode => {
@@ -95,7 +97,7 @@ export class MapComponent implements OnInit, OnDestroy {
       container: 'map',
       style: 'mapbox://styles/mapbox/dark-v11',
       center: [-74.5, 40],
-      zoom: 3
+      zoom: this.innerScreenWidth < 1000 ? 1.5 : 2.5,
     });
 
     this.map.dragRotate.disable();
@@ -280,7 +282,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   runLiveFeed() {
-    if(this.currentDateSubscription != null) this.currentDateSubscription.unsubscribe();
+    if (this.currentDateSubscription != null) this.currentDateSubscription.unsubscribe();
 
     this.currentDateSubscription = this.currentDate$.subscribe((newDateObj) => {
       const airplanesGeoJson = this.geoService.convertLegRendersToLiveFeedGeoJson(this.dataStoreService.getAllLegRenders(), newDateObj);

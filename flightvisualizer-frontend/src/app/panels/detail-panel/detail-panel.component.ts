@@ -1,14 +1,14 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {DetailSelectionType, ModeSelection} from "../../core/enum";
-import {Subscription} from "rxjs";
-import {DataStoreService} from "../../core/services/data-store.service";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { DetailSelectionType, ModeSelection } from "../../core/enum";
+import { Subscription } from "rxjs";
+import { DataStoreService } from "../../core/services/data-store.service";
 
 @Component({
   selector: 'app-detail-panel',
   templateUrl: './detail-panel.component.html',
   styleUrl: './detail-panel.component.css'
 })
-export class DetailPanelComponent implements OnInit, OnDestroy{
+export class DetailPanelComponent implements OnInit, OnDestroy {
 
   detailSelectionTypeSubscription!: Subscription;
   selectedAirportSubscription!: Subscription;
@@ -34,7 +34,7 @@ export class DetailPanelComponent implements OnInit, OnDestroy{
       }
     });
 
-    this.selectedRouteSubscription =  this.dataStoreService.selectedRoute.subscribe(route => {
+    this.selectedRouteSubscription = this.dataStoreService.selectedRoute.subscribe(route => {
       if (route.originAirportIataCode != '') {
         this.expanded = true;
       }
@@ -43,7 +43,7 @@ export class DetailPanelComponent implements OnInit, OnDestroy{
     this.modeSelectionSubscription = this.dataStoreService.modeSelection.subscribe(modeSelection => {
       this.modeSelection = modeSelection;
 
-      if(this.modeSelection == ModeSelection.LIVE_FEED) {
+      if (this.modeSelection == ModeSelection.LIVE_FEED) {
         this.selectionType = DetailSelectionType.AIRPLANE;
         this.onSelectionTypeChange();
       }

@@ -1,7 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {DataStoreService} from "../../../core/services/data-store.service";
-import {Subscription} from "rxjs";
-import {LegRender} from "../../../protos/objects";
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { DataStoreService } from "../../../core/services/data-store.service";
+import { Subscription } from "rxjs";
+import { LegRender } from "../../../protos/objects";
 
 @Component({
   selector: 'app-airplane-info',
@@ -16,7 +16,8 @@ export class AirplaneInfoComponent implements OnInit, OnDestroy {
   // UI Data
   selectedAirplane: LegRender = LegRender.create();
 
-  constructor(private dataStoreService: DataStoreService) { }
+  constructor(private dataStoreService: DataStoreService) {
+  }
 
   ngOnInit(): void {
     this.selectedAirplaneSubscription = this.dataStoreService.selectedAirplane.subscribe(airplane => {

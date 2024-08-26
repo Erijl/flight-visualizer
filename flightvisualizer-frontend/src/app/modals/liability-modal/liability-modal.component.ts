@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 enum ModalState {
   LIABILITY = 'LIABILITY',
@@ -13,9 +13,11 @@ enum ModalState {
   templateUrl: './liability-modal.component.html',
   styleUrl: './liability-modal.component.css'
 })
-export class LiabilityModalComponent {
+export class LiabilityModalComponent implements OnInit{
   @Output() closeModalEvent = new EventEmitter();
   modalState = ModalState.WELCOME;
+
+  innerScreenWidth = 1000;
 
   closeModal() {
     this.closeModalEvent.emit();
@@ -26,4 +28,8 @@ export class LiabilityModalComponent {
   }
 
   protected readonly ModalState = ModalState;
+
+  ngOnInit(): void {
+    this.innerScreenWidth = window.innerWidth;
+  }
 }
