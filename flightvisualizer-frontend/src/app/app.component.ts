@@ -4,7 +4,7 @@ import {DataStoreService} from "./core/services/data-store.service";
 import {ToastService} from "./core/services/toast.service";
 import {environment} from "../environments/environment";
 import {ModeSelection} from "./core/enum";
-import { Platform, PlatformModule } from "@angular/cdk/platform";
+import { Platform } from "@angular/cdk/platform";
 
 @Component({
   selector: 'app-root',

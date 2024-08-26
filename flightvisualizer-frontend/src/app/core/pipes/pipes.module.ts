@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {IntToTimeofdayPipe} from "./int-to-timeofday.pipe";
-
+import { IntToTimeofdayPipe } from "./int-to-timeofday.pipe";
 
 
 @NgModule({
@@ -15,4 +14,5 @@ import {IntToTimeofdayPipe} from "./int-to-timeofday.pipe";
     IntToTimeofdayPipe
   ]
 })
-export class PipesModule { }
+export class PipesModule {
+}

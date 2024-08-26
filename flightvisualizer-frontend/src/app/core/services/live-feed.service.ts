@@ -1,7 +1,7 @@
-import {Injectable, OnDestroy, OnInit} from '@angular/core';
-import {LiveFeedSpeedMultiplierString, ModeSelection} from "../enum";
-import {BehaviorSubject, interval, Observable, Subscription, switchMap} from "rxjs";
-import {DataStoreService} from "./data-store.service";
+import { Injectable } from '@angular/core';
+import { ModeSelection } from "../enum";
+import { BehaviorSubject, interval, Observable, Subscription, switchMap } from "rxjs";
+import { DataStoreService } from "./data-store.service";
 
 @Injectable({
   providedIn: 'root'
