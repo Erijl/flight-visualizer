@@ -4,6 +4,7 @@ import {DataStoreService} from "./core/services/data-store.service";
 import {ToastService} from "./core/services/toast.service";
 import {environment} from "../environments/environment";
 import {ModeSelection} from "./core/enum";
+import { Platform, PlatformModule } from "@angular/cdk/platform";
 
 @Component({
   selector: 'app-root',
@@ -17,9 +18,12 @@ export class AppComponent implements OnInit, OnDestroy {
   showModeSelect = true;
   isLoading = false;
 
+  isUserAgentBlocked = false;
+
   showLoadingScreenSubscription!: Subscription;
 
-  constructor(private dataStoreService: DataStoreService, public toastService: ToastService) {
+  constructor(private dataStoreService: DataStoreService, public toastService: ToastService,
+              private platformService: Platform) {
     if(!environment.production) {
       console.log('Development mode');
     }
@@ -29,9 +33,13 @@ export class AppComponent implements OnInit, OnDestroy {
     this.showLoadingScreenSubscription = this.dataStoreService.showLoadingScreen.subscribe((show: boolean) => {
       this.isLoading = show;
     });
+
+    this.isUserAgentBlocked = ((this.platformService.IOS || this.platformService.ANDROID) && this.platformService.FIREFOX);
   }
 
   closeModal() {
+    if(this.isUserAgentBlocked) return;
+
     this.dataStoreService.setShowLoadingScreen(true);
     this.showModal = false;
     this.renderMap = true;
@@ -39,6 +47,8 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   selectMode(mode: ModeSelection) {
+    if(this.isUserAgentBlocked) return;
+
     this.dataStoreService.setModeSelection(mode);
     this.showModeSelect = false;
   }

@@ -32,6 +32,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   // UI data
   generalFilter: GeneralFilter = GeneralFilter.create(DefaultGeneralFilter);
+  innerScreenWidth = 1000;
 
   // UI state
   selectedAirportFilter: SelectedAirportFilter = SelectedAirportFilter.create();
@@ -53,6 +54,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.innerScreenWidth = window.innerWidth;
     this.currentDate$ = this.liveFeedService.getCurrentDate$();
 
     this.modeSelectionSubscription = this.dataStoreService.modeSelection.subscribe(mode => {
@@ -95,7 +97,7 @@ export class MapComponent implements OnInit, OnDestroy {
       container: 'map',
       style: 'mapbox://styles/mapbox/dark-v11',
       center: [-74.5, 40],
-      zoom: 3
+      zoom: this.innerScreenWidth < 1000 ? 1.5 : 2.5,
     });
 
     this.map.dragRotate.disable();

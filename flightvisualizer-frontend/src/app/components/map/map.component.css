@@ -76,3 +76,9 @@ table {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+@media (max-width: 800px) {
+  .side-panel {
+    left: 20px
+  }
+}

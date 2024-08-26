@@ -115,6 +115,10 @@
     border-top-right-radius: 3rem;
     border-bottom-left-radius: 3rem;
   }
+
+  #modal-wrapper {
+    top: 2vh;
+  }
 }
 
 @media(max-width: 728px) {
@@ -159,7 +163,6 @@ main {
   gap: 20px;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 20px;
 }
 
 .header-container {
@@ -283,4 +286,49 @@ main {
   text-decoration: none;
   appearance: none;
   cursor: pointer;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.8);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.overlay-content {
+  text-align: center;
+  max-width: 80%;
+}
+
+@media (max-width: 800px) {
+
+  .header {
+    font-size: 2.5rem;
+  }
+
+  .subheader {
+    font-size: 1.25rem;
+  }
+
+  .card {
+    width: 18rem;
+    height: 28rem;
+  }
+
+  .cards-container {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  #modal-wrapper {
+    padding: .5rem;
+    padding-right: 1rem;
+  }
 }

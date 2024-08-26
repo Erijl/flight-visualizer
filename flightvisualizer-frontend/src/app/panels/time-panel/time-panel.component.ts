@@ -26,13 +26,19 @@ export class TimePanelComponent implements OnInit, OnDestroy {
 
   modeSelectionSubscription!: Subscription;
 
-  expanded: boolean = true;
+  expanded: boolean = false;
   modeSelection: ModeSelection = ModeSelection.NONE;
+  innerScreenWidth = 1000;
 
   constructor(private dataStoreService: DataStoreService) {
   }
 
   ngOnInit() {
+    this.innerScreenWidth = window.innerWidth;
+    if(this.innerScreenWidth >= 800) {
+      this.expanded = true;
+    }
+
     this.modeSelectionSubscription = this.dataStoreService.modeSelection.subscribe(modeSelection => {
       this.modeSelection = modeSelection;
     })
