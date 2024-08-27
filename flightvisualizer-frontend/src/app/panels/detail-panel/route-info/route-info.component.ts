@@ -1,17 +1,17 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {Subscription} from "rxjs";
-import {DataStoreService} from "../../../core/services/data-store.service";
-import {DetailedLegInformation, LegRender} from "../../../protos/objects";
-import {MatPaginator} from "@angular/material/paginator";
-import {MatSort} from "@angular/material/sort";
-import {MatTableDataSource} from "@angular/material/table";
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Subscription } from "rxjs";
+import { DataStoreService } from "../../../core/services/data-store.service";
+import { DetailedLegInformation, LegRender } from "../../../protos/objects";
+import { MatPaginator } from "@angular/material/paginator";
+import { MatSort } from "@angular/material/sort";
+import { MatTableDataSource } from "@angular/material/table";
 
 @Component({
   selector: 'app-route-info',
   templateUrl: './route-info.component.html',
   styleUrl: './route-info.component.css'
 })
-export class RouteInfoComponent implements OnInit, OnDestroy, AfterViewInit{
+export class RouteInfoComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedRouteSubscription!: Subscription;
   currentlyRenderedRoutesSubscription!: Subscription;
   routeDetailSubscription!: Subscription;

@@ -20,6 +20,9 @@
   max-height: 90%;
   height: auto;
   overflow: auto;
+
+  white-space: normal;
+  word-break: break-word;
 }
 
 body.modal-open {
@@ -143,3 +146,4 @@ h1 {
 .full-width {
   width: 100%;
 }
+

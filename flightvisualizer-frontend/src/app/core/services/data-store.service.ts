@@ -1,14 +1,14 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   DefaultGeneralFilter,
   DefaultRouteFilter,
   DefaultSelectedAirportFilter,
   DefaultTimeFilter
 } from "../dto/default-filter";
-import {DataService} from "./data.service";
-import {BehaviorSubject} from "rxjs";
-import {DetailSelectionType, ModeSelection} from "../enum";
-import {GeneralFilter, RouteFilter, SelectedAirportFilter, TimeFilter} from "../../protos/filters";
+import { DataService } from "./data.service";
+import { BehaviorSubject } from "rxjs";
+import { DetailSelectionType, ModeSelection } from "../enum";
+import { GeneralFilter, RouteFilter, SelectedAirportFilter, TimeFilter } from "../../protos/filters";
 import {
   AirportDetails,
   AirportRender,
@@ -16,7 +16,7 @@ import {
   FlightDateFrequency,
   LegRender
 } from "../../protos/objects";
-import {RouteDisplayType} from "../../protos/enums";
+import { RouteDisplayType } from "../../protos/enums";
 
 @Injectable({
   providedIn: 'root'
@@ -222,7 +222,7 @@ export class DataStoreService {
 
   // FETCHING DATA
   private getDistinctFlightScheduleLegsForRendering(): void {
-    if(!this.isInitialized) return;
+    if (!this.isInitialized) return;
     this.setShowLoadingScreen(true);
     this.dataService.getDistinctFlightScheduleLegsForRendering(this.getTimeFilter(), this.getGeneralFilter(), this.getRouteFilter(), this.getSelectedAirportFilter()).subscribe(sandboxModeResponseObject => {
       this.furthestFLightLeg = sandboxModeResponseObject.furthestFlightLeg ?? LegRender.create()
@@ -274,14 +274,14 @@ export class DataStoreService {
     const flightDateFrequencies = this._allFlightDateFrequencies.getValue();
     let timeFilter = TimeFilter.create(DefaultTimeFilter);
 
-    if(!timeFilter || !timeFilter.dateRange) return;
+    if (!timeFilter || !timeFilter.dateRange) return;
 
     if (!flightDateFrequencies || flightDateFrequencies.length == 0) {
       //TODO oh boy...
     }
 
     timeFilter.dateRange.start = flightDateFrequencies[0].date;
-    if(timeFilter.dateRange.start) timeFilter.dateRange.start = new Date(timeFilter.dateRange.start);
+    if (timeFilter.dateRange.start) timeFilter.dateRange.start = new Date(timeFilter.dateRange.start);
 
     this.setTimeFilter(timeFilter);
   }

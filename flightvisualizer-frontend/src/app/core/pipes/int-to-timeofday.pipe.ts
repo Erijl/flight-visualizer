@@ -6,9 +6,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class IntToTimeofdayPipe implements PipeTransform {
 
   transform(value: number | null | undefined): string {
-    if(value == undefined) return '';
-    let hours = Math.floor((value)/60);
-    let minutes = Math.floor((value)%60);
+    if (value == undefined) return '';
+    let hours = Math.floor((value) / 60);
+    let minutes = Math.floor((value) % 60);
 
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }

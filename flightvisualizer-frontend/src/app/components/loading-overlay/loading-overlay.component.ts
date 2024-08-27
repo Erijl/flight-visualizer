@@ -6,6 +6,4 @@ import { Component } from '@angular/core';
   styleUrls: ['./loading-overlay.component.scss']
 })
 export class LoadingOverlayComponent {
-  zIndex = 10000;
-
 }
