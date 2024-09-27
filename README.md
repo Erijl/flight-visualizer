@@ -57,7 +57,7 @@ The Project is divided into four main directories, some containing its own readm
 
 ## Contributors
 
-> <img src="https://avatars.githubusercontent.com/erijl" height="60px" title="Justus M." alt="Portrait"/> | <a href="https://github.com/erijl" target="_blank">@erijl</a>
+> <img src="https://avatars.githubusercontent.com/Erijl" height="60px" title="Justus M." alt="Portrait"/> | <a href="https://github.com/erijl" target="_blank">@Erijl</a>
 
 ## License
 
